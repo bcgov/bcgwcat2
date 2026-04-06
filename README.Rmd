@@ -1,0 +1,96 @@
+---
+output: github_document
+---
+
+<!-- badges: start -->
+[![img](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
+[![R-CMD-check](https://github.com/bcgov/bcgwcat2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bcgov/bcgwcat2/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+# bcgwcat2 - Groundwater Chemistry Analysis Tool
+
+> Adapted from [bcgwcat](https://github.com/bcgov/bcgwcat) in light of the 
+> transition from EMS to EnMods. This may replace bcgwcat entirely in the future.
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  fig.path = "man/figures/",
+  out.width = "100%"
+)
+```
+
+The goal of bcgwcat2 is to provide easy access to EnMods data as well as to provide
+workflow tools specific to those working with groundwater. 
+
+> **Warning! This tool is a work in progress and is not ready for use.**
+
+These tools are available through R functions as well as through a **Shiny user-interface**. This tool can help with:
+
+- Downloading EnMods data via the [renmods](http://github.com/bcgov/renmods) package
+- Calculating charge balances
+- Calculating water types
+- Converting data to a format for importing into AquaChem
+- Providing water quality summaries
+- Piperplots and Stiff plots
+
+## Quick Start
+
+- Install/Update [**R**](https://cloud.r-project.org/) and [**RStudio**](https://rstudio.com/)
+- Install pak - `install.packages("pak", dependencies = TRUE)`
+- Install bcgwcat - `pak::pkg_install("bcgov/bcgwcat2")` [Update All if asked]
+- Launch the Shiny App - `gw_app()`
+
+
+## In Detail
+
+1. [**Install/Update RStudio**](https://rstudio.com/) (if it's been a while)
+2. [**Install/Update R**](https://cloud.r-project.org/) (if it's been a while)
+3. **Open RStudio**
+4. **Install pak** In the console type the following and hit enter
+
+     ```{r, eval = FALSE}
+     install.packages("pak", dependencies = TRUE)
+     ```
+5. **Check that your system is ready** Install build tools if prompted
+    ```{r, eval = FALSE}
+    pkgbuild::check_build_tools()
+    ```
+6. **Install bcgwcat2** In the console type the following and hit enter 
+(be sure to install all updates if prompted!)
+  
+    ```{r, eval = FALSE}
+    pak::pkg_install("bcgov/bcgwcat2")
+    ```
+    
+#### Troubleshooting
+
+1. **Update renmods** In the console type the following and hit enter
+
+     ```{r, eval = FALSE}
+     pak::pkg_install("bcgov/renmods")
+     ```
+
+2. **Update all packages** If you run into errors right at the start, consider updating your packages.
+
+    ```{r, eval = FALSE}
+    pak::pkg_install("bcgov/bcgwcat2", upgrade = TRUE)
+    ```
+
+
+
+## License
+
+Copyright 2026 Province of British Columbia
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
