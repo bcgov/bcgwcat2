@@ -1,0 +1,36 @@
+Package: bcgwcat2
+Type: Package
+Title: BC Groundwater Chemistry Analysis Tool
+Version: 0.0.1
+Authors@R: 
+  c(person("Steffi", "LaZerte", email = "sel@steffilazerte.ca", role = c("aut", "cre"), 
+           comment = c(ORCID = "0000-0002-7690-8360")),
+  person("Andarge", "Baye", email = "Andarge.Baye@gov.bc.ca", role = "aut"),
+  person("Province of British Columbia", role = "cph"))
+Description: Set of tools for working with groundwater chemstry data from the 
+    BC Government EnMoDS (Environmental Monitoring Data System). Download EnMoDS data and 
+    a) export, b) view water quality summaries, c) create piper and stiff plots. 
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.5)
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    dplyr,
+    purrr,
+    readr,
+    renmods (>= 0.0.2),
+    stringr,
+    tidyr
+Remotes: 
+    bcgov/renmods
+Suggests: 
+    roxygen2,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+URL: https://bcgov.github.io/bcgwcat/, https://github.com/bcgov/bcgwcat/
