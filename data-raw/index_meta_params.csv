@@ -1,0 +1,6 @@
+enmods_name,ems_name
+observed_property_id,parameter
+observed_property_name,parameter_code
+analysis_method,analytical_method
+result_value,result
+result_unit,unit

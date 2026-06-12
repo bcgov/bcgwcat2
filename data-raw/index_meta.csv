@@ -1,0 +1,7 @@
+enmods_name,ems_name
+location_id,ems_id
+observed_date_time,collection_start
+medium,sample_state
+location_latitude,latitude
+location_longitude,longitude
+location_name,obs_well
