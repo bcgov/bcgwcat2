@@ -19,3 +19,5 @@ misc
 _\.new\.png$
 
 
+^\.vscode$
+^[.]?air[.]toml$
