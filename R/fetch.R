@@ -30,9 +30,12 @@
 #' )
 
 fetch_renmods <- function(ems_ids, date_range) {
-  s <- renmods::renmods_connect(dates = date_range) |>
-    dplyr::filter(.data$Location_ID %in% .env$ems_ids) |>
-    dplyr::collect()
+  s_tbl <- renmods::renmods_connect(dates = date_range) |>
+    dplyr::filter(.data$Location_ID %in% .env$ems_ids)
+
+  s <- dplyr::collect(s_tbl)
+
+  renmods::renmods_disconnect(s_tbl)
 
   # TODO: CHECK IF ANY DATA -> check_present()
 
