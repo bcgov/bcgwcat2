@@ -61,25 +61,19 @@ fmt_minimal <- function(
   out_path = paste0("bcgwcat_", Sys.Date(), ".csv")
 ) {
   # TODO: Check path
-  # TODO: Widen data
-  samples |>
+
+  s <- samples |>
     # Get only columns of interest
     dplyr::rename_with(tolower) |>
-    dplyr::select(all_of(c(
+    dplyr::select(any_of(c(
       index_meta_params$enmods_name,
-      index_meta$enmods_name
+      index_meta$enmods_name,
+      "obs_well" # In case all ready done
     ))) |>
     # Get only parameters of interest
     dplyr::filter(observed_property_id %in% index_params$enmods_name) |>
-    # Extract Observation Wells
-    dplyr::mutate(
-      obs_well = stringr::str_extract(
-        .data$location_name,
-        "(?<=OBS WELL )\\d{1,4}"
-      ) |>
-        as.numeric()
-    ) |>
-    dplyr::select(-"location_name") |>
+    add_obs_wells() |>
+    dplyr::select(-dplyr::any_of("location_name")) |>
     dplyr::relocate(
       obs_well,
       location_id,
@@ -137,5 +131,19 @@ fmt_aquachem <- function(
   save = FALSE,
   out_path = paste0("aquachem_", Sys.Date(), ".csv")
 ) {
-  fmt_minimal(samples)
+
+add_obs_wells <- function(df) {
+  if ("obs_well" %in% names(df) && !"location_name" %in% names(df)) {
+    return(df)
+  }
+  # Extract Observation Wells
+  df |>
+    dplyr::mutate(
+      obs_well = stringr::str_extract(
+        .data$location_name,
+        "(?<=OBS WELL )\\d{1,4}"
+      ) |>
+        as.numeric()
+    )
+}
 }
