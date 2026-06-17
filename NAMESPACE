@@ -2,3 +2,5 @@
 
 export(fetch_renmods)
 export(fmt_minimal)
+importFrom(glue,glue)
+importFrom(glue,glue_collapse)
