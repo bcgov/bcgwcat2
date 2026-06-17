@@ -25,6 +25,7 @@
 #' **`fmt_wide()`** builds on `fmt_minimal()`
 #'
 #' - transform the parameters/observed properties from long into wide format
+#' - if any parameters for a specific observation (identified by `location_id` and `observation_date_time`) have been measured multiple times with different methods, a single measurement will be selected
 #'
 #' **`fmt_aquachem()`** - Builds on `fmt_wide()`
 #'
@@ -88,38 +89,26 @@ fmt_minimal <- function(
 fmt_wide <- function(
   samples,
   include_units = TRUE,
+fix_multi_method = c("first", "min", "max"),
   save = FALSE,
   out_path = paste0("wide_", Sys.Date(), ".csv")
 ) {
-  s <- fmt_minimal(samples)
-
-  if (include_units) {
-    s <- dplyr::mutate(
-      s,
-      result_unit = stringr::str_replace(.data$result_unit, " ", "_"),
-      observed_property_id = paste0(
-        .data$observed_property_id,
-        "_",
-        .data$result_unit,
-        ""
-      )
-    )
-  }
-
-  # TODO: See DEVTESTS for problem
-  s |>
-    dplyr::select(
-      -"observed_property_name",
-      -"analysis_method",
-      -"result_unit"
-    ) |>
+  #TODO add saving
+  samples |>
+    fmt_minimal() |>
+    fix_multiple_measures(fix_multi_method) |>
     dplyr::left_join(
       dplyr::select(index_params, "enmods_name", "bcgwcat_wide"),
       by = c("observed_property_id" = "enmods_name")
     ) |>
-
-    dplyr::select(-"observed_property_id") |>
-    tidyr::pivot_wider(
+    add_units("bcgwcat_wide", "result_unit", include_units) |>
+    dplyr::select(
+-"observed_property_id",
+      -"observed_property_name",
+      -"analysis_method",
+      -"result_unit"
+    ) |>
+        tidyr::pivot_wider(
       names_from = "bcgwcat_wide",
       values_from = "result_value"
     )
@@ -146,4 +135,14 @@ add_obs_wells <- function(df) {
         as.numeric()
     )
 }
+
+add_units <- function(df, param_col, units_col, include_units) {
+  if (include_units) {
+    df <- dplyr::mutate(
+      df,
+      !!units_col := stringr::str_replace(.data[[units_col]], " ", "_"),
+      !!param_col := glue("{.data[[param_col]]}_{.data[[units_col]]}")
+    )
+  }
+  df
 }
