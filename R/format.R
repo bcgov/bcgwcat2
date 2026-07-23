@@ -17,8 +17,8 @@
 #'
 #' **`fmt_minimal()`**
 #'
-#' - keeps only columns listed in `index_meta` and `index_meta_params`
-#' - filters to only parameters (observed properties) listed in `index_param`
+#' - keeps only columns listed in [index_meta()] and [index_meta_params()]
+#' - filters to only parameters (observed properties) listed in [index_param()]
 #' - all column names converted to lower case (snake_case)
 #' - creates `obs_well` filled with Observation Well listed in `location_name`
 #'
@@ -50,8 +50,10 @@
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
-#' ) |>
-#' fmt_minimal()
+#' )
+#'
+#' fmt_minimal(s)
+#' fmt_wide(s)
 #'
 #' s
 
@@ -62,64 +64,59 @@ fmt_minimal <- function(
   out_path = paste0("bcgwcat_", Sys.Date(), ".csv")
 ) {
   # TODO: Check path
+  check_samples(samples, check_fmt = FALSE)
 
-  s <- samples |>
+  samples |>
     # Get only columns of interest
+    dplyr::select(any_of(meta_vars("enmods", param_vars = TRUE))) |>
     dplyr::rename_with(tolower) |>
-    dplyr::select(any_of(c(
-      index_meta_params$enmods_name,
-      index_meta$enmods_name,
-      "obs_well" # In case all ready done
-    ))) |>
     # Get only parameters of interest
-    dplyr::filter(observed_property_id %in% index_params$enmods_name) |>
+    dplyr::filter(
+      .data$observed_property_id %in% index_params()$enmods_param
+    ) |>
     add_obs_wells() |>
-    dplyr::select(-dplyr::any_of("location_name")) |>
+    add_bcgwcat_params() |>
+
     dplyr::relocate(
-      obs_well,
-      location_id,
-      location_latitude,
-      location_longitude,
-      observed_date_time,
-      medium
-    )
+      "obs_well",
+      "location_id",
+      "location_latitude",
+      "location_longitude",
+      "location_elevation",
+      "observed_date_time",
+      "medium"
+    ) |>
+    # Add meq
+    add_meq() |>
+    add_charge_balance() |>
+    add_water_type()
 }
 
 #' @rdname fmt
 fmt_wide <- function(
   samples,
   include_units = TRUE,
-fix_multi_method = c("first", "min", "max"),
+  fix_multi_method = c("first", "min", "max"),
   save = FALSE,
   out_path = paste0("wide_", Sys.Date(), ".csv")
 ) {
-  #TODO add saving
+  # TODO add saving
+
   samples |>
     fmt_minimal() |>
+    add_units_to_col("bcgwcat_param", "result_unit", include_units) |>
     fix_multiple_measures(fix_multi_method) |>
-    dplyr::left_join(
-      dplyr::select(index_params, "enmods_name", "bcgwcat_wide"),
-      by = c("observed_property_id" = "enmods_name")
-    ) |>
-    add_units("bcgwcat_wide", "result_unit", include_units) |>
     dplyr::select(
--"observed_property_id",
+      -"observed_property_id",
       -"observed_property_name",
       -"analysis_method",
       -"result_unit"
     ) |>
-        tidyr::pivot_wider(
-      names_from = "bcgwcat_wide",
+    tidyr::pivot_wider(
+      names_from = "bcgwcat_param",
       values_from = "result_value"
     )
 }
-
-#' @rdname fmt
-fmt_aquachem <- function(
-  samples,
-  save = FALSE,
-  out_path = paste0("aquachem_", Sys.Date(), ".csv")
-) {
 
 add_obs_wells <- function(df) {
   if ("obs_well" %in% names(df) && !"location_name" %in% names(df)) {
@@ -133,16 +130,52 @@ add_obs_wells <- function(df) {
         "(?<=OBS WELL )\\d{1,4}"
       ) |>
         as.numeric()
-    )
+    ) |>
+    dplyr::select(-dplyr::any_of("location_name"))
 }
 
-add_units <- function(df, param_col, units_col, include_units) {
+add_units_to_col <- function(df, param_col, units_col, include_units) {
   if (include_units) {
     df <- dplyr::mutate(
       df,
       !!units_col := stringr::str_replace(.data[[units_col]], " ", "_"),
-      !!param_col := glue("{.data[[param_col]]}_{.data[[units_col]]}")
+      !!param_col := glue("{.data[[param_col]]}_{tolower(.data[[units_col]])}")
+    )
+  } else {
+    # Always add meq as units
+    df <- dplyr::mutate(
+      df,
+      !!param_col := dplyr::if_else(
+        .data[[units_col]] == "meq",
+        glue("{.data[[param_col]]}_meq"),
+        .data[[param_col]]
+      )
     )
   }
   df
+}
+
+add_bcgwcat_params <- function(s) {
+  dplyr::left_join(
+    dplyr::select(s, -dplyr::any_of("bcgwcat_param")), # Remove previously added columns
+    dplyr::select(index_params(), "enmods_param", "bcgwcat_param"),
+    by = c("observed_property_id" = "enmods_param")
+  ) |>
+    dplyr::relocate("bcgwcat_param", .before = "observed_property_id")
+}
+
+add_meq <- function(samples) {
+  dplyr::bind_rows(samples, meq(samples))
+}
+
+add_charge_balance <- function(samples) {
+  samples |>
+    dplyr::filter(
+      !bcgwcat_param %in% c("charge_balance", "anion_sum", "cation_sum")
+    ) |>
+    dplyr::bind_rows(charge_balance(samples))
+}
+
+add_water_type <- function(samples) {
+  dplyr::left_join(samples, water_type(samples), by = meta_vars())
 }
