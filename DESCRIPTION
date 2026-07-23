@@ -18,11 +18,14 @@ Depends:
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
+    bsicons,
+    bslib,
     dplyr,
     glue,
     purrr,
     readr,
     renmods (>= 0.0.2),
+    shiny,
     stringr,
     tidyr
 Remotes: 
