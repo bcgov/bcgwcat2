@@ -6,20 +6,25 @@ fix_multiple_measures <- function(
 
   # Find multiple measures
   # (i.e. same location, same date, same parameter, but different method)
-  obs <- c("location_id", "observed_date_time", "observed_property_id")
+  obs <- c(meta_vars(), "bcgwcat_param")
+  no_meq <- s |>
+    dplyr::select(dplyr::all_of(obs), "analysis_method") |>
+    dplyr::distinct()
 
-  multi <- dplyr::summarize(
-    s,
-    analysis_methods = glue_collapse(unique(.data$analysis_method), "; "),
-    n = dplyr::n(),
-    .by = obs
-  ) |>
-    dplyr::filter(.data$n > 1)
+  keys <- purrr::pmap_chr(no_meq[obs], paste)
+  n <- table(keys)
+  multi <- no_meq[keys %in% names(n)[n > 1], ] |>
+    dplyr::summarize(
+      analysis_methods = glue_collapse(unique(.data$analysis_method), "; "),
+      .by = obs
+    ) |>
+    dplyr::arrange(dplyr::pick(dplyr::all_of(obs))) |>
+    dplyr::select(dplyr::all_of(obs), "analysis_methods")
 
   if (nrow(multi) > 0) {
     inform(
       "Multiple measures for a single observation detected, keeping {method} value",
-      df = dplyr::select(multi, -"n")
+      df = multi
     )
 
     if (method == "first") {
