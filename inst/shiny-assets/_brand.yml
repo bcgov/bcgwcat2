@@ -1,0 +1,154 @@
+meta:
+  name: BC Government Design System
+  links:
+    home: https://www2.gov.bc.ca/gov/content/digital/design-system/foundations/colour
+
+color:
+  palette:
+    # Theme colours
+    primary-blue: "#013366"
+    primary-gold: "#FCBA19"
+
+    # Gold colour scale
+    gold-10: "#FEF8E8"
+    gold-20: "#FEF0D8"
+    gold-30: "#FDE9C4"
+    gold-40: "#FCE2B0"
+    gold-50: "#FBDA9D"
+    gold-60: "#FBD389"
+    gold-70: "#FACC75"
+    gold-80: "#F9C462"
+    gold-90: "#F8BA47"
+    gold-100: "#FCBA19"
+
+    # Blue colour scale
+    blue-10: "#F1F8FE"
+    blue-20: "#D8EAFD"
+    blue-30: "#C1DDFC"
+    blue-40: "#A8D0FB"
+    blue-50: "#91C4FA"
+    blue-60: "#7AB8F9"
+    blue-70: "#5595D9"
+    blue-80: "#3470B1"
+    blue-90: "#1E5189"
+    blue-100: "#013366"
+
+    # Greyscale
+    white: "#FFFFFF"
+    gray-10: "#FAF9F8"
+    gray-20: "#F3F2F1"
+    gray-30: "#ECEAE8"
+    gray-40: "#E0DEDC"
+    gray-50: "#D1CFCD"
+    gray-60: "#C6C5C3"
+    gray-70: "#9F9D9C"
+    gray-80: "#605E5C"
+    gray-90: "#3D3C3B"
+    gray-100: "#353433"
+    gray-110: "#252423"
+
+    # Typography colours
+    typography-primary: "#2D2D2D"
+    typography-secondary: "#474543"
+    typography-disabled: "#9F9D9C"
+    typography-placeholder: "#9F9D9C"
+    typography-link: "#255A90"
+    typography-danger: "#CE3E39"
+    typography-primary-invert: "#FFFFFF"
+    typography-secondary-invert: "#ECEAE8"
+
+    # Surface colours
+    surface-background-white: "#FFFFFF"
+    surface-background-light-gray: "#FAF9F8"
+    surface-background-light-blue: "#F1F8FE"
+    surface-background-dark-blue: "#013366"
+    surface-border-light: "#D8D8D8"
+    surface-border-medium: "#898785"
+    surface-border-dark: "#353433"
+    surface-border-active: "#2E5DD7"
+    surface-overlay: "#00000073"
+
+    # Primary surface - Buttons
+    surface-primary-default: "#013366" # Button
+    surface-primary-hover: "#1E5189"   # Button hover
+    surface-primary-pressed: "#01264C"
+    surface-primary-disabled: "#EDEBE9"
+
+    # Secondary surface - Buttons
+    surface-secondary-default: "#FFFFFF"
+    surface-secondary-hover: "#EDEBE9"
+    surface-secondary-pressed: "#E0DEDC"
+    surface-secondary-disabled: "#EDEBE9"
+
+    # Tertiary surface
+    surface-tertiary-default: "#FFFFFF00"
+    surface-tertiary-hover: "#ECEAE8"
+    surface-tertiary-pressed: "#E0DEDC"
+    surface-tertiary-disabled: "#EDEBE9"
+
+    # Support / status colours
+    support-info-bg: "#F7F9FC"
+    support-danger-bg: "#F4E1E2"
+    support-success-bg: "#F6FFF8"
+    support-warning-bg: "#FEF1D8"
+    support-info-border: "#053662"
+    support-danger-border: "#CE3E39"
+    support-success-border: "#42814A"
+    support-warning-border: "#F8BB47"
+
+    # Icon colours
+    icon-primary: "#2D2D2D"
+    icon-primary-invert: "#FFFFFF"
+    icon-secondary: "#474543"
+    icon-disabled: "#9F9D9C"
+    icon-link: "#255A90"
+    icon-info: "#053662"
+    icon-danger: "#CE3E39"
+    icon-success: "#42814A"
+    icon-warning: "#F8BB47"
+
+  # Semantic mappings
+  foreground: typography-primary
+  background: white
+  primary: primary-gold
+  secondary: primary-blue
+  info: support-info-border
+  success: support-success-border
+  warning: support-warning-border
+  danger: support-danger-border
+  light: gray-10
+  dark: gray-100
+
+typography:
+  fonts:
+    - family: BC Sans
+      source: file
+      files:
+        - path: https://raw.githubusercontent.com/bcgov/bc-sans/main/fonts/BCSans-Regular.woff2
+        - path: https://raw.githubusercontent.com/bcgov/bc-sans/main/fonts/BCSans-Italic.woff2
+          style: italic
+        - path: https://raw.githubusercontent.com/bcgov/bc-sans/main/fonts/BCSans-Bold.woff2
+          weight: bold
+        - path: https://raw.githubusercontent.com/bcgov/bc-sans/main/fonts/BCSans-BoldItalic.woff2
+          weight: bold
+          style: italic
+        - path: https://raw.githubusercontent.com/bcgov/bc-sans/main/fonts/BCSans-Light.woff2
+          weight: light
+        - path: https://raw.githubusercontent.com/bcgov/bc-sans/main/fonts/BCSans-LightItalic.woff2
+          weight: light
+          style: italic
+
+  base:
+    family: BC Sans
+    #color: typography-primary
+
+  headings:
+    family: BC Sans
+    weight: bold
+    color: primary-blue
+
+  link:
+    color: typography-link
+
+  monospace:
+    family: monospace
