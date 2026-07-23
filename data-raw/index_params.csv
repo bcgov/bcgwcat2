@@ -1,11 +1,11 @@
-ems_name,ems_code,ems_unit,aqua_code,aqua_unit,water_quality,smwr_code,enmods_name,enmods_description
-Acidity pH 4.5,0132,mg/L,NA,NA,TRUE,NA,Acidity pH 4.5 (as CaCO3) (fl. conc.),Major Ions; EMS code: 0132
-Acidity pH 8.3,0131,mg/L,NA,NA,TRUE,NA,Acidity pH 8.3 (as CaCO3) (fl. conc.),Major Ions; EMS code: 0131
-Alkalinity Phen. 8.3,0101,mg/L,NA,NA,TRUE,NA,Alkalinity; Phenolphthalein (as CaCO3) (fl. conc.),Major Ions; EMS code: 0101
-Alkalinity Total 4.5,0102,mg/L,Meas_Alk,mg/L,TRUE,NA,Alkalinity Total 4.5 (as CaCO3) (fl. conc.),Major Ions; EMS code: 0102
+ems_param,ems_code,ems_unit,aqua_code,aqua_unit,water_quality,smwr_code,enmods_param,enmods_description
+Acidity pH 4.5,132,mg/L,NA,NA,TRUE,NA,Acidity pH 4.5 (as CaCO3) (fl. conc.),Major Ions; EMS code: 0132
+Acidity pH 8.3,131,mg/L,NA,NA,TRUE,NA,Acidity pH 8.3 (as CaCO3) (fl. conc.),Major Ions; EMS code: 0131
+Alkalinity Phen. 8.3,101,mg/L,NA,NA,TRUE,NA,Alkalinity; Phenolphthalein (as CaCO3) (fl. conc.),Major Ions; EMS code: 0101
+Alkalinity Total 4.5,102,mg/L,Meas_Alk,mg/L,TRUE,NA,Alkalinity Total 4.5 (as CaCO3) (fl. conc.),Major Ions; EMS code: 0102
 Aluminum Dissolved,AL-D,mg/L,Al_diss,ug/L,TRUE,aluminum,Aluminum Dissolved (fl. conc.),Metals - Dissolved; EMS code: AL-D
 Aluminum Total,AL-T,mg/L,Al_tot,ug/L,TRUE,NA,Aluminum Total (fl. conc.),Metals - Total; EMS code: AL-T
-Anion Sum,ASUM,mEq/L,anion_sum,NA,TRUE,NA,Anion Sum (equiv./vol.),Major Ions; EMS code: ASUM
+Anion Sum,ASUM,mEq/L,anion_sum,mEq/L,TRUE,NA,Anion Sum (equiv./vol.),Major Ions; EMS code: ASUM
 Antimony Dissolved,SB-D,mg/L,Sb_diss,ug/L,TRUE,NA,Antimony Dissolved (fl. conc.),Metals - Dissolved; EMS code: SB-D
 Antimony Total,SB-T,mg/L,Sb_tot,ug/L,TRUE,NA,Antimony Total (fl. conc.),Metals - Total; EMS code: SB-T
 Arsenic Dissolved,AS-D,mg/L,As_diss,ug/L,TRUE,NA,Arsenic Dissolved (fl. conc.),Metals - Dissolved; EMS code: AS-D
@@ -14,7 +14,7 @@ Barium Dissolved,BA-D,mg/L,Ba,mg/L,TRUE,NA,Barium Dissolved (fl. conc.),Metals -
 Barium Total,BA-T,mg/L,Ba_tot,mg/L,TRUE,NA,Barium Total (fl. conc.),Metals - Total; EMS code: BA-T
 Beryllium Dissolved,BE-D,mg/L,NA,NA,TRUE,NA,Beryllium Dissolved (fl. conc.),Metals - Dissolved; EMS code: BE-D
 Beryllium Total,BE-T,mg/L,NA,NA,TRUE,NA,Beryllium Total (fl. conc.),Metals - Total; EMS code: BE-T
-Bicarbonate Alkalinity (as CaCO3),0150,mg/L,HCO3,mg/L,FALSE,bicarbonate,Bicarbonate Alkalinity (as CaCO3) (fl. conc.),Major Ions; EMS code: 0150
+Bicarbonate Alkalinity (as CaCO3),150,mg/L,HCO3,mg/L,FALSE,bicarbonate,Bicarbonate Alkalinity (as CaCO3) (fl. conc.),Major Ions; EMS code: 0150
 Bismuth Dissolved,BI-D,mg/L,NA,NA,TRUE,NA,Bismuth Dissolved (fl. conc.),Metals - Dissolved; EMS code: BI-D
 Bismuth Total,BI-T,mg/L,NA,NA,TRUE,NA,Bismuth Total (fl. conc.),Metals - Total; EMS code: BI-T
 Boron Dissolved,B--D,mg/L,B,mg/L,TRUE,NA,Boron Dissolved (fl. conc.),Metals - Dissolved; EMS code: B--D
@@ -24,9 +24,9 @@ Cadmium Dissolved,CD-D,mg/L,Cd_diss,ug/L,TRUE,NA,Cadmium Dissolved (fl. conc.),M
 Cadmium Total,CD-T,mg/L,Cd_tot,ug/L,TRUE,NA,Cadmium Total (fl. conc.),Metals - Total; EMS code: CD-T
 Calcium Dissolved,CA-D,mg/L,Ca,mg/L,TRUE,calcium,Calcium Dissolved (fl. conc.),Metals - Dissolved; EMS code: CA-D
 Calcium Total,CA-T,mg/L,Ca_tot,mg/L,TRUE,NA,Calcium Total (fl. conc.),Metals - Total; EMS code: CA-T
-Carbonate Alkalinity,0149,mg/L,CO3,mg/L,FALSE,carbonate,Carbonate Alkalinity (as CaCO3) (fl. conc.),Major Ions; EMS code: 0149
+Carbonate Alkalinity,149,mg/L,CO3,mg/L,FALSE,carbonate,Carbonate Alkalinity (as CaCO3) (fl. conc.),Major Ions; EMS code: 0149
 Cation - Anion Balance,CBAL,%,charge_balance,%,TRUE,NA,Cation-Anion Balance %=100*(Cations-Anions)/(Cations+Anions) (ratio),EMS code: CBAL
-Cation Sum,CSUM,mEq/L,cation_sum,NA,TRUE,NA,Cation Sum (equiv./vol.),Major Ions; EMS code: CSUM
+Cation Sum,CSUM,mEq/L,cation_sum,mEq/L,TRUE,NA,Cation Sum (equiv./vol.),Major Ions; EMS code: CSUM
 Chloride Dissolved,1104,mg/L,Cl,mg/L,TRUE,chloride,Chloride Dissolved (fl. conc.),Major Ions; EMS code: 1104
 Chromium Dissolved,CR-D,mg/L,Cr_diss,ug/L,TRUE,NA,Chromium Dissolved (fl. conc.),Metals - Dissolved; EMS code: CR-D
 Chromium Total,CR-T,mg/L,Cr_tot,ug/L,TRUE,NA,Chromium Total (fl. conc.),Metals - Total; EMS code: CR-T
@@ -34,11 +34,11 @@ Cobalt Dissolved,CO-D,mg/L,Co_diss,mg/L,TRUE,NA,Cobalt Dissolved (fl. conc.),Met
 Cobalt Total,CO-T,mg/L,Co_tot,mg/L,TRUE,NA,Cobalt Total (fl. conc.),Metals - Total; EMS code: CO-T
 Copper Dissolved,CU-D,mg/L,Cu_diss,ug/L,TRUE,NA,Copper Dissolved (fl. conc.),Metals - Dissolved; EMS code: CU-D
 Copper Total,CU-T,mg/L,Cu_tot,ug/L,TRUE,NA,Copper Total (fl. conc.),Metals - Total; EMS code: CU-T
-Cyanide WAD,0157,mg/L,NA,NA,TRUE,NA,Cyanide WAD (fl. conc.),Inorganics; EMS code: 0157
+Cyanide WAD,157,mg/L,NA,NA,TRUE,NA,Cyanide WAD (fl. conc.),Inorganics; EMS code: 0157
 Dissolved Oxygen-Field,DO-F,mg/L,DO,mg/L,FALSE,NA,Dissolved Oxygen-Field (fl. conc.),Field; EMS code: DO-F
 Fluoride Dissolved,1106,mg/L,F,mg/L,TRUE,fluoride,Fluoride Dissolved (fl. conc.),Major Ions; EMS code: 1106
 Hardness (Dissolved),1107,mg/L,Meas_Hardness,mg/L,FALSE,NA,Hardness (Dissolved) (as CaCO3) (fl. conc.),Major Ions; EMS code: 1107
-Hardness Total (Total),0107,mg/L,NA,NA,TRUE,NA,Hardness Total (Total) (fl. conc.),Major Ions; EMS code: 0107
+Hardness Total (Total),107,mg/L,NA,NA,TRUE,NA,Hardness Total (Total) (fl. conc.),Major Ions; EMS code: 0107
 Hydroxide Alkalinity,AK-H,mg/L,NA,NA,TRUE,NA,Hydroxide Alkalinity (as CaCO3) (fl. conc.),Major Ions; EMS code: AK-H
 Iron Dissolved,FE-D,mg/L,Fe_diss,mg/L,TRUE,iron,Iron Dissolved (fl. conc.),Metals - Dissolved; EMS code: FE-D
 Iron Total,FE-T,mg/L,Fe_tot,mg/L,TRUE,NA,Iron Total (fl. conc.),Metals - Total; EMS code: FE-T
@@ -58,22 +58,22 @@ Nitrate (NO3) Dissolved,1110,mg/L,NO3,mg/L,TRUE,nitrate as n,Nitrate (NO3) Disso
 Nitrate(NO3) + Nitrite(NO2) Dissolved,1109,mg/L,NA,NA,TRUE,NA,Nitrate(NO3) + Nitrite(NO2) Dissolved (fl. conc.),Nutrients; EMS code: 1109
 Nitrogen - Nitrite Dissolved (NO2),1111,mg/L,NO2,mg/L,TRUE,nitrite as n,Nitrogen - Nitrite Dissolved (NO2) (fl. conc.),Nutrients; EMS code: 1111
 Nitrogen (Kjeldahl) Total Dissolved,1113,mg/L,NA,NA,TRUE,NA,Nitrogen (Kjeldahl) Total Dissolved (fl. conc.),Nutrients; EMS code: 1113
-Nitrogen Amm.Total,0108,mg/L,NH4_tot,NA,TRUE,NA,Nitrogen Ammonia Total (fl. conc.),Nutrients; EMS code: 0108
+Nitrogen Amm.Total,108,mg/L,NH4_tot,NA,TRUE,NA,Nitrogen Ammonia Total (fl. conc.),Nutrients; EMS code: 0108
 Nitrogen Ammonia Dissolved,1108,mg/L,NH4,mg/L,TRUE,NA,Nitrogen Ammonia Dissolved (fl. conc.),Nutrients; EMS code: 1108
-Nitrogen Kjel.Tot(N),0113,mg/L,NA,NA,TRUE,NA,Nitrogen Kjel.Tot(N) (fl. conc.),Nutrients; EMS code: 0113
-Nitrogen NO2 + NO3,0109,mg/L,NA,NA,TRUE,NA,Total Nitrogen NO2 + NO3 (fl. conc.),Nutrients; EMS code: 0109
+Nitrogen Kjel.Tot(N),113,mg/L,NA,NA,TRUE,NA,Nitrogen Kjel.Tot(N) (fl. conc.),Nutrients; EMS code: 0113
+Nitrogen NO2 + NO3,109,mg/L,NA,NA,TRUE,NA,Total Nitrogen NO2 + NO3 (fl. conc.),Nutrients; EMS code: 0109
 Nitrogen Organic Total Dissolved,1112,mg/L,NA,NA,TRUE,NA,Nitrogen Organic Total Dissolved (fl. conc.),Nutrients; EMS code: 1112
-Nitrogen Organic-Total,0112,mg/L,NA,NA,TRUE,NA,Nitrogen Organic-Total (fl. conc.),Nutrients; EMS code: 0112
-Nitrogen Total,0114,mg/L,NA,NA,TRUE,NA,Nitrogen Total (fl. conc.),Nutrients; EMS code: 0114
+Nitrogen Organic-Total,112,mg/L,NA,NA,TRUE,NA,Nitrogen Organic-Total (fl. conc.),Nutrients; EMS code: 0112
+Nitrogen Total,114,mg/L,NA,NA,TRUE,NA,Nitrogen Total (fl. conc.),Nutrients; EMS code: 0114
 Nitrogen Total Dissolved,1114,mg/L,NA,NA,TRUE,NA,Nitrogen Total Dissolved (fl. conc.),Nutrients; EMS code: 1114
-pH,0004,pH units,pH_lab,NA,TRUE,NA,pH (acidity),Physical Properties; EMS code: 0004
-pH-Field,PH-F,pH units,pH_field,NA,TRUE,NA,pH-Field (acidity),Physical Properties; EMS code: PH-F
+pH,4,pH units,pH_lab,pH units,TRUE,NA,pH (acidity),Physical Properties; EMS code: 0004
+pH-Field,PH-F,pH units,pH_field,pH units,TRUE,NA,pH-Field (acidity),Physical Properties; EMS code: PH-F
 Phosphorus Ort.Dis-P,1118,mg/L,NA,NA,TRUE,NA,Phosphorus Ort.Dis-P (fl. conc.),Nutrients; EMS code: 1118
 Phosphorus Total,P--T,mg/L,NA,NA,TRUE,NA,Phosphorus Total (fl. conc.),Nutrients; EMS code: P--T
 Phosphorus Total Dissolved,P--D,mg/L,NA,NA,TRUE,NA,Phosphorus Total Dissolved (fl. conc.),Metals - Dissolved; EMS code: P--D
 Potassium Dissolved,K--D,mg/L,K,mg/L,FALSE,potassium,Potassium Dissolved (fl. conc.),Metals - Dissolved; EMS code: K--D
 Potassium Total,K--T,mg/L,K_tot,mg/L,FALSE,NA,Potassium Total (fl. conc.),Metals - Total; EMS code: K--T
-Residue: Filterable 1.0u (TDS),0007,mg/L,NA,NA,TRUE,NA,Residue: Filterable 1.0u (TDS) (fl. conc.),Physical Properties; EMS code: 0007
+Residue: Filterable 1.0u (TDS),7,mg/L,NA,NA,TRUE,NA,Residue: Filterable 1.0u (TDS) (fl. conc.),Physical Properties; EMS code: 0007
 Selenium Dissolved,SE-D,mg/L,Se_diss,ug/L,TRUE,NA,Selenium Dissolved (fl. conc.),Metals - Dissolved; EMS code: SE-D
 Selenium Total,SE-T,mg/L,Se_tot,ug/L,TRUE,NA,Selenium Total (fl. conc.),Metals - Total; EMS code: SE-T
 Silica Reactive Diss,1120,mg/L,NA,NA,TRUE,NA,Silica Reactive Diss (fl. conc.),Nutrients; EMS code: 1120
@@ -83,7 +83,7 @@ Silver Dissolved,AG-D,mg/L,Ag_diss,ug/L,TRUE,NA,Silver Dissolved (fl. conc.),Met
 Silver Total,AG-T,mg/L,Ag_tot,ug/L,TRUE,NA,Silver Total (fl. conc.),Metals - Total; EMS code: AG-T
 Sodium Dissolved,NA-D,mg/L,Na,mg/L,FALSE,sodium,Sodium Dissolved (fl. conc.),Metals - Dissolved; EMS code: NA-D
 Sodium Total,NA-T,mg/L,Na_tot,mg/L,TRUE,NA,Sodium Total (fl. conc.),Metals - Total; EMS code: NA-T
-Specific Conductance,0011,uS/cm,Cond,uS/cm,FALSE,NA,Specific Conductance (elec. cond.),Physical Properties; EMS code: 0011
+Specific Conductance,11,uS/cm,Cond,uS/cm,FALSE,NA,Specific Conductance (elec. cond.),Physical Properties; EMS code: 0011
 Specific Conductivity-Field,SC-F,uS/cm,Cond_field,NA,FALSE,NA,Specific Conductivity-Field (elec. cond.),Physical Properties; EMS code: SC-F
 Strontium Dissolved,SR-D,mg/L,Sr,mg/L,FALSE,NA,Strontium Dissolved (fl. conc.),Metals - Dissolved; EMS code: SR-D
 Strontium Total,SR-T,mg/L,Sr_tot,mg/L,TRUE,NA,Strontium Total (fl. conc.),Metals - Total; EMS code: SR-T
@@ -98,7 +98,7 @@ Tin Dissolved,SN-D,mg/L,NA,NA,TRUE,NA,Tin Dissolved (fl. conc.),Metals - Dissolv
 Tin Total,SN-T,mg/L,NA,NA,TRUE,NA,Tin Total (fl. conc.),Metals - Total; EMS code: SN-T
 Titanium Dissolved,TI-D,mg/L,NA,NA,TRUE,NA,Titanium Dissolved (fl. conc.),Metals - Dissolved; EMS code: TI-D
 Titanium Total,TI-T,mg/L,NA,NA,TRUE,NA,Titanium Total (fl. conc.),Metals - Total; EMS code: TI-T
-Turbidity,0015,NTU,NA,NA,TRUE,NA,Turbidity (turb.),Physical Properties; EMS code: 0015
+Turbidity,15,NTU,NA,NA,TRUE,NA,Turbidity (turb.),Physical Properties; EMS code: 0015
 Uranium Dissolved,U--D,mg/L,U_diss,ug/L,TRUE,NA,Uranium Dissolved (fl. conc.),Metals - Dissolved; EMS code: U--D
 Uranium Total,U--T,mg/L,U_tot,ug/L,TRUE,NA,Uranium Total (fl. conc.),Metals - Total; EMS code: U--T
 Vanadium Dissolved,V--D,mg/L,V_diss,ug/L,FALSE,NA,Vanadium Dissolved (fl. conc.),Metals - Dissolved; EMS code: V--D

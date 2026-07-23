@@ -1,0 +1,10 @@
+bcgwcat_col,enmods_col,ems_col,aqua_col,notes
+location_id,Location_ID,ems_id,NA,NA
+NA,NA,NA,SampleID,Aqua was EMS ids with sample number appended (1401030-1)
+observed_date_time,Observed_Date_Time,collection_start,Sample_Date,NA
+medium,Medium,sample_state,Watertype,NA
+location_latitude,Location_Latitude,latitude,Coord_Lat,NA
+location_longitude,Location_Longitude,longitude,Coord_Long,NA
+location_elevation,Location_Elevation,NA,NA,NA
+NA,Location_Name,NA,NA,NA
+obs_well,NA,obs_well,StationID,Bcgwcat is extracted from location_name

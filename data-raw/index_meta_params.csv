@@ -1,6 +1,6 @@
-enmods_name,ems_name
-observed_property_id,parameter
-observed_property_name,parameter_code
-analysis_method,analytical_method
-result_value,result
-result_unit,unit
+bcgwcat_col,enmods_col,ems_col
+observed_property_id,Observed_Property_ID,parameter
+observed_property_name,Observed_Property_Name,parameter_code
+analysis_method,Analysis_Method,analytical_method
+result_value,Result_Value,result
+result_unit,Result_Unit,unit
