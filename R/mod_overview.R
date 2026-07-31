@@ -12,8 +12,8 @@ mod_overview_ui <- function(id = "overview") {
   ns <- NS(id)
 
   nav_panel(
-    title = "EnMoDS Data Status",
-    layout_columns(
+    title = "Status",
+    layout_column_wrap(
       fill = FALSE,
       uiOutput(ns("status_box1")),
       uiOutput(ns("status_box2")),
@@ -22,6 +22,7 @@ mod_overview_ui <- function(id = "overview") {
     ),
 
     card(
+      card_header("EnMoDS Datasets"),
       card_body(
         fillable = FALSE,
         reactable::reactableOutput(ns("status_table"))
