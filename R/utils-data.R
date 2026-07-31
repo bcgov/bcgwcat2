@@ -55,9 +55,13 @@ index_meta_params <- function() {
 }
 
 read_data <- function(file) {
-  readr::read_csv(system.file(
-    "extdata",
-    file,
-    package = "bcgwcat2"
-  ))
+  readr::read_csv(
+    system.file(
+      "extdata",
+      file,
+      package = "bcgwcat2"
+    ),
+    show_col_types = FALSE,
+    progress = FALSE
+  )
 }

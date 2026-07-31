@@ -3,9 +3,7 @@
 #' Calculates MEQ values for 'long' data in mg/L. Expects output of either
 #' [fetch_renmods()] or [fmt_minimal()].
 #'
-#' For conversion details see the included data frame, `meq_conversion`.
-#'
-#' Also see `?meq_conversion` for a description of the data.
+#' For conversion details and a description of the data see [meq_conversion()].
 #'
 #' MEQs are calculated by dividing the parameter concentration in mg/L by the
 #' conversion factor. "result_unit" is required to ensure the units are in mg/L
@@ -42,7 +40,7 @@ meq <- function(samples) {
 
   meq_values <- samples |>
     dplyr::inner_join(
-      dplyr::select(meq_conversion, "bcgwcat_param", "conversion"),
+      dplyr::select(meq_conversion(), "bcgwcat_param", "conversion"),
       by = "bcgwcat_param",
       multiple = "all"
     ) |>
@@ -116,7 +114,12 @@ charge_balance <- function(samples) {
 
   samples |>
     dplyr::left_join(
-      dplyr::select(meq_conversion, "bcgwcat_param", "type", "charge_balance"),
+      dplyr::select(
+        meq_conversion(),
+        "bcgwcat_param",
+        "type",
+        "charge_balance"
+      ),
       by = "bcgwcat_param"
     ) |>
     dplyr::filter(.data$charge_balance, .data$result_unit == "meq/l") |>
@@ -183,7 +186,7 @@ water_type <- function(samples) {
   samples <- check_samples(samples)
 
   samples |>
-    dplyr::full_join(meq_conversion, by = "bcgwcat_param") |>
+    dplyr::full_join(meq_conversion(), by = "bcgwcat_param") |>
     dplyr::filter(
       (.data$water_type & result_unit == "meq/l") |
         .data$bcgwcat_param == "charge_balance"

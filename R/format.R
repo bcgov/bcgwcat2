@@ -89,7 +89,8 @@ fmt_minimal <- function(
     # Add meq
     add_meq() |>
     add_charge_balance() |>
-    add_water_type()
+    add_water_type() |>
+    add_placeholder()
 }
 
 #' @rdname fmt
@@ -101,7 +102,6 @@ fmt_wide <- function(
   out_path = paste0("wide_", Sys.Date(), ".csv")
 ) {
   # TODO add saving
-
   samples |>
     fmt_minimal() |>
     add_units_to_col("bcgwcat_param", "result_unit", include_units) |>
@@ -178,4 +178,29 @@ add_charge_balance <- function(samples) {
 
 add_water_type <- function(samples) {
   dplyr::left_join(samples, water_type(samples), by = meta_vars())
+}
+
+add_placeholder <- function(
+  samples,
+  add = c("charge_balance_enmods", "anion_sum_enmods", "cation_sum_enmods")
+) {
+  add <- dplyr::tribble(
+    ~bcgwcat_param          , ~result_unit ,
+    "charge_balance_enmods" , "%"          ,
+    "anion_sum_enmods"      , "meq/l"      ,
+    "cation_sum_enmods"     , "meq/l"
+  ) |>
+    dplyr::mutate(result_value = NA) |>
+    dplyr::filter(
+      .data$bcgwcat_param %in%
+        add &
+        !.data$bcgwcat_param %in% unique(samples$bcgwcat_param)
+    )
+
+  if (nrow(add) > 0) {
+    add <- cbind(dplyr::select(samples[1, ], -dplyr::all_of(names(add))), add)
+    samples <- dplyr::bind_rows(samples, add)
+  }
+
+  samples
 }

@@ -23,9 +23,10 @@ Imports:
     dplyr,
     glue,
     purrr,
+    reactable,
     readr,
     renmods (>= 0.0.2),
-    shiny,
+    shiny (>= 1.14.0),
     stringr,
     tidyr
 Remotes: 

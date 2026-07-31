@@ -13,6 +13,18 @@
 #' )
 #' tbl_overview(s, "rel")
 #'
+#' s <- fetch_renmods(
+#'   ems_ids = "E309359",
+#'   date_range = c("1900-01-01", "2099-01-01")
+#' )
+#' tbl_overview(s, "rel")
+#'
+#'
+#' s <- fetch_renmods(
+#'   ems_ids = "E328305",
+#'   date_range = c("2026-01-01", "2027-01-01")
+#' )
+#' tbl_overview(s, "rel")
 
 tbl_overview <- function(samples, which) {
   d <- samples |>
@@ -52,29 +64,45 @@ tbl_overview <- function(samples, which) {
     dplyr::mutate(
       observed_date_time = format(observed_date_time, "%Y-%m-%d %H:%M:%S %Z")
     ) |>
-    dplyr::select(
+    dplyr::relocate(
       dplyr::all_of(cols_meta),
-      dplyr::matches("charge_balance_%|anion_sum_meq/l|cation_sum_meq/l"),
-      dplyr::everything()
+      dplyr::matches("charge_balance_%|anion_sum_meq/l|cation_sum_meq/l")
     ) |>
+    dplyr::relocate("charge_balance_enmods_%", .after = dplyr::last_col()) |>
     dplyr::arrange(
       .data$obs_well,
       .data$location_id,
       .data$observed_date_time
-    )
+    ) # |>
+  #dplyr::rename_with(pretty_names)
 
-  DT::datatable(
+  col_fmt <- purrr::map(cols_round, \(c) {
+    reactable::colDef(format = reactable::colFormat(digits = 2))
+  }) |>
+    rlang::set_names(cols_round)
+
+  col_fmt[["charge_balance_%"]] <- reactable::colDef(
+    style = \(v) {
+      if (is.na(v)) {
+        col <- "white"
+      } else if (v <= -10 | v >= 10) {
+        col <- "#f8d7da"
+      } else {
+        col <- "#d4edda"
+      }
+      list(background = col)
+    },
+    format = reactable::colFormat(digits = 2)
+  )
+
+  reactable::reactable(
     d,
-    options = list(pageLength = 20, scrollX = TRUE),
-    rownames = FALSE,
-    class = "nowrap"
-  ) |>
-    DT::formatRound(columns = cols_round) |>
-    DT::formatStyle(
-      columns = "charge_balance_%",
-      backgroundColor = DT::styleInterval(
-        cuts = c(-10.0001, 10),
-        values = c("#f8d7da", "#d4edda", "#f8d7da")
-      )
-    )
+    showPageSizeOptions = TRUE,
+    defaultPageSize = 20,
+    searchable = TRUE,
+    defaultColDef = reactable::colDef(
+      header = pretty_names
+    ),
+    columns = col_fmt
+  )
 }
