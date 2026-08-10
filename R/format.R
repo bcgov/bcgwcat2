@@ -88,9 +88,9 @@ fmt_minimal <- function(
     ) |>
     # Add meq
     add_meq() |>
+    add_placeholder() |>
     add_charge_balance() |>
-    add_water_type() |>
-    add_placeholder()
+    add_water_type()
 }
 
 #' @rdname fmt
@@ -184,7 +184,7 @@ add_placeholder <- function(
   samples,
   add = c("charge_balance_enmods", "anion_sum_enmods", "cation_sum_enmods")
 ) {
-  add <- dplyr::tribble(
+  placeholders <- dplyr::tribble(
     ~bcgwcat_param          , ~result_unit ,
     "charge_balance_enmods" , "%"          ,
     "anion_sum_enmods"      , "meq/l"      ,
@@ -193,13 +193,16 @@ add_placeholder <- function(
     dplyr::mutate(result_value = NA) |>
     dplyr::filter(
       .data$bcgwcat_param %in%
-        add &
+        .env$add &
         !.data$bcgwcat_param %in% unique(samples$bcgwcat_param)
     )
 
-  if (nrow(add) > 0) {
-    add <- cbind(dplyr::select(samples[1, ], -dplyr::all_of(names(add))), add)
-    samples <- dplyr::bind_rows(samples, add)
+  if (nrow(placeholders) > 0) {
+    placeholders <- cbind(
+      dplyr::select(samples[1, ], -dplyr::all_of(names(placeholders))),
+      placeholders
+    )
+    samples <- dplyr::bind_rows(samples, placeholders)
   }
 
   samples
