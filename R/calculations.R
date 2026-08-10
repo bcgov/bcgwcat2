@@ -96,6 +96,9 @@ meq <- function(samples) {
 #' Missing values are ignored (ie. generally treated as 0). However, if all
 #' values for cations or anions are missing the charge balance is `NA`.
 #'
+#' If there are multiple measures for the same observation (i.e. repeated
+#' measures), we use the mean MEQ value for that parameter.
+#'
 #' @inheritParams common_docs
 #'
 #' @return Data frame with only cation and anion sums, and charge balance
@@ -107,11 +110,18 @@ meq <- function(samples) {
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
 #' charge_balance(s)
+#'
+#' s <- fetch_renmods(
+#'   ems_ids = "E102388",
+#'   date_range = c("2026-01-01", "2027-01-01")
+#' )
+#' charge_balance(s)
 
 charge_balance <- function(samples) {
   samples <- check_samples(samples)
 
   pre_calc <- samples |>
+    # take mean of multiple measures
     dplyr::left_join(
       dplyr::select(
         meq_conversion(),
@@ -122,6 +132,7 @@ charge_balance <- function(samples) {
       by = "bcgwcat_param"
     ) |>
     dplyr::filter(.data$charge_balance, .data$result_unit == "meq/l") |>
+    fix_multiple_measures(type = "meq") |>
     dplyr::summarize(
       sum = dplyr::if_else(
         all(is.na(.data$result_value)),

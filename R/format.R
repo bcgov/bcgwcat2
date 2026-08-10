@@ -97,7 +97,7 @@ fmt_minimal <- function(
 fmt_wide <- function(
   samples,
   include_units = TRUE,
-  fix_multi_method = c("first", "min", "max"),
+  fix_multi_method = "first",
   save = FALSE,
   out_path = paste0("wide_", Sys.Date(), ".csv")
 ) {
@@ -107,9 +107,12 @@ fmt_wide <- function(
   prep <- samples |>
     add_units_to_col("bcgwcat_param", "result_unit", include_units) |>
     # Multiple samples of the same type
-    fix_multiple_measures(fix_multi_method, by = NULL, name = "samples") |>
+    fix_multiple_measures(
+      method = fix_multi_method,
+      type = "repeated_measure"
+    ) |>
     # Multiple samples, different methods
-    fix_multiple_measures(fix_multi_method) |>
+    fix_multiple_measures(method = fix_multi_method, type = "multi_measure") |>
     dplyr::select(
       -"observed_property_id",
       -"observed_property_name",
