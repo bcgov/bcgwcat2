@@ -11,6 +11,7 @@ bcgwcat_app <- function() {
     mod_overview_ui(),
     mod_data_ui(),
     mod_water_quality_ui(),
+    mod_plots_ui(),
     mod_details_ui()
   )
 
@@ -18,6 +19,7 @@ bcgwcat_app <- function() {
     updated <- mod_overview_server()
     sample_data <- mod_data_server(updated, session)
     mod_water_quality_server(sample_data, session)
+    mod_plots_server(sample_data, session)
     mod_details_server()
   }
 
