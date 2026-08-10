@@ -106,3 +106,79 @@ tbl_overview <- function(samples, which) {
     columns = col_fmt
   )
 }
+
+#' Reactable table for data overview
+#'
+#' @param which Character. Which columns to include "rel" for relevant,
+#'   otherwise all are included.
+#'
+#' @returns Reactable data table
+#'
+#' @export
+#' @examples
+#' s <- fetch_renmods(
+#'   ems_ids = c("1401030", "1401377"),
+#'   date_range = c("2020-01-01", "2022-02-01")
+#' )
+#' tbl_water_quality(s)
+#' tbl_water_quality(s, "problems")
+#' tbl_water_quality(s, "no_missing")
+
+tbl_water_quality <- function(samples, which = NULL, params = NULL) {
+  wq <- water_quality(samples)
+
+  if (!is.null(params)) {
+    wq <- dplyr::filter(wq, .data$bcgwcat_param %in% .env$params)
+  }
+
+  if (!is.null(which)) {
+    wq <- if (which == "problems") {
+      dplyr::filter(wq, .data$water_quality_problem)
+    } else if (which == "no_missing") {
+      dplyr::filter(wq, !is.na(.data$water_quality_problem))
+    }
+  }
+
+  wq |>
+    dplyr::select(
+      "obs_well",
+      "location_id",
+      "observed_date_time",
+      "bcgwcat_param",
+      "result_value",
+      "result_unit",
+      "limit",
+      "limit_unit",
+      "limit_note",
+      "water_quality_problem"
+    ) |>
+    dplyr::arrange(
+      .data$obs_well,
+      .data$location_id,
+      .data$observed_date_time
+    ) |>
+    reactable::reactable(
+      showPageSizeOptions = TRUE,
+      defaultPageSize = 20,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(
+        header = pretty_names
+      ),
+      columns = list(
+        result_value = reactable::colDef(
+          format = reactable::colFormat(digits = 2)
+        ),
+        water_quality_problem = reactable::colDef(show = FALSE)
+      ),
+      rowStyle = \(i) {
+        col <- if (is.na(wq$water_quality_problem[i])) {
+          "white"
+        } else if (wq$water_quality_problem[i]) {
+          "#f8d7da"
+        } else {
+          "#d4edda"
+        }
+        list(background = col)
+      }
+    )
+}
