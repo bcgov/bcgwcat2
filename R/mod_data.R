@@ -116,6 +116,11 @@ mod_data_server <- function(updated, app_session, id = "data") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Use Reactive Vals to pass among modules
+    ems_ids <- reactiveVal(NULL)
+    samples <- reactiveVal(NULL)
+    samples_wide <- reactiveVal(NULL)
+
     # Navigation MOds -------------
     observe({
       nav_select("bcgwcat", selected = "Details", session = app_session)
@@ -171,10 +176,9 @@ mod_data_server <- function(updated, app_session, id = "data") {
       }
     )
 
-    # Check IDs ----------------
-    ems_ids <- reactive({
+    # Check EMS IDs ----------------
+    observe({
       req(input$ems_ids)
-
       ids <- input$ems_ids
       # Check ID formatting
       len <- nchar(ids) == 7
@@ -184,14 +188,13 @@ mod_data_server <- function(updated, app_session, id = "data") {
         all(len) & all(sym),
         message = glue("Invalid EMS ID(s): {problems}")
       ))
-
-      ids
+      ems_ids(ids)
     })
 
     date_range <- reactive(input$date_range)
 
-    # Fetch Data ------------------------------
-    samples <- reactive({
+    # samples() ------------------------------
+    observe({
       req(ems_ids())
       # Let user know what's going on
       id <- showNotification(
@@ -203,9 +206,12 @@ mod_data_server <- function(updated, app_session, id = "data") {
 
       # Messages to console
       with_messages({
-        fetch_renmods(ems_ids(), date_range()) |> # Fetch data
+        s <- fetch_renmods(ems_ids(), date_range()) |> # Fetch data
           fmt_minimal() # Format
       })
+
+      samples(s)
+      samples_wide(samples())
     }) |>
       bindEvent(input$fetch_data)
 
@@ -226,13 +232,13 @@ mod_data_server <- function(updated, app_session, id = "data") {
         )
       )
 
-      validate(need(input$ems_ids, "Choose EMS Ids to fetch data for"))
+      validate(need(ems_ids(), "Choose EMS Ids to fetch data for"))
       validate(need(samples(), "Click 'Collect Data'"))
       validate(need(nrow(samples()) > 0, "No data to display"))
       req(input$data_columns)
 
       # Create table
-      with_messages(tbl_overview(samples(), which = input$data_columns))
+      with_messages(tbl_overview(samples_wide(), which = input$data_columns))
     })
 
     # Download ------------------
