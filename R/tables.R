@@ -1,9 +1,9 @@
-#' Data table for ove
+#' Reactable table for data overview
 #'
-#' @param samples
-#' @param which
+#' @param which Character. Which columns to include "rel" for relevant,
+#'   otherwise all are included.
 #'
-#' @returns
+#' @returns Reactable data table
 #'
 #' @export
 #' @examples
@@ -19,16 +19,15 @@
 #' )
 #' tbl_overview(s, "rel")
 #'
-#'
 #' s <- fetch_renmods(
-#'   ems_ids = "E328305",
+#'   ems_ids = "E102388",
 #'   date_range = c("2026-01-01", "2027-01-01")
 #' )
-#' tbl_overview(s, "rel")
+#' fmt_wide(s)
+#' tbl_overview(fmt_wide(s), "rel")
 
 tbl_overview <- function(samples, which) {
-  d <- samples |>
-    fmt_wide()
+  d <- check_samples_wide(samples)
 
   cols_meta <- c(
     "obs_well",
