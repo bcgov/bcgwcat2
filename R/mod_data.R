@@ -55,8 +55,16 @@ mod_data_ui <- function(id = "data") {
         uiOutput(ns("messages")),
         radioButtons(
           ns("data_columns"),
-          "Data to preview",
+          "Data to show",
           choices = list("Relevant Columns" = "rel", "All Columns" = "all")
+        ),
+        radioButtons(
+          ns("data_download"),
+          "Data format to download",
+          choices = list(
+            "Wide (matches data shown)" = "wide",
+            "Long (includes all data)" = "long"
+          )
         )
       ),
       navset_card_pill(
@@ -245,12 +253,24 @@ mod_data_server <- function(updated, app_session, id = "data") {
     output$download_csv <- downloadHandler(
       filename = function() {
         req(samples())
+        suffix <- dplyr::if_else(input$data_download == "long", "long", "wide")
         # Use the selected dataset as the suggested file name
-        paste0(paste0(input$ems_ids, collapse = "-"), "_", Sys.Date(), ".csv")
+        paste0(
+          paste0(input$ems_ids, collapse = "-"),
+          "_",
+          suffix,
+          "_",
+          Sys.Date(),
+          ".csv"
+        )
       },
       content = function(file) {
         # Write the dataset to the `file` that will be downloaded
-        readr::write_csv(samples(), file)
+        if (input$data_download == "long") {
+          readr::write_csv(samples(), file)
+        } else if (input$data_download == "wide") {
+          readr::write_csv(samples_wide(), file)
+        }
       }
     )
 
