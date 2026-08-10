@@ -156,7 +156,7 @@ mod_details_ui <- function(id = "details") {
 #'
 #' @export
 #' @examples
-mod_details_server <- function(id = "details") {
+mod_details_server <- function(id = "details", ...) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 

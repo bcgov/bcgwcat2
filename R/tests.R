@@ -14,7 +14,7 @@ test_mod <- function(module) {
   ui <- bcgwcat_ui(get(paste0("mod_", module, "_ui"))())
 
   server <- function(input, output, session) {
-    get(paste0("mod_", module, "_server"))()
+    get(paste0("mod_", module, "_server"))(updated = reactiveVal(1))
   }
 
   bcgwcat_run_app(ui, server)

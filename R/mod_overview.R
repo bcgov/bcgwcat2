@@ -59,7 +59,8 @@ mod_overview_ui <- function(
 
 mod_overview_server <- function(
   id = "overview",
-  data_types = renmods_data_types()
+  data_types = renmods_data_types(),
+  ...
 ) {
   moduleServer(id, function(input, output, session) {
     updated <- reactiveVal(0)

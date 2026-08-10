@@ -69,9 +69,11 @@ mod_data_ui <- function(id = "data") {
       ),
       navset_card_pill(
         nav_panel(
-          title = "Data Preview",
+          title = "Data",
           card_body(
             gap = 0,
+            strong("EnMoDS Water Chemistry Data"),
+            "Note: ",
             tags$ul(
               tags$li(
                 "Charge balances are highlighted as acceptable",
@@ -91,9 +93,7 @@ mod_data_ui <- function(id = "data") {
                 ").",
               ),
               tags$li(
-                "Parameter names, ",
-                em("and occasionally units,"),
-                "are different from those in the EMS data base.",
+                "Parameter names are different from those in the EnMoDs data base.",
               ),
               tags$li(
                 "Please see ",
@@ -120,7 +120,7 @@ mod_data_ui <- function(id = "data") {
 }
 
 
-mod_data_server <- function(updated, app_session, id = "data") {
+mod_data_server <- function(updated, app_session, id = "data", ...) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
