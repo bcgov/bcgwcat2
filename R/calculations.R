@@ -70,9 +70,6 @@ meq <- function(samples) {
 #' respectively, when these are added to samples data (see
 #' [add_charge_balance()]).
 #'
-#' @param samples Data frame. Output from [fmt_minimal()] or [fetch_renmods()].
-#' If [fetch_renmods()] samples will be first formatted with [fmt_minimal()].
-#'
 #' Potential changes in workflows over the years have made it difficult to
 #' ascertain exactly how charge balances were calculated in older samples. This
 #' resulted in discrepancies between EMS and locally calculated charge balances.
@@ -99,6 +96,8 @@ meq <- function(samples) {
 #' Missing values are ignored (ie. generally treated as 0). However, if all
 #' values for cations or anions are missing the charge balance is `NA`.
 #'
+#' @inheritParams common_docs
+#'
 #' @return Data frame with only cation and anion sums, and charge balance
 #'   values.
 #' @export
@@ -112,7 +111,7 @@ meq <- function(samples) {
 charge_balance <- function(samples) {
   samples <- check_samples(samples)
 
-  samples |>
+  pre_calc <- samples |>
     dplyr::left_join(
       dplyr::select(
         meq_conversion(),
@@ -132,7 +131,16 @@ charge_balance <- function(samples) {
       .by = c(meta_vars(), "type")
     ) |>
     dplyr::mutate(type = paste0(.data$type, "_sum")) |>
-    tidyr::pivot_wider(names_from = "type", values_from = "sum") |>
+    tidyr::pivot_wider(names_from = "type", values_from = "sum")
+
+  if (!"anion_sum" %in% names(pre_calc)) {
+    pre_calc$anion_sum <- NA
+  }
+  if (!"cation_sum" %in% names(pre_calc)) {
+    pre_calc$cation_sum <- NA
+  }
+
+  pre_calc |>
     dplyr::mutate(
       charge_balance = 100 *
         ((.data$cation_sum - .data$anion_sum) /
