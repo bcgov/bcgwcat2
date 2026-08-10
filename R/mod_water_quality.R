@@ -19,51 +19,46 @@ mod_water_quality_ui <- function(id = "water_quality") {
         radioButtons(
           ns("show"),
           "Samples to include",
-          choices = c("All", "Problems only", "Non-missing only")
+          choices = c(
+            "All" = "all",
+            "Problems only" = "problems",
+            "Non-missing only" = "no_missing"
+          )
         ),
-        uiOutput(ns("ui_params"))
+        uiOutput(ns("ui_params")),
+        mini_button(
+          ns("params_toggle"),
+          label = "Select/Unselect All",
+          width = 120
+        )
       ),
       navset_card_pill(
         nav_panel(
-          title = "Data Preview",
+          title = "Data",
           card_body(
             gap = 0,
+            strong(
+              "Summarized Water Quality based to the 'Upper Limits' ",
+              "of the 'Maximum Acceptable Concentration' for 'Drinking Water'"
+            ),
+            "Note: ",
             tags$ul(
               tags$li(
-                "Charge balances are highlighted as acceptable",
-                "(absolute value < 10; ",
-                span(
-                  "green",
-                  style = "background-color:#d4edda",
-                  .noWS = "after"
-                ),
-                ")",
-                "or not (absolute value > 10; ",
-                span(
-                  "red",
-                  style = "background-color:#f8d7da",
-                  .noWS = "after"
-                ),
-                ").",
-              ),
-              tags$li(
-                "Parameter names, ",
-                em("and occasionally units,"),
-                "are different from those in the EMS data base.",
+                "Parameter names are different from those in the EMS data base.",
               ),
               tags$li(
                 "Please see ",
                 actionLink(ns("link_to_details"), "Details"),
-                "for more specifics regarding how Charge Balances differ from those in the EMS data base and how bcgwcat parameter names correspond to EnMoDs and EMS data."
+                "for more specifics regarding how bcgwcat parameter names correspond to EnMoDs and EMS data."
               )
             ),
-            reactable::reactableOutput(ns("table_samples")),
-            shinyjs::disabled(
-              downloadButton(
-                ns("download_csv"),
-                label = "Download as CSV"
-              )
-            ),
+            reactable::reactableOutput(ns("table_water_quality")),
+            # shinyjs::disabled(
+            #   downloadButton(
+            #     ns("download_csv"),
+            #     label = "Download as CSV"
+            #   )
+            # )
           )
         ),
         nav_panel(
@@ -78,7 +73,8 @@ mod_water_quality_ui <- function(id = "water_quality") {
 mod_water_quality_server <- function(
   sample_data,
   app_session,
-  id = "water_quality"
+  id = "water_quality",
+  ...
 ) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -93,33 +89,35 @@ mod_water_quality_server <- function(
     }) |>
       bindEvent(input$link_to_details)
 
-    # Messages -----------------
-    output$messages <- renderUI({
-      ems_ids()
-      invisible()
-    })
-
     # UI --------------------
+    params <- reactive(unique(samples()$bcgwcat_param))
+
     output$ui_params <- renderUI({
-      params <- unique(samples()$bcgwcat_params)
       selectizeInput(
-        "parameters",
+        ns("params"),
         label = "Parameters to include",
         multiple = TRUE,
-        choices = params,
-        selected = params
+        choices = params(),
+        selected = params()
       )
     })
 
+    observe({
+      browser()
+      if (!is.null(input$params) && length(input$params) > 0) {
+        updateSelectizeInput(session, "params", selected = character(0))
+      } else {
+        updateSelectizeInput(session, "params", selected = params())
+      }
+    }) |>
+      bindEvent(input$params_toggle)
+
     # Table ---------------------
     output$table_water_quality <- reactable::renderReactable({
-      validate(need(ems_ids(), "Choose EMS Ids to fetch data for"))
-      validate(need(samples(), "Click 'Collect Data'"))
+      validate(need(samples(), "Collect data first (see Data tab)"))
       validate(need(nrow(samples()) > 0, "No data to display"))
-
       req(input$params)
       req(input$show)
-
       # Create table
       with_messages(tbl_water_quality(
         samples(),

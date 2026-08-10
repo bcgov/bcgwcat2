@@ -123,9 +123,19 @@ tbl_overview <- function(samples, which) {
 #' tbl_water_quality(s)
 #' tbl_water_quality(s, "problems")
 #' tbl_water_quality(s, "no_missing")
+#'
+#' s <- fetch_renmods(
+#'   ems_ids = c("E298733"),
+#'   date_range = c("2026-01-01", "2026-06-01")
+#' )
+#' tbl_water_quality(s)
+#' water_quality(s)
 
 tbl_water_quality <- function(samples, which = NULL, params = NULL) {
-  wq <- water_quality(samples)
+  wq <- water_quality(samples) |>
+    dplyr::mutate(
+      observed_date_time = format(observed_date_time, "%Y-%m-%d %H:%M:%S %Z")
+    )
 
   if (!is.null(params)) {
     wq <- dplyr::filter(wq, .data$bcgwcat_param %in% .env$params)

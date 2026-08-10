@@ -38,9 +38,23 @@ water_quality <- function(samples) {
       by = "bcgwcat_param",
       multiple = "all"
     ) |>
-    dplyr::mutate(water_quality_problem = .data$result_value > .data$limit)
+    dplyr::mutate(
+      result_value_comp = units_convert(
+        .data$result_value,
+        from = .data$result_unit,
+        to = .data$limit_unit
+      ),
+      water_quality_problem = .data$result_value > .data$limit
+    )
 
-  if (any(wq$result_unit != wq$limit_unit, na.rm = TRUE)) {
+  # Are there any other unconvertable units which don't match?
+  uncomp <- dplyr::filter(
+    wq,
+    !.data$result_unit %in% c("meq/L", "mg/L", "\u00B5g/L", "ug/L")
+  )
+  if (
+    nrow(uncomp) && any(uncomp$result_unit != uncomp$limit_unit, na.rm = TRUE)
+  ) {
     abort(
       "Water quality units do not match EnMoDS parameter units.",
       "Please open an issue: https://github.com/bcgov/bcgwcat/"

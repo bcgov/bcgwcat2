@@ -29,3 +29,14 @@ pretty_renmods <- function(x) {
     "historic" ~ "Historic data"
   )
 }
+
+units_convert <- function(x, from, to) {
+  dplyr::case_when(
+    from == "mg/L" & to == "\u00B5g/L" ~ x * 1000,
+    from == "mg/L" & to == "ug/L" ~ x * 1000,
+    from == "\u00B5g/L" & to == "mg/L" ~ x / 1000,
+    from == "ug/L" & to == "mg/L" ~ x / 1000,
+    from == to | (is.na(from) & is.na(to)) | from == "meq/L" ~ x,
+    TRUE ~ NA_real_
+  )
+}
