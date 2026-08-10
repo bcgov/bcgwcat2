@@ -102,20 +102,26 @@ fmt_wide <- function(
   out_path = paste0("wide_", Sys.Date(), ".csv")
 ) {
   # TODO add saving
-  samples |>
-    fmt_minimal() |>
+  samples <- check_samples(samples)
+
+  prep <- samples |>
     add_units_to_col("bcgwcat_param", "result_unit", include_units) |>
+    # Multiple samples of the same type
+    fix_multiple_measures(fix_multi_method, by = NULL, name = "samples") |>
+    # Multiple samples, different methods
     fix_multiple_measures(fix_multi_method) |>
     dplyr::select(
       -"observed_property_id",
       -"observed_property_name",
       -"analysis_method",
       -"result_unit"
-    ) |>
-    tidyr::pivot_wider(
-      names_from = "bcgwcat_param",
-      values_from = "result_value"
     )
+
+  tidyr::pivot_wider(
+    prep,
+    names_from = "bcgwcat_param",
+    values_from = "result_value"
+  )
 }
 
 add_obs_wells <- function(df) {
