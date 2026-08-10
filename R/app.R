@@ -8,15 +8,17 @@
 
 bcgwcat_app <- function() {
   ui <- bcgwcat_ui(
-    mod_overview_ui("overview"),
-    mod_data_ui("data"),
-    mod_details_ui("details")
+    mod_overview_ui(),
+    mod_data_ui(),
+    mod_water_quality_ui(),
+    mod_details_ui()
   )
 
   server <- function(input, output, session) {
-    mod_overview_server("overview")
-    mod_data_server("data", app_session = session)
-    mod_details_server("details")
+    updated <- mod_overview_server()
+    sample_data <- mod_data_server(updated, session)
+    mod_water_quality_server(sample_data, session)
+    mod_details_server()
   }
 
   bcgwcat_run_app(ui, server)
@@ -25,6 +27,7 @@ bcgwcat_app <- function() {
 bcgwcat_ui <- function(...) {
   # Set as non-interactive so renmods doesn't use terminal to ask about updates
   options(rlang_interactive = FALSE)
+  Sys.setenv(NO_COLOR = TRUE, R_CLI_DYNAMIC = FALSE) # Fix progress bars
 
   page_navbar(
     id = "bcgwcat",
@@ -68,6 +71,14 @@ bcgwcat_theme <- function() {
   ) |>
     bs_add_rules(
       "
+  .messages.recalculating {
+    opacity: 1 !important;
+  }
+
+  /* Hide reactive headers */
+  .hidden .rt-tr-header {
+    display: none !important;
+  }
   .btn {
     max-width: 250px;
   }
