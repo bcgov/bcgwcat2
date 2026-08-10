@@ -7,3 +7,13 @@ mini_button <- function(inputId, label, width = 80) {
     inline = TRUE
   )
 }
+
+with_messages <- function(code) {
+  withCallingHandlers(code, message = \(m) {
+    shinyjs::html(
+      id = "console_messages",
+      html = cli::ansi_strip(m$message),
+      add = TRUE
+    )
+  })
+}

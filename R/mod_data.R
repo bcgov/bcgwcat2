@@ -112,7 +112,7 @@ mod_data_ui <- function(id = "data") {
 }
 
 
-mod_data_server <- function(id = "data", app_session) {
+mod_data_server <- function(updated, app_session, id = "data") {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -202,16 +202,10 @@ mod_data_server <- function(id = "data", app_session) {
       on.exit(removeNotification(id), add = TRUE)
 
       # Messages to console
-      withCallingHandlers(
-        fetch_renmods(ems_ids(), date_range()), # Fetch data
-        message = \(m) {
-          shinyjs::html(
-            id = "console_messages",
-            html = cli::ansi_strip(m$message),
-            add = TRUE
-          )
-        }
-      )
+      with_messages({
+        fetch_renmods(ems_ids(), date_range()) |> # Fetch data
+          fmt_minimal() # Format
+      })
     }) |>
       bindEvent(input$fetch_data)
 
@@ -222,22 +216,23 @@ mod_data_server <- function(id = "data", app_session) {
 
     # Table ---------------------
     output$table_samples <- reactable::renderReactable({
+      updated() # refresh if data is updated
+      data_dts <- check_date_range(input$date_range)
+      shinyjs::toggleState("fetch_data", any(data_dts, na.rm = TRUE))
+      validate(
+        need(
+          any(data_dts, na.rm = TRUE),
+          "Missing data for this data range. Go to the status tab to download the required data set."
+        )
+      )
+
       validate(need(input$ems_ids, "Choose EMS Ids to fetch data for"))
       validate(need(samples(), "Click 'Collect Data'"))
       validate(need(nrow(samples()) > 0, "No data to display"))
       req(input$data_columns)
 
-      # Messages to console
-      withCallingHandlers(
-        tbl_overview(samples(), which = input$data_columns), # Create table
-        message = \(m) {
-          shinyjs::html(
-            id = "console_messages",
-            html = cli::ansi_strip(m$message),
-            add = TRUE
-          )
-        }
-      )
+      # Create table
+      with_messages(tbl_overview(samples(), which = input$data_columns))
     })
 
     # Download ------------------
@@ -252,5 +247,60 @@ mod_data_server <- function(id = "data", app_session) {
         readr::write_csv(samples(), file)
       }
     )
+
+    # Returns -------------------------------------------
+    list("samples" = samples, "ems_ids" = ems_ids)
+  })
+}
+
+
+#' Check if a date range has
+#'
+#' @param date_ranges
+#'
+#' @returns
+#'
+#' @noRd
+#' @examples
+#' check_date_range(c("1990-01-01", "2020-01-01"))
+
+check_date_range <- function(date_range) {
+  date_range <- lubridate::interval(date_range[1], date_range[2])
+  data_dts <- renmods::cache_status()$date_range
+
+  char_to_range(data_dts) |>
+    purrr::map_lgl(\(i) {
+      lubridate::`%within%`(
+        date_range,
+        lubridate::interval(start = i[1], end = i[2])
+      )
+    }) |>
+    tidyr::replace_na(FALSE)
+}
+
+#' Check if a date range has
+#'
+#' @param date_ranges
+#'
+#' @returns
+#'
+#' @noRd
+#' @examples
+#' check_date_range(c("1990-01-01 to 2020-01-01"))
+char_to_range <- function(date_range) {
+  purrr::map(date_range, \(d) {
+    if (is.na(d)) {
+      dt <- c(NA, NA)
+    } else {
+      dt <- stringr::str_split_1(d, " to ")
+      if (length(dt) == 1) {
+        dt <- c(min_date, dt)
+      }
+      # If it's the "this_yr", push the end date to the end of the year
+      if (lubridate::year(dt[2]) == lubridate::year(Sys.Date())) {
+        dt[2] <- stringr::str_replace(dt[2], "\\d{2}-\\d{2}$", "12-31")
+      }
+    }
+    lubridate::as_date(dt)
   })
 }
