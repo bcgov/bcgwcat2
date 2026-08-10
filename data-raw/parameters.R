@@ -142,7 +142,7 @@ wq_std <- bcdata::bcdc_get_data(
     "status"
   ) |>
   left_join(
-    select(index_params, "ems_code", "enmods_param", "aqua_code"),
+    select(index_params, "ems_code", "enmods_param", "bcgwcat_param"),
     by = "ems_code"
   ) |>
   mutate(limit = as.numeric(limit)) |>
@@ -152,7 +152,7 @@ wq_std <- bcdata::bcdc_get_data(
   mutate(n = n(), .by = "ems_code") |>
   assert(within_bounds(1, Inf), n)
 
-# EMS Ids
+# EMS Ids ---------------------------------------
 db <- renmods::renmods_connect()
 ems_ids <- db |>
   dplyr::select("Location_ID") |>
@@ -160,15 +160,24 @@ ems_ids <- db |>
   dplyr::pull()
 renmods::renmods_disconnect(db)
 
+db <- renmods::renmods_connect(types = "historic")
+min_date <- db |>
+  dplyr::summarize(min_date = min(Observed_Date_Time, na.rm = TRUE)) |>
+  dplyr::pull(min_date)
+renmods::renmods_disconnect(db)
+
+# Date ranges -----------------------------------
+
 # Interal Data ---------------------------------
 usethis::use_data(
-  wq_std,
   ems_ids,
+  min_date
   internal = TRUE,
   overwrite = TRUE
 )
 
 # External Data ----------------------------------
+write_csv(wq_std, "inst/extdata/wq_std.csv")
 write_csv(meq_conversion, "inst/extdata/meq_conversion.csv")
 write_csv(index_params, "inst/extdata/index_params.csv")
 write_csv(index_meta_params, "inst/extdata/index_meta_params.csv")
