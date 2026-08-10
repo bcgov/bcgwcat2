@@ -154,7 +154,7 @@ wq_std <- bcdata::bcdc_get_data(
 
 # EMS Ids ---------------------------------------
 db <- renmods::renmods_connect()
-ems_ids <- db |>
+ems_ids_all <- db |>
   dplyr::select("Location_ID") |>
   dplyr::distinct() |>
   dplyr::pull()
@@ -170,8 +170,8 @@ renmods::renmods_disconnect(db)
 
 # Interal Data ---------------------------------
 usethis::use_data(
-  ems_ids,
-  min_date
+  ems_ids_all,
+  min_date,
   internal = TRUE,
   overwrite = TRUE
 )

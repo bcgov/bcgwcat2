@@ -142,7 +142,12 @@ mod_data_server <- function(updated, app_session, id = "data") {
     })
 
     # UI --------------------------
-    updateSelectizeInput(session, "ems_ids", choices = ems_ids, server = TRUE)
+    updateSelectizeInput(
+      session,
+      "ems_ids",
+      choices = ems_ids_all,
+      server = TRUE
+    )
 
     purrr::map(
       c(
