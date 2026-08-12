@@ -237,10 +237,10 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
     output$table_samples <- reactable::renderReactable({
       updated() # refresh if data is updated
       data_dts <- check_date_range(input$date_range)
-      shinyjs::toggleState("fetch_data", any(data_dts, na.rm = TRUE))
+      shinyjs::toggleState("fetch_data", data_dts)
       validate(
         need(
-          any(data_dts, na.rm = TRUE),
+          data_dts,
           "Missing data for this data range. Go to the status tab to download the required data set."
         )
       )
@@ -294,19 +294,48 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
 #' @noRd
 #' @examples
 #' check_date_range(c("1990-01-01", "2020-01-01"))
+#' check_date_range(c("2022-01-01", "2026-01-01"))
+#' check_date_range(c("1900-01-01", "2099-01-01"))
 
 check_date_range <- function(date_range) {
-  date_range <- lubridate::interval(date_range[1], date_range[2])
-  data_dts <- renmods::cache_status()$date_range
+  if (date_range[1] < min_date) {
+    date_range[1] <- as.character(lubridate::as_date(min_date))
+  }
+  if (date_range[2] > Sys.Date()) {
+    date_range[2] <- as.character(lubridate::as_date(Sys.Date()))
+  }
 
-  char_to_range(data_dts) |>
-    purrr::map_lgl(\(i) {
-      lubridate::`%within%`(
-        date_range,
-        lubridate::interval(start = i[1], end = i[2])
+  date_range <- lubridate::interval(date_range[1], date_range[2])
+  data_dts <- renmods::cache_status()$date_range |>
+    char_to_range() |>
+    purrr::map(\(i) lubridate::interval(start = i[1], end = i[2]))
+
+  i <- purrr::reduce(data_dts, \(x1, x2) {
+    if (length(x1) > 1) {
+      x0 <- x1[2]
+    } else {
+      x0 <- x1
+    }
+    if (
+      lubridate::int_end(x2) + lubridate::days(1) == lubridate::int_start(x0)
+    ) {
+      i <- lubridate::interval(
+        start = lubridate::int_start(x2),
+        end = lubridate::int_end(x0)
       )
-    }) |>
-    tidyr::replace_na(FALSE)
+      if (length(x1) > 1) {
+        i <- append(x1[1], i)
+      }
+    } else {
+      i <- append(x1, x2)
+    }
+
+    i
+  })
+
+  purrr::map_lgl(i, \(ii) lubridate::`%within%`(date_range, ii)) |>
+    tidyr::replace_na(FALSE) |>
+    any()
 }
 
 #' Check if a date range has
