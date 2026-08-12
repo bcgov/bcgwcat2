@@ -140,7 +140,7 @@ tbl_water_quality <- function(samples, which = NULL, params = NULL) {
     wq <- dplyr::filter(wq, .data$bcgwcat_param %in% .env$params)
   }
 
-  if (!is.null(which)) {
+  if (!is.null(which) && which != "all") {
     wq <- if (which == "problems") {
       dplyr::filter(wq, .data$water_quality_problem)
     } else if (which == "no_missing") {
