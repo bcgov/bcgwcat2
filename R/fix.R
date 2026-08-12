@@ -17,7 +17,6 @@ fix_multiple_measures <- function(
     s_prep <- dplyr::filter(s, result_unit != "meq/l")
   } else if (type == "meq") {
     desc <- "Multiple MEQ values"
-    method <- "mean"
     s_prep <- dplyr::filter(s, result_unit == "meq/l")
   } else {
     abort("`type` must be 'multi_measure' or 'repeated_measure' or 'meq'")
