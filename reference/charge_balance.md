@@ -1,0 +1,80 @@
+# Calculate charge balance
+
+Calculates charge balances based on ALS formula. **Note:** Original EMS
+charge balances, anion sums and cation sums will be renamed to
+`charge_balance_enmods`, `anion_sum_enmods`, `cation_sum_enmods`,
+respectively, when these are added to samples data (see
+[`fmt_minimal()`](https://bcgov.github.io/bcgwcat2/reference/fmt.md)).
+
+## Usage
+
+``` r
+charge_balance(samples)
+```
+
+## Arguments
+
+- samples:
+
+  Data frame. Output from
+  [`fmt_minimal()`](https://bcgov.github.io/bcgwcat2/reference/fmt.md)
+  or
+  [`fetch_renmods()`](https://bcgov.github.io/bcgwcat2/reference/fetch_renmods.md).
+  If
+  [`fetch_renmods()`](https://bcgov.github.io/bcgwcat2/reference/fetch_renmods.md)
+  samples will be first formatted with
+  [`fmt_minimal()`](https://bcgov.github.io/bcgwcat2/reference/fmt.md).
+
+## Value
+
+Data frame with only cation and anion sums, and charge balance values.
+
+## Details
+
+Potential changes in workflows over the years have made it difficult to
+ascertain exactly how charge balances were calculated in older samples.
+This resulted in discrepancies between EMS and locally calculated charge
+balances. Therefore for consistency, we calculate charge balances for
+all samples using the ALS formula below.
+
+One difference between this calculation and that of ALS, is that we use
+more significant digits when calculating MEQ.
+
+anion sum = chloride_dissolved_meq/l + sulfate_dissolved_meq/l +
+fluoride_dissolved_meq/l + nitrate_no3_dissolved_meq/l +
+nitrogen_nitrite_dissolved_no2_meq/l +
+alkalinity_total_4.5_as_caco3_meq/l
+
+cation sum = calcium_dissolved_meq/l + magnesium_dissolved_meq/l +
+sodium_dissolved_meq/l + potassium_dissolved_meq/l +
+aluminum_dissolved_meq/l + copper_dissolved_meq/l +
+iron_dissolved_meq/l + manganese_dissolved_meq/l +
+zinc_dissolved_meq/l + nitrogen_ammonia_dissolved_meq/l + (10 ^ (-ph))
+\* 1000
+
+Charge balance = 100 x (Cation Sum - Anion sum) / (Cation Sum + Anion
+Sum)
+
+Missing values are ignored (ie. generally treated as 0). However, if all
+values for cations or anions are missing the charge balance is `NA`.
+
+If there are multiple measures for the same observation (i.e. repeated
+measures), we use the mean MEQ value for that parameter.
+
+## Examples
+
+``` r
+if (FALSE) { # interactive()
+s <- fetch_renmods(
+  ems_ids = c("1401030", "1401377"),
+  date_range = c("2020-01-01", "2022-02-01")
+)
+charge_balance(s)
+
+s <- fetch_renmods(
+  ems_ids = "E102388",
+  date_range = c("2026-01-01", "2027-01-01")
+)
+charge_balance(s)
+}
+```
