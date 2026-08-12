@@ -37,7 +37,8 @@ pak::pkg_install("bcgov/bcgwcat2") #"Update All" if asked
 
 ### Usage
 
-- Launch the Shiny App - `gw_app()`
+- Launch the Shiny App -
+  [`bcgwcat_app()`](https://bcgov.github.io/bcgwcat2/reference/bcgwcat_app.md)
 
 #### Example
 
