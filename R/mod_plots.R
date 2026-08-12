@@ -39,15 +39,18 @@ mod_plots_ui <- function(id = "plots") {
           title = "Plots",
           card_body(
             gap = 0,
-            card(
-              full_screen = TRUE,
-              card_header("Stiff Plot"),
-              card_body(plotOutput(ns("plot_stiff")))
-            ),
-            card(
-              full_screen = TRUE,
-              card_header("Piper Plot"),
-              card_body(plotOutput(ns("plot_piper")))
+            layout_column_wrap(
+              width = 1 / 2,
+              card(
+                full_screen = TRUE,
+                card_header("Stiff Plot"),
+                card_body(plotOutput(ns("plot_stiff")))
+              ),
+              card(
+                full_screen = TRUE,
+                card_header("Piper Plot"),
+                card_body(plotOutput(ns("plot_piper")))
+              )
             )
           )
         ),
@@ -80,12 +83,14 @@ mod_plots_server <- function(
       bindEvent(input$link_to_details)
 
     # UI --------------------
-    updateSelectizeInput(
-      session,
-      "ems_ids",
-      choices = ems_ids_all,
-      server = TRUE
-    )
+    observe({
+      updateSelectizeInput(
+        session,
+        "ems_ids",
+        choices = ems_ids(),
+        server = TRUE
+      )
+    })
 
     # Plots - Stiff ---------------------
     output$plot_stiff <- renderPlot({
@@ -94,19 +99,24 @@ mod_plots_server <- function(
 
       req(input$ems_ids)
       req(input$omit_bad)
-      req(input$plot_legends)
+      req(input$legends)
 
-      # Create plot
+      stiff_plot(
+        samples(),
+        ems_id = input$ems_ids,
+        valid = as.logical(input$omit_bad),
+        legend = as.logical(input$legends)
+      )
     })
 
     # Plots - Piper ---------------------
-    output$plot_stiff <- renderPlot({
+    output$plot_piper <- renderPlot({
       validate(need(samples(), "Collect data first (see Data tab)"))
       validate(need(nrow(samples()) > 0, "No data to display"))
 
       req(input$ems_ids)
       req(input$omit_bad)
-      req(input$plot_legends)
+      req(input$legends)
 
       # Create plot
     })
