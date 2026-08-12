@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030"),
 #'   date_range = c("1990-01-01", "2026-06-01")

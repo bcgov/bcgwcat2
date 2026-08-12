@@ -13,5 +13,7 @@ mod_data_ui(id = "data")
 Title
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 test_mod("data")
+\dontshow{\}) # examplesIf}
 }

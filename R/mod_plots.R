@@ -5,7 +5,7 @@
 #' @returns
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' test_mod("water_quality")
 
 mod_plots_ui <- function(id = "plots") {

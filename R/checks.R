@@ -35,7 +35,7 @@ check_samples <- function(samples, check_fmt = TRUE) {
 #' @returns Formatted samples data frame
 #'
 #' @noRd
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")

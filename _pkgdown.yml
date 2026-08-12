@@ -1,0 +1,19 @@
+url: https://bcgov.github.io/bcgwcat2/
+template:
+  bootstrap: 5
+  bootswatch: cerulean
+  bslib:
+    headings-color: "#003366"
+    primary: "#003366"
+    body-secondary-color: "white"
+
+reference:
+- title: Shiny User-Interface
+  desc: Function for launching the user-interface
+  contents:
+  - has_concept("shiny_app")
+
+- title: General function reference
+  desc: Functions available for coding from the R console
+  contents:
+  - lacks_concepts("shiny_app")

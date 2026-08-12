@@ -13,7 +13,7 @@ CONTRIBUTING.md
 ^RELEASE\.R$
 ^DEVTESTS\.R$
 ^COMPLIANCE.yaml$
-misc
+^misc$
 ^CONTRIBUTING\.md$
 
 _\.new\.png$
@@ -21,3 +21,7 @@ _\.new\.png$
 
 ^\.vscode$
 ^[.]?air[.]toml$
+
+^NEXT$
+^\.tmp$
+^START HERE\.md$

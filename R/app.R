@@ -3,7 +3,7 @@
 #' @returns
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' bcgwcat_app()
 
 bcgwcat_app <- function() {
@@ -58,8 +58,8 @@ bcgwcat_sidebar <- function() {
 #'
 #' @returns bslib theme
 #'
-#' @export
-#' @examples
+#' @noRd
+#' @examplesIf interactive()
 #' bcgwcat_theme()
 
 bcgwcat_theme <- function() {

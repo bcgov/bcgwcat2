@@ -5,7 +5,7 @@
 #' @returns
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' test_mod("details")
 
 mod_details_ui <- function(id = "details") {
@@ -150,12 +150,13 @@ mod_details_ui <- function(id = "details") {
 
 #' Title
 #'
-#' @param id
+#' @param id Character. Shiny module ID
+#' @param ...
 #'
 #' @returns
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 mod_details_server <- function(id = "details", ...) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns

@@ -5,7 +5,7 @@
 \title{Create Stiff plot}
 \usage{
 stiff_plot(
-  d,
+  samples,
   ems_id = NULL,
   colour = TRUE,
   legend = TRUE,
@@ -14,11 +14,12 @@ stiff_plot(
 )
 }
 \arguments{
-\item{d}{AquaChem formatted dataset}
+\item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
+If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
-\item{ems_id}{Ids to plot if dataset includes more than one}
+\item{ems_id}{IDs to plot if dataset includes more than one}
 
-\item{colour}{Whether to add colour by ems_id}
+\item{colour}{Whether to add colour by \code{ems_id}}
 
 \item{legend}{Whether to show the legend}
 
@@ -29,4 +30,18 @@ missing. Default TRUE. Matches behaviour of \code{water_type()}.}
 }
 \description{
 Create Stiff plot
+}
+\examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+s <- fetch_renmods(
+  ems_ids = c("1401030"),
+  date_range = c("1990-01-01", "2026-06-01")
+)
+stiff_plot(s)
+s <- fetch_renmods(
+  ems_ids = c("E218582"),
+  date_range = c("2026-01-01", "2026-06-01")
+)
+stiff_plot(s)
+\dontshow{\}) # examplesIf}
 }

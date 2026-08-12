@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-#' @examples
+#' @examplesIf interactive()
 #' s <- data.frame(observed_property_id = "", result_value = "", result_unit = "")
 #' meq(s)
 #'
@@ -68,7 +68,7 @@ meq <- function(samples) {
 #' charge balances, anion sums and cation sums will be renamed to
 #' `charge_balance_enmods`, `anion_sum_enmods`, `cation_sum_enmods`,
 #' respectively, when these are added to samples data (see
-#' [add_charge_balance()]).
+#' [fmt_minimal()]).
 #'
 #' Potential changes in workflows over the years have made it difficult to
 #' ascertain exactly how charge balances were calculated in older samples. This
@@ -104,7 +104,7 @@ meq <- function(samples) {
 #' @return Data frame with only cation and anion sums, and charge balance
 #'   values.
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
@@ -176,7 +176,7 @@ charge_balance <- function(samples) {
 
 
 is_valid <- function(charge_balance) {
-  !is.na(charge_balance) && abs(charge_balance) <= 10
+  !is.na(charge_balance) & abs(charge_balance) <= 10
 }
 
 #' Calculate water type
@@ -198,7 +198,7 @@ is_valid <- function(charge_balance) {
 #'
 #' @return Data frame with added columns `water_type` and `missing_ion`.
 #'
-#' @examples
+#' @examplesIf interactive()
 #'
 #' @export
 water_type <- function(samples) {
@@ -223,7 +223,7 @@ water_type <- function(samples) {
 #' @returns Data frame with two values, missing_ion and water_type
 #'
 #' @noRd
-#' @examples
+#' @examplesIf interactive()
 water_type_single <- function(df) {
   vals <- rlang::set_names(df$result_value, df$water_code)
   vals <- vals[!is.na(names(vals))]

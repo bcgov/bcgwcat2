@@ -1,0 +1,22 @@
+uniqueid,variable,component,ems_code,limit,limitnotes,units,condition,predictedeffectlevel,status,enmods_param,bcgwcat_param,n
+81,Aluminum,Total,AL-T,9.5,NA,mg/L,NA,No Effect,Approved,Aluminum Total (fl. conc.),aluminum_total,1
+109,Arsenic,Total,AS-T,0.01,NA,mg/L,NA,No Effect,Approved,Arsenic Total (fl. conc.),arsenic_total,1
+154,Boron,Total,B--T,5,NA,mg/L,NA,No Effect,Approved,Boron Total (fl. conc.),boron_total,1
+173,Cadmium,Total,CD-T,0.005,NA,mg/L,NA,No Effect,Approved,Cadmium Total (fl. conc.),cadmium_total,1
+445,Fluoride,Total,1106,1.5,NA,mg/L,NA,No Effect,Approved,Fluoride Dissolved (fl. conc.),fluoride_dissolved,1
+558,Molybdenum,Total,MO-T,0.088,NA,mg/L,NA,No Effect,Approved,Molybdenum Total (fl. conc.),molybdenum_total,1
+592,Nitrate,Total,1110,45,Reported as nitrate.,mg/L,NA,No Effect,Approved,Nitrate (NO3) Dissolved (fl. conc.),nitrate_no3_dissolved,2
+593,Nitrate,Total,1110,10,Reported as N.,mg/L,NA,No Effect,Approved,Nitrate (NO3) Dissolved (fl. conc.),nitrate_no3_dissolved,2
+628,Nitrite,Dissolved,1111,3,Reported as nitrite.,mg/L,NA,No Effect,Approved,Nitrogen - Nitrite Dissolved (NO2) (fl. conc.),nitrogen_nitrite_dissolved_no2,2
+629,Nitrite,Dissolved,1111,1,Reported as N.,mg/L,NA,No Effect,Approved,Nitrogen - Nitrite Dissolved (NO2) (fl. conc.),nitrogen_nitrite_dissolved_no2,2
+719,Selenium,Total,SE-T,0.01,NA,mg/L,NA,No Effect,Approved,Selenium Total (fl. conc.),selenium_total,1
+898,Lead,Total,PB-T,0.005,NA,mg/L,NA,No Effect,Approved,Lead Total (fl. conc.),lead_total,1
+899,Antimony,Total,SB-T,0.006,NA,mg/L,NA,No Effect,Approved,Antimony Total (fl. conc.),antimony_total,1
+902,Chromium,Total,CR-T,0.05,NA,mg/L,NA,No Effect,Approved,Chromium Total (fl. conc.),chromium_total,1
+903,Cobalt,Total,CO-T,0.001,NA,mg/L,NA,No Effect,Approved,Cobalt Total (fl. conc.),cobalt_total,1
+904,Manganese,Total,MN-T,0.12,NA,mg/L,NA,No Effect,Approved,Manganese Total (fl. conc.),manganese_total,1
+905,Copper,Total,CU-T,2,includes short-term and long-term exposure,mg/L,NA,No Effect,Approved,Copper Total (fl. conc.),copper_total,1
+915,Nickel,Total,NI-T,0.08,NA,mg/L,NA,No Effect,Approved,Nickel Total (fl. conc.),nickel_total,1
+920,Strontium,Total,SR-T,7,NA,mg/L,NA,No Effect,Approved,Strontium Total (fl. conc.),strontium_total,1
+923,Uranium,Total,U--T,0.02,NA,mg/L,NA,No Effect,Approved,Uranium Total (fl. conc.),uranium_total,1
+925,Zinc,Total,ZN-T,3,NA,mg/L,NA,No Effect,Approved,Zinc Total (fl. conc.),zinc_total,1

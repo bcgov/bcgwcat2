@@ -25,3 +25,7 @@ missing a cation or anion (i.e. is all cations or all anions).
 Water type is designed to compliment piper plots by using the same ions so
 they are comparable.
 }
+\examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+\dontshow{\}) # examplesIf}
+}

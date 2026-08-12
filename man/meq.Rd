@@ -15,9 +15,7 @@ Calculates MEQ values for 'long' data in mg/L. Expects output of either
 \code{\link[=fetch_renmods]{fetch_renmods()}} or \code{\link[=fmt_minimal]{fmt_minimal()}}.
 }
 \details{
-For conversion details see the included data frame, \code{meq_conversion}.
-
-Also see \code{?meq_conversion} for a description of the data.
+For conversion details and a description of the data see \code{\link[=meq_conversion]{meq_conversion()}}.
 
 MEQs are calculated by dividing the parameter concentration in mg/L by the
 conversion factor. "result_unit" is required to ensure the units are in mg/L
@@ -26,6 +24,7 @@ before calculating MEQs
 \strong{Note: This is an internal function, exported for clarity in calculations}
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- data.frame(observed_property_id = "", result_value = "", result_unit = "")
 meq(s)
 
@@ -38,5 +37,5 @@ meq(s)
 
 fmt_minimal(s)
 fmt_wide(s)
-
+\dontshow{\}) # examplesIf}
 }

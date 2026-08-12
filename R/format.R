@@ -18,7 +18,7 @@
 #' **`fmt_minimal()`**
 #'
 #' - keeps only columns listed in [index_meta()] and [index_meta_params()]
-#' - filters to only parameters (observed properties) listed in [index_param()]
+#' - filters to only parameters (observed properties) listed in [index_params()]
 #' - all column names converted to lower case (snake_case)
 #' - creates `obs_well` filled with Observation Well listed in `location_name`
 #'
@@ -35,6 +35,9 @@
 #'   with AquaChem)
 #'
 #' @param samples Data frame. Output from [fetch_renmods()]
+#' @param include_units Logical. Whether or not to append units to parameter
+#'   column names.
+#' @param fix_multi_method Character. How should multiple measurements be fixed?
 #' @param save Logical. Whether to automatically save the formatted data to
 #' `out_path`.
 #' @param out_path Character. Location and file name to save data to if `save =
@@ -46,7 +49,7 @@
 #' @aliases fmt
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")

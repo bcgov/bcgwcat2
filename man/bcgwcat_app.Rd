@@ -10,5 +10,7 @@ bcgwcat_app()
 Title
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 bcgwcat_app()
+\dontshow{\}) # examplesIf}
 }

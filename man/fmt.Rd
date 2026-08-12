@@ -16,7 +16,7 @@ fmt_minimal(
 fmt_wide(
   samples,
   include_units = TRUE,
-  fix_multi_method = c("first", "min", "max"),
+  fix_multi_method = "first",
   save = FALSE,
   out_path = paste0("wide_", Sys.Date(), ".csv")
 )
@@ -28,6 +28,11 @@ fmt_wide(
 \code{out_path}.}
 
 \item{out_path}{Character. Location and file name to save data to if \code{save = TRUE}.}
+
+\item{include_units}{Logical. Whether or not to append units to parameter
+column names.}
+
+\item{fix_multi_method}{Character. How should multiple measurements be fixed?}
 }
 \value{
 Filtered and formatted data frame of EnMoDS data.
@@ -40,7 +45,7 @@ All functions use \code{\link[=fmt_minimal]{fmt_minimal()}} as their first step.
 \strong{\code{fmt_minimal()}}
 \itemize{
 \item keeps only columns listed in \code{\link[=index_meta]{index_meta()}} and \code{\link[=index_meta_params]{index_meta_params()}}
-\item filters to only parameters (observed properties) listed in \code{\link[=index_param]{index_param()}}
+\item filters to only parameters (observed properties) listed in \code{\link[=index_params]{index_params()}}
 \item all column names converted to lower case (snake_case)
 \item creates \code{obs_well} filled with Observation Well listed in \code{location_name}
 }
@@ -60,6 +65,7 @@ with AquaChem)
 }
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- fetch_renmods(
   ems_ids = c("1401030", "1401377"),
   date_range = c("2020-01-01", "2022-02-01")
@@ -69,4 +75,5 @@ fmt_minimal(s)
 fmt_wide(s)
 
 s
+\dontshow{\}) # examplesIf}
 }

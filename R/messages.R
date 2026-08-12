@@ -6,7 +6,7 @@
 #' @returns
 #'
 #' @noRd
-#' @examples
+#' @examplesIf interactive()
 #' inform(c("This", "is", "a", "message"))
 
 inform <- function(message, df = NULL, ..., .envir = rlang::caller_env()) {
@@ -23,7 +23,7 @@ inform <- function(message, df = NULL, ..., .envir = rlang::caller_env()) {
 #' @returns
 #'
 #' @noRd
-#' @examples
+#' @examplesIf interactive()
 
 abort <- function(..., .envir = rlang::caller_env(), call = NULL) {
   cli::cli_abort(..., call = call, .envir = .envir)

@@ -2,21 +2,42 @@
 % Please edit documentation in R/tables.R
 \name{tbl_overview}
 \alias{tbl_overview}
-\title{Data table for ove}
+\title{Reactable table for data overview}
 \usage{
 tbl_overview(samples, which)
 }
 \arguments{
-\item{which}{}
+\item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
+If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
+
+\item{which}{Character. Which columns to include "rel" for relevant,
+otherwise all are included.}
+}
+\value{
+Reactable data table
 }
 \description{
-Data table for ove
+Reactable table for data overview
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- fetch_renmods(
   ems_ids = c("1401030", "1401377"),
   date_range = c("2020-01-01", "2022-02-01")
 )
 tbl_overview(s, "rel")
 
+s <- fetch_renmods(
+  ems_ids = "E309359",
+  date_range = c("1900-01-01", "2099-01-01")
+)
+tbl_overview(s, "rel")
+
+s <- fetch_renmods(
+  ems_ids = "E102388",
+  date_range = c("2026-01-01", "2027-01-01")
+)
+fmt_wide(s)
+tbl_overview(fmt_wide(s), "rel")
+\dontshow{\}) # examplesIf}
 }

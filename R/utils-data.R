@@ -2,6 +2,12 @@ renmods_data_types <- function() {
   c("this_yr", "yr_2_5", "yr_5_10", "historic")
 }
 
+#' Title
+#'
+#' @returns
+#'
+#' @export
+#' @examplesIf interactive()
 meq_conversion <- function() {
   read_data("meq_conversion.csv")
 }
@@ -9,10 +15,11 @@ meq_conversion <- function() {
 #' Helper to return metadata columns for different data
 #'
 #' @param which Which data to fetch metadata columns for?
+#' @param param_vars Logical. Include parameter variables?
 #'
 #' @returns
 #'
-#' @export
+#' @noRd
 #' @examples
 #' meta_vars()
 #' meta_vars("enmods")

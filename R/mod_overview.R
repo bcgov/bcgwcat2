@@ -1,11 +1,12 @@
 #' Title
 #'
-#' @param id
+#' @param id Character. Shiny module ID
+#' @param data_types
 #'
 #' @returns
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' test_mod("overview")
 
 mod_overview_ui <- function(
@@ -129,10 +130,6 @@ mod_overview_server <- function(
       t
     }) |>
       bindEvent(updated())
-
-    output$status_fig <- ggiraph::renderGirafe({
-      tbl_dates(data_status())
-    })
 
     output$status_table <- reactable::renderReactable({
       tbl_dates(data_status())

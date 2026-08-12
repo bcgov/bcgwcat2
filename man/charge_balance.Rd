@@ -8,8 +8,20 @@ charge_balance(samples)
 }
 \arguments{
 \item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
-If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.
-
+If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
+}
+\value{
+Data frame with only cation and anion sums, and charge balance
+values.
+}
+\description{
+Calculates charge balances based on ALS formula. \strong{Note:} Original EMS
+charge balances, anion sums and cation sums will be renamed to
+\code{charge_balance_enmods}, \code{anion_sum_enmods}, \code{cation_sum_enmods},
+respectively, when these are added to samples data (see
+\code{\link[=fmt_minimal]{fmt_minimal()}}).
+}
+\details{
 Potential changes in workflows over the years have made it difficult to
 ascertain exactly how charge balances were calculated in older samples. This
 resulted in discrepancies between EMS and locally calculated charge balances.
@@ -34,23 +46,23 @@ nitrogen_ammonia_dissolved_meq/l +
 Charge balance = 100 x (Cation Sum - Anion sum) / (Cation Sum + Anion Sum)
 
 Missing values are ignored (ie. generally treated as 0). However, if all
-values for cations or anions are missing the charge balance is \code{NA}.}
-}
-\value{
-Data frame with only cation and anion sums, and charge balance
-values.
-}
-\description{
-Calculates charge balances based on ALS formula. \strong{Note:} Original EMS
-charge balances, anion sums and cation sums will be renamed to
-\code{charge_balance_enmods}, \code{anion_sum_enmods}, \code{cation_sum_enmods},
-respectively, when these are added to samples data (see
-\code{\link[=add_charge_balance]{add_charge_balance()}}).
+values for cations or anions are missing the charge balance is \code{NA}.
+
+If there are multiple measures for the same observation (i.e. repeated
+measures), we use the mean MEQ value for that parameter.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- fetch_renmods(
   ems_ids = c("1401030", "1401377"),
   date_range = c("2020-01-01", "2022-02-01")
 )
 charge_balance(s)
+
+s <- fetch_renmods(
+  ems_ids = "E102388",
+  date_range = c("2026-01-01", "2027-01-01")
+)
+charge_balance(s)
+\dontshow{\}) # examplesIf}
 }

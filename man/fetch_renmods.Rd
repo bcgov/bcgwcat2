@@ -21,8 +21,10 @@ EMS ID. Also collects data into memory, so can take some time if a lot of
 data are requested.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- fetch_renmods(
   ems_ids = c("1401030", "1401377"),
   date_range = c("2020-01-01", "2022-02-01")
 )
+\dontshow{\}) # examplesIf}
 }

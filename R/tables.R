@@ -3,10 +3,12 @@
 #' @param which Character. Which columns to include "rel" for relevant,
 #'   otherwise all are included.
 #'
+#' @inheritParams common_docs
+#'
 #' @returns Reactable data table
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
@@ -110,11 +112,14 @@ tbl_overview <- function(samples, which) {
 #'
 #' @param which Character. Which columns to include "rel" for relevant,
 #'   otherwise all are included.
+#' @param params Character vector. Only include these parameters.
+#'
+#' @inheritParams common_docs
 #'
 #' @returns Reactable data table
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
@@ -124,10 +129,12 @@ tbl_overview <- function(samples, which) {
 #' tbl_water_quality(s, "no_missing")
 #'
 #' s <- fetch_renmods(
-#'   ems_ids = c("E298733"),
+#'   ems_ids = c("E218582"),
 #'   date_range = c("2026-01-01", "2026-06-01")
 #' )
 #' tbl_water_quality(s)
+#' tbl_water_quality(s, "problems")
+#' tbl_water_quality(s, "no_missing")
 #' water_quality(s)
 
 tbl_water_quality <- function(samples, which = NULL, params = NULL) {

@@ -5,7 +5,7 @@
 #' @returns
 #'
 #' @export
-#' @examples
+#' @examplesIf interactive()
 #' test_mod("data")
 
 mod_data_ui <- function(id = "data") {

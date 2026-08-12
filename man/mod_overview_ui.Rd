@@ -4,14 +4,18 @@
 \alias{mod_overview_ui}
 \title{Title}
 \usage{
-mod_overview_ui(id = "overview")
+mod_overview_ui(id = "overview", data_types = renmods_data_types())
 }
 \arguments{
-\item{id}{}
+\item{id}{Character. Shiny module ID}
+
+\item{data_types}{}
 }
 \description{
 Title
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 test_mod("overview")
+\dontshow{\}) # examplesIf}
 }
