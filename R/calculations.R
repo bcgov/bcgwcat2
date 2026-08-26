@@ -247,7 +247,7 @@ water_type_single <- function(df) {
       total = .env$total,
       prop = round(.data$result_value / .data$total, 3)
     ) |>
-    dplyr::filter(.data$prop >= 0.1) %>%
+    dplyr::filter(.data$prop >= 0.1) |>
     dplyr::arrange(
       dplyr::desc(.data$type),
       dplyr::desc(.data$prop)
