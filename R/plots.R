@@ -22,6 +22,13 @@
 #'   date_range = c("2026-01-01", "2026-06-01")
 #' )
 #' stiff_plot(s)
+#'
+#' s <- fetch_renmods(
+#'   ems_ids = c("E298733"),
+#'   date_range = c("2026-01-01", "2026-06-01")
+#' )
+#' stiff_plot(s)
+#'
 
 stiff_plot <- function(
   samples,
@@ -81,12 +88,21 @@ stiff_plot <- function(
     )
 
   # Use Meas_Alk if missing HCO3
-  if (with_Alk) {
+  if (
+    with_Alk &&
+      all(
+        c(
+          "bicarbonate_alkalinity_as_caco3",
+          "alkalinity_total_4.5_as_caco3"
+        ) %in%
+          names(s_prep)
+      )
+  ) {
     s_prep <- dplyr::mutate(
       s_prep,
       bicarbonate_alkalinity_as_caco3 = dplyr::if_else(
         is.na(.data$bicarbonate_alkalinity_as_caco3),
-        .data$bicarbonate_alkalinity_as_caco3,
+        .data$alkalinity_total_4.5_as_caco3,
         .data$bicarbonate_alkalinity_as_caco3
       )
     )
@@ -98,7 +114,7 @@ stiff_plot <- function(
   }
 
   s_prep <- s_prep |>
-    dplyr::select(-"bicarbonate_alkalinity_as_caco3") |>
+    dplyr::select(-dplyr::any_of("bicarbonate_alkalinity_as_caco3")) |>
     tidyr::pivot_longer(
       cols = -c("location_id", "id", "charge_balance"),
       names_to = "bcgwcat_param",
