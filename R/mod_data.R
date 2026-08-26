@@ -194,9 +194,10 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
       req(input$ems_ids)
       ids <- input$ems_ids
       # Check ID formatting
-      len <- nchar(ids) == 7
+      len <- nchar(ids) %in% c(7, 8)
       sym <- stringr::str_detect(ids, "^[a-zA-Z0-9]*$")
       problems <- glue_collapse(ids[!len | !sym], sep = ", ")
+      # TODO: Check that this is working
       validate(need(
         all(len) & all(sym),
         message = glue("Invalid EMS ID(s): {problems}")

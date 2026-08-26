@@ -28,8 +28,15 @@
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
+#'
+#'  s <- fetch_renmods(
+#'   ems_ids = 22769669,
+#'   date_range = c("2020-01-01", "2022-02-01")
+#' )
 
 fetch_renmods <- function(ems_ids, date_range) {
+  ems_ids <- as.character(ems_ids)
+
   s_tbl <- renmods::renmods_connect(dates = date_range) |>
     dplyr::filter(.data$Location_ID %in% .env$ems_ids)
 
