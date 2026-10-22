@@ -25,3 +25,6 @@ _\.new\.png$
 ^NEXT$
 ^\.tmp$
 ^START HERE\.md$
+^CODE_DESIGN\.md$
+^\.claude$
+^vignettes/articles$
