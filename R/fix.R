@@ -1,3 +1,53 @@
+fix_ph <- function(s) {
+  cols <- c("Location_ID", "Observed_Date_Time", "Result_Value")
+
+  problems <- dplyr::filter(
+    s,
+    Observed_Property_ID == "pH (acidity)",
+    Data_Classification == "FIELD_RESULT"
+  )
+
+  if (nrow(problems) > 0) {
+    msg <- c(
+      "!" = "Correcting {nrow(problems)} case(s) of `pH (acidity)` being recorded as a Field Result.",
+      "*" = "Reclassifying as `pH-Field (acidity)`"
+    )
+    s <- s |>
+      dplyr::mutate(
+        Observed_Property_ID = dplyr::if_else(
+          Observed_Property_ID == "pH (acidity)" &
+            Data_Classification == "FIELD_RESULT",
+          "pH-Field (acidity)",
+          Observed_Property_ID
+        )
+      )
+
+    # Check if exact duplicate of recorded field result (pick the transformed result if so)
+    dups <- s |>
+      dplyr::filter(Observed_Property_ID == "pH-Field (acidity)") |>
+      dplyr::filter(dplyr::n() > 1, .by = cols) |>
+      dplyr::filter(Observed_Property_Name == "0004")
+
+    # Remove exact dups created
+    if (nrow(dups) > 0) {
+      msg <- c(
+        msg,
+        "x" = "Reclassification created {nrow(dups)} duplicate(s), omit instead"
+      )
+      s <- anti_join(s, dups, by = c(cols, "Observed_Property_Name"))
+    }
+
+    inform(msg)
+  }
+  s
+}
+
+fix_replicates <- function(s) {
+  # Only "Normal" samples (not replicates, blanks, spikes, or ...
+  # TODO: Do something with replicate samples?
+  dplyr::filter(s, .data$QC_Type == "NORMAL")
+}
+
 fix_multiple_measures <- function(
   s,
   method = c("first", "min", "max", "mean"),

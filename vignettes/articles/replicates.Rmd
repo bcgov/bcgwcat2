@@ -1,0 +1,146 @@
+---
+title: "Sample Replicates"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+EnMoDS data includes some replicate samples, usually defined as quality control (QC) samples alongside regular
+environmental samples. The `QC_Type` column identifies which kind of sample each
+row comes from. 
+
+Other samples may have replicates due to multiple analysis methods, such as Phosphorus Total, or field vs. lab pH.
+
+## QC types
+
+According to the [QC_Types.xlsx from EnMoDS](https://coms.api.gov.bc.ca/api/v1/object/52b1636f-3cd6-4f8c-b49e-a81f12f6bd18), the types are "Blank", "Other QC", "Regular", "Replicate", or "Spike".
+
+However in the data itself, they appear to be "BLANK", "NORMAL", "REPLICATE" and "SPIKE".
+
+**Current practice is to only keep NORMAL samples when applying formatting functions**.
+
+### Example
+
+```{r}
+library(bcgwcat2)
+library(dplyr)
+library(stringr)
+
+# A well sampled on one day, with normal, replicate and blank samples
+s <- fetch_renmods("E316790", c("2023-10-11", "2023-10-12"))
+nrow(s)
+count(s, QC_Type)
+
+s <- fmt_minimal(s)
+nrow(s) # drops unused observedproperties, as well as non-normal samples
+```
+
+
+## Multiple Analyses
+
+```{r}
+s <- fetch_renmods("E337477", c("2025-06-17", "2025-06-18"))
+fmt_minimal(s)
+
+filter(s, Observed_Property_ID == "Phosphorus Total Dissolved")
+
+
+s |>
+  filter(str_detect(Observed_Property_ID, "pH")) |>
+  select(
+    Location_ID,
+    Observed_Date_Time,
+    Observed_Property_ID,
+    Data_Classification,
+    Analysis_Method,
+    QC_Type,
+    Result_Value
+  )
+
+fmt <- fmt_minimal(s)
+fmt |>
+  filter(str_detect(observed_property_id, "pH")) |>
+  select(
+    location_id,
+    observed_date_time,
+    observed_property_id,
+    analysis_method,
+    result_value
+  )
+```
+
+## Multiple pH Measures
+
+In the EMS data, `pH`, EMS ID 004, was considered as the Lab whereas `pH-Field`, EMS ID PH-F was a field based pH value. 
+
+In EnMoDs this is a bit confused. There is `pH (acidity)` which is associated with EMS code: 0004 and `pH-Field (acidity)` associated with EMS code `PH-F`. 
+
+However, EnMoDs also includes a `Data_Classification` column which can be "LAB", "FIELD_RESULT", "ACTIVITY_RESULT", "SURROGATE_RESULT", "FIELD_SURVEY", and "VERTICAL_PROFILE" (according to [Data_Classifications.xlsx from the EnMoDs website](https://coms.api.gov.bc.ca/api/v1/object/18a23c82-4fef-472d-8f9a-263fd7bc1870)). 
+
+This leads to observations having two measures of `pH (acidity)`, on of which has a `Data_Classification` of "LAB" and the other of "FIELD_RESULT".
+
+**Current practice is to relabel those with a `Data_Classification` of "FIELD_RESULT" as `pH-Field (acidity)`. If this duplicates an existing `pH-Field (acidity)` record, it is removed.**.
+
+```{r}
+s <- fetch_renmods("E337477", c("2025-06-17", "2025-06-18"))
+
+s |>
+  filter(str_detect(Observed_Property_ID, "pH")) |>
+  select(
+    Location_ID,
+    Observed_Date_Time,
+    Observed_Property_ID,
+    Data_Classification,
+    Analysis_Method,
+    QC_Type,
+    Result_Value
+  )
+
+fmt <- fmt_minimal(s)
+fmt |>
+  filter(str_detect(observed_property_id, "pH")) |>
+  select(
+    location_id,
+    observed_date_time,
+    observed_property_id,
+    analysis_method,
+    result_value
+  )
+```
+
+Very rarely this actually creates a duplicate of the existing `pH-Field` value.
+
+
+```{r}
+s <- fetch_renmods("E287195", c("2022-02-23", "2022-02-24"))
+
+s |>
+  filter(str_detect(Observed_Property_ID, "pH")) |>
+  select(
+    Location_ID,
+    Observed_Date_Time,
+    Observed_Property_ID,
+    Data_Classification,
+    Analysis_Method,
+    QC_Type,
+    Result_Value
+  ) |>
+  arrange(Observed_Property_ID)
+
+fmt <- fmt_minimal(s)
+fmt |>
+  filter(str_detect(observed_property_id, "pH")) |>
+  select(
+    location_id,
+    observed_date_time,
+    observed_property_id,
+    analysis_method,
+    result_value
+  ) |>
+  arrange(observed_property_id)
+```

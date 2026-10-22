@@ -69,17 +69,24 @@ fmt_minimal <- function(
   # TODO: Check path
   check_samples(samples, check_fmt = FALSE)
 
-  samples |>
-    # Get only columns of interest
-    dplyr::select(any_of(meta_vars("enmods", param_vars = TRUE))) |>
-    dplyr::rename_with(tolower) |>
-    # Get only parameters of interest
+  # Filtering and Fixing
+  s <- samples |>
     dplyr::filter(
-      .data$observed_property_id %in% index_params()$enmods_param
+      # Only parameters of interest
+      .data$Observed_Property_ID %in% index_params()$enmods_param
     ) |>
+    fix_replicates() |>
+    fix_ph()
+
+  # Get only columns of interest
+  s <- s |>
+    dplyr::select(any_of(meta_vars("enmods", param_vars = TRUE))) |>
+    dplyr::rename_with(tolower)
+
+  # Add and arrange additional columns
+  s <- s |>
     add_obs_wells() |>
     add_bcgwcat_params() |>
-
     dplyr::relocate(
       "obs_well",
       "location_id",
@@ -88,12 +95,16 @@ fmt_minimal <- function(
       "location_elevation",
       "observed_date_time",
       "medium"
-    ) |>
-    # Add meq
+    )
+
+  # Add calculated values
+  s <- s |>
     add_meq() |>
-    add_placeholder() |>
+    add_placeholders() |>
     add_charge_balance() |>
     add_water_type()
+
+  s
 }
 
 #' @rdname fmt
@@ -192,7 +203,7 @@ add_water_type <- function(samples) {
   dplyr::left_join(samples, water_type(samples), by = meta_vars())
 }
 
-add_placeholder <- function(
+add_placeholders <- function(
   samples,
   add = c("charge_balance_enmods", "anion_sum_enmods", "cation_sum_enmods")
 ) {
