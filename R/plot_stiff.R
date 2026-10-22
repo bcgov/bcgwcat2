@@ -1,4 +1,4 @@
-#' Create Stiff plot
+#' Create Stiff Plot
 #'
 #' @param ems_id IDs to plot if dataset includes more than one
 #' @param colour Whether to add colour by `ems_id`
@@ -6,6 +6,8 @@
 #' @param valid Logical. Keep only valid data (charge balances <=10)
 #' @param with_Alk Logical. Whether to use `Meas_Alk_meq` for `HCO3_meq` if
 #'   missing. Default TRUE. Matches behaviour of `water_type()`.
+#'
+#' @returns ggplot Stiff Plot
 #'
 #' @inheritParams common_docs
 #'
@@ -17,6 +19,7 @@
 #'   date_range = c("1990-01-01", "2026-06-01")
 #' )
 #' stiff_plot(s)
+#'
 #' s <- fetch_renmods(
 #'   ems_ids = c("E218582"),
 #'   date_range = c("2026-01-01", "2026-06-01")

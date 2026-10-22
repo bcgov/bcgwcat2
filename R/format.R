@@ -141,6 +141,50 @@ fmt_wide <- function(
   )
 }
 
+fmt_piper <- function(samples, with_Alk = TRUE) {
+  p <- meq_conversion() |>
+    dplyr::filter(water_type)
+  p <- rlang::set_names(paste0(p$bcgwcat_param, "_meq/l"), p$water_code)
+
+  ss <- fmt_wide(samples)
+
+  if (with_Alk) {
+    ss <- dplyr::mutate(
+      ss,
+      `bicarbonate_alkalinity_as_caco3_meq/l` = dplyr::if_else(
+        is.na(.data$`bicarbonate_alkalinity_as_caco3_meq/l`),
+        .data$`alkalinity_total_4.5_as_caco3_meq/l`,
+        .data$`bicarbonate_alkalinity_as_caco3_meq/l`
+      )
+    )
+  }
+
+  ss <- ss |>
+    dplyr::select(
+      "location_id",
+      "observed_date_time",
+      "charge_balance_%",
+      "water_type",
+      dplyr::any_of(p)
+    ) |>
+    dplyr::filter(abs(`charge_balance_%`) <= 10) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(
+      # Add together, ignore missing, but if both missing, NA
+      Na_K = dplyr::if_else(
+        is.na(.data$Na) & is.na(.data$K),
+        NA_real_,
+        sum(.data$Na, .data$K, na.rm = TRUE)
+      ),
+      HCO3_CO3 = dplyr::if_else(
+        is.na(.data$`HCO3*`) & is.na(.data$HCO3),
+        NA_real_,
+        sum(.data$`HCO3*`, .data$HCO3, na.rm = TRUE)
+      )
+    ) |>
+    dplyr::ungroup()
+}
+
 add_obs_wells <- function(df) {
   if ("obs_well" %in% names(df) && !"location_name" %in% names(df)) {
     return(df)
