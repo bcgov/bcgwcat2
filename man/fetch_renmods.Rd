@@ -26,5 +26,10 @@ s <- fetch_renmods(
   ems_ids = c("1401030", "1401377"),
   date_range = c("2020-01-01", "2022-02-01")
 )
+
+ s <- fetch_renmods(
+  ems_ids = 22769669,
+  date_range = c("2020-01-01", "2022-02-01")
+)
 \dontshow{\}) # examplesIf}
 }

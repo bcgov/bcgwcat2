@@ -46,5 +46,7 @@ fetch_renmods <- function(ems_ids, date_range) {
 
   # TODO: CHECK IF ANY DATA -> check_present()
 
+  # TODO: Check if ANY MEDIUM != "Water - Ground"
+
   s
 }
