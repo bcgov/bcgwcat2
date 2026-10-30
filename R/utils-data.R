@@ -20,8 +20,8 @@ renmods_data_types <- function() {
 #'
 #' @export
 #' @examplesIf interactive()
-meq_conversion <- function() {
-  read_data("meq_conversion.csv")
+ion_details <- function() {
+  read_data("ion_details.csv")
 }
 
 #' Helper to return metadata columns for different data

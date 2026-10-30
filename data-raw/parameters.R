@@ -60,6 +60,36 @@ index_meta_params <- read_csv(
 )
 index_meta <- read_csv("data-raw/index_meta.csv", col_types = cols())
 
+# Ion Use --------------------------------------------
+
+ion_use <- tribble(
+  ~bcgwcat_param                    , ~charge_balance , ~water_type , ~piper_plot , ~stiff_plot ,
+
+  # Anions
+  "chloride_dissolved"              , TRUE            , TRUE        , TRUE        , TRUE        ,
+  "sulfate_dissolved"               , TRUE            , TRUE        , TRUE        , TRUE        ,
+  "fluoride_dissolved"              , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "nitrate_no3_dissolved"           , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "nitrogen_nitrite_dissolved_no2"  , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "alkalinity_total_4.5_as_caco3"   , TRUE            , TRUE        , TRUE        , TRUE        ,
+  "bicarbonate_alkalinity_as_caco3" , FALSE           , TRUE        , TRUE        , TRUE        ,
+  "carbonate_alkalinity_as_caco3"   , FALSE           , FALSE       , TRUE        , FALSE       ,
+
+  # Cations
+  "calcium_dissolved"               , TRUE            , TRUE        , TRUE        , TRUE        ,
+  "magnesium_dissolved"             , TRUE            , TRUE        , TRUE        , TRUE        ,
+  "sodium_dissolved"                , TRUE            , TRUE        , TRUE        , TRUE        ,
+  "potassium_dissolved"             , TRUE            , TRUE        , TRUE        , FALSE       ,
+  "aluminum_dissolved"              , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "copper_dissolved"                , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "iron_dissolved"                  , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "manganese_dissolved"             , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "zinc_dissolved"                  , TRUE            , FALSE       , FALSE       , FALSE       ,
+  "nitrogen_ammonia_dissolved"      , TRUE            , FALSE       , FALSE       , FALSE       ,
+
+  "ph"                              , TRUE            , FALSE       , FALSE       , FALSE
+)
+
 
 # MEQ Conversions ------------------------------------
 # Atomic mass values from https://en.wikipedia.org/wiki/List_of_elements_by_atomic_properties
@@ -73,35 +103,37 @@ c <- 12.0107
 ca <- 40.078
 h <- 1.008
 
-meq_conversion <- tribble(
-  ~bcgwcat_param                    , ~ems_code , ~mass          , ~valency_state , ~type    , ~charge_balance , ~water_type , ~water_code ,
-
-  "ph"                              , "4"       , NA             , NA             , "cation" , TRUE            , FALSE       , ""          , # pH Lab - converts to [H ion] for charge_balances
+ion_details <- tribble(
+  ~bcgwcat_param                    , ~ems_code , ~mass          , ~valency_state , ~type    , ~water_code ,
 
   # Anions
-  "chloride_dissolved"              , "1104"    , cl             ,              1 , "anion"  , TRUE            , TRUE        , "Cl"        , # Cl - Chloride Dissolved
-  "sulfate_dissolved"               , "1121"    , s + 4 * o      ,              2 , "anion"  , TRUE            , TRUE        , "SO4"       , # SO4 - Sulfate Dissolved
-  "fluoride_dissolved"              , "1106"    , f              ,              1 , "anion"  , TRUE            , FALSE       , ""          , # F - Fluoride Dissolved
-  "nitrate_no3_dissolved"           , "1110"    , n              ,              1 , "anion"  , TRUE            , FALSE       , ""          , # NO3 - Nitrate Dissolved - as N
-  "nitrogen_nitrite_dissolved_no2"  , "1111"    , n              ,              1 , "anion"  , TRUE            , FALSE       , ""          , # NO2 - Nitrite Dissolved - as N
-  "alkalinity_total_4.5_as_caco3"   , "0102"    , ca + c + 3 * o ,              2 , "anion"  , TRUE            , TRUE        , "HCO3*"     , # Alkalinity Total 4.5 (as CaCO3)
-  "bicarbonate_alkalinity_as_caco3" , "0150"    , h + c + 3 * o  ,              1 , "anion"  , FALSE           , TRUE        , "HCO3"      , # HCO3 - Bicarbonate Alkalinity (as CaCO3)
-  "carbonate_alkalinity_as_caco3"   , "0149"    , c + 3 * o      ,              2 , "anion"  , FALSE           , FALSE       , ""          , # CO3 - Carbonate Alkalinity (as CaCO3)
+  "chloride_dissolved"              , "1104"    , cl             ,              1 , "anion"  , "Cl"        , # Cl - Chloride Dissolved
+  "sulfate_dissolved"               , "1121"    , s + 4 * o      ,              2 , "anion"  , "SO4"       , # SO4 - Sulfate Dissolved
+  "fluoride_dissolved"              , "1106"    , f              ,              1 , "anion"  , ""          , # F - Fluoride Dissolved
+  "nitrate_no3_dissolved"           , "1110"    , n              ,              1 , "anion"  , ""          , # NO3 - Nitrate Dissolved - as N
+  "nitrogen_nitrite_dissolved_no2"  , "1111"    , n              ,              1 , "anion"  , ""          , # NO2 - Nitrite Dissolved - as N
+  "alkalinity_total_4.5_as_caco3"   , "0102"    , ca + c + 3 * o ,              2 , "anion"  , "HCO3*"     , # Alkalinity Total 4.5 (as CaCO3)
+  "bicarbonate_alkalinity_as_caco3" , "0150"    , h + c + 3 * o  ,              1 , "anion"  , "HCO3"      , # HCO3 - Bicarbonate Alkalinity (as CaCO3)
+  "carbonate_alkalinity_as_caco3"   , "0149"    , c + 3 * o      ,              2 , "anion"  , "CO3"       , # CO3 - Carbonate Alkalinity (as CaCO3)
 
   # Cations
-  "calcium_dissolved"               , "CA-D"    , 40.078         ,              2 , "cation" , TRUE            , TRUE        , "Ca"        , # Calcium Dissolved
-  "magnesium_dissolved"             , "MG-D"    , 24.3050        ,              2 , "cation" , TRUE            , TRUE        , "Mg"        , # Magnesium Dissolved
-  "sodium_dissolved"                , "NA-D"    , 22.98976928    ,              1 , "cation" , TRUE            , TRUE        , "Na"        , # Sodium Dissolved
-  "potassium_dissolved"             , "K--D"    , 39.0983        ,              1 , "cation" , TRUE            , TRUE        , "K"         , # Potassium Dissolved
-  "aluminum_dissolved"              , "AL-D"    ,  8.993615      ,              1 , "cation" , TRUE            , FALSE       , ""          , # Aluminum Dissolved
-  "copper_dissolved"                , "CU-D"    , 63.546         ,              2 , "cation" , TRUE            , FALSE       , ""          , # Copper Dissolved
-  "iron_dissolved"                  , "FE-D"    , 55.845         ,              2 , "cation" , TRUE            , FALSE       , ""          , # Iron Dissolved
-  "manganese_dissolved"             , "MN-D"    , 54.938045      ,              2 , "cation" , TRUE            , FALSE       , ""          , # Manganese Dissolved
-  "zinc_dissolved"                  , "ZN-D"    , 65.38          ,              2 , "cation" , TRUE            , FALSE       , ""          , # Zinc Dissolved
-  "nitrogen_ammonia_dissolved"      , "1108"    , 14.0067        ,              1 , "cation" , TRUE            , FALSE       , ""          , # Nitrogen Ammonia Dissolved
+  "calcium_dissolved"               , "CA-D"    , 40.078         ,              2 , "cation" , "Ca"        , # Calcium Dissolved
+  "magnesium_dissolved"             , "MG-D"    , 24.3050        ,              2 , "cation" , "Mg"        , # Magnesium Dissolved
+  "sodium_dissolved"                , "NA-D"    , 22.98976928    ,              1 , "cation" , "Na"        , # Sodium Dissolved
+  "potassium_dissolved"             , "K--D"    , 39.0983        ,              1 , "cation" , "K"         , # Potassium Dissolved
+  "aluminum_dissolved"              , "AL-D"    ,  8.993615      ,              1 , "cation" , ""          , # Aluminum Dissolved
+  "copper_dissolved"                , "CU-D"    , 63.546         ,              2 , "cation" , ""          , # Copper Dissolved
+  "iron_dissolved"                  , "FE-D"    , 55.845         ,              2 , "cation" , ""          , # Iron Dissolved
+  "manganese_dissolved"             , "MN-D"    , 54.938045      ,              2 , "cation" , ""          , # Manganese Dissolved
+  "zinc_dissolved"                  , "ZN-D"    , 65.38          ,              2 , "cation" , ""          , # Zinc Dissolved
+  "nitrogen_ammonia_dissolved"      , "1108"    , 14.0067        ,              1 , "cation" , ""          , # Nitrogen Ammonia Dissolved
+
+  "ph"                              , "4"       , NA             , NA             , "cation" , "" # pH Lab - converts to [H ion] for charge_balances
 ) |>
   mutate(conversion = round(mass / valency_state, 5)) |>
-  arrange(.data$type, .data$bcgwcat_param)
+  arrange(.data$type, .data$bcgwcat_param) |>
+  left_join(ion_use, by = "bcgwcat_param")
+
 
 # Water Quality Standards ----------------------------------------------------
 not_as_n <- function(x) !(!is.na(x) & str_detect(x, "Reported as N\\\\."))
@@ -126,7 +158,7 @@ wq_std <- bcdata::bcdc_get_data(
     ems_code %in% index_params$ems_code,
     !is.na(ems_code),
     days == 1,
-    !is.na(limit),
+    !is.na(limit)
     # !uniqueid %in% c(591, 627) # remove Nitrate and Nitrite "reported as N." (limitnotes)
   ) |>
   select(
@@ -178,7 +210,7 @@ usethis::use_data(
 
 # External Data ----------------------------------
 write_csv(wq_std, "inst/extdata/wq_std.csv")
-write_csv(meq_conversion, "inst/extdata/meq_conversion.csv")
+write_csv(ion_details, "inst/extdata/ion_details.csv")
 write_csv(index_params, "inst/extdata/index_params.csv")
 write_csv(index_meta_params, "inst/extdata/index_meta_params.csv")
 write_csv(index_meta, "inst/extdata/index_meta.csv")
