@@ -52,7 +52,7 @@ meq <- function(samples) {
     ) |>
     dplyr::mutate(
       result_value = dplyr::if_else(
-        .data$observed_property_id == "ph",
+        .data$bcgwcat_param == "ph",
         10^(-.data$result_value) * 1000,
         .data$result_value / .data$conversion
       ),
