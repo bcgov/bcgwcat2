@@ -26,26 +26,20 @@
 #' @param samples Data frame. Output from [fmt_minimal()] or [fetch_renmods()].
 #' If [fetch_renmods()] samples will be first formatted with [fmt_minimal()].
 #'
-#' @export
+#' @noRd
 #'
 #' @examplesIf interactive()
-#' s <- data.frame(observed_property_id = "", result_value = "", result_unit = "")
-#' meq(s)
 #'
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
 #'
-#' meq(s)
-#'
-#' fmt_minimal(s)
-#' fmt_wide(s)
-#'
+#' fmt_base(s) |>
+#'   meq() |>
+#'   dplyr::select(bcgwcat_param, observed_property_id, result_value, result_unit)
 
 meq <- function(samples) {
-  samples <- check_samples(samples)
-
   # TODO: CHECK UNITS!
 
   # Values all in mg/L which is the standard reported by EMS
@@ -115,23 +109,28 @@ meq <- function(samples) {
 #'
 #' @return Data frame with only cation and anion sums, and charge balance
 #'   values.
-#' @export
+#' @noRd
+#'
 #' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
-#' charge_balance(s)
+#' fmt_base(s) |>
+#'   meq() |>
+#'   charge_balance() |>
+#'   dplyr::select(bcgwcat_param, result_value, result_unit)
 #'
 #' s <- fetch_renmods(
 #'   ems_ids = "E102388",
 #'   date_range = c("2026-01-01", "2027-01-01")
 #' )
-#' charge_balance(s)
+#' fmt_base(s) |>
+#'   meq() |>
+#'   charge_balance() |>
+#'   dplyr::select(bcgwcat_param, result_value, result_unit)
 
 charge_balance <- function(samples) {
-  samples <- check_samples(samples)
-
   pre_calc <- samples |>
     # take mean of multiple measures
     dplyr::left_join(
@@ -200,22 +199,30 @@ is_valid <- function(charge_balance) {
 #' replacement (indicated by an '*' on HCO3 in the water type). Otherwise,
 #' missing ions are ignored (i.e. treated as 0). The column `missing_ion`
 #' indicates whether there is a problem with the water type, such that it is
-#' missing a cation or anion (i.e. is all cations or all anions).
-#' Water type is designed to compliment piper plots by using the same ions so
-#' they are comparable.
+#' missing a cation or anion (i.e. is all cations or all anions). Water type is
+#' designed to compliment piper plots by using the same ions so they are
+#' comparable.
 #'
 #' @param samples Data frame. Output from [fmt_minimal()] or [fetch_renmods()].
 #' If [fetch_renmods()] samples will be first formatted with [fmt_minimal()].
 #'
-#'
 #' @return Data frame with added columns `water_type` and `missing_ion`.
 #'
-#' @examplesIf interactive()
+#' @noRd
 #'
-#' @export
-water_type <- function(samples) {
-  samples <- check_samples(samples)
+#' @examplesIf interactive()
+#' s <- fetch_renmods(
+#'   ems_ids = "E102388",
+#'   date_range = c("2026-01-01", "2027-01-01")
+#' )
+#'
+#' fmt_base(s) |>
+#'   add_meq() |>
+#'   add_charge_balance() |>
+#'   water_type() |>
+#'   dplyr::select(water_type)
 
+water_type <- function(samples) {
   samples |>
     dplyr::full_join(ion_details(), by = "bcgwcat_param") |>
     dplyr::filter(
@@ -235,7 +242,7 @@ water_type <- function(samples) {
 #' @returns Data frame with two values, missing_ion and water_type
 #'
 #' @noRd
-#' @examplesIf interactive()
+
 water_type_single <- function(df) {
   vals <- rlang::set_names(df$result_value, df$water_code)
   vals <- vals[!is.na(names(vals))]

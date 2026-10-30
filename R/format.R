@@ -67,40 +67,12 @@ fmt_minimal <- function(
   out_path = paste0("bcgwcat_", Sys.Date(), ".csv")
 ) {
   # TODO: Check path
-  check_samples(samples, check_fmt = FALSE)
 
-  # Filtering and Fixing
-  s <- samples |>
-    dplyr::filter(
-      # Only parameters of interest
-      .data$Observed_Property_ID %in% index_params()$enmods_param
-    ) |>
-    fix_replicates() |>
-    fix_ph()
-
-  # Get only columns of interest
-  s <- s |>
-    dplyr::select(any_of(meta_vars("enmods", param_vars = TRUE))) |>
-    dplyr::rename_with(tolower)
-
-  # Add and arrange additional columns
-  s <- s |>
-    add_obs_wells() |>
-    add_bcgwcat_params() |>
-    dplyr::relocate(
-      "obs_well",
-      "location_id",
-      "location_latitude",
-      "location_longitude",
-      "location_elevation",
-      "observed_date_time",
-      "medium"
-    )
+  s <- fmt_base(samples)
 
   # Add calculated values
   s <- s |>
     add_meq() |>
-    add_placeholders() |>
     add_charge_balance() |>
     add_water_type()
 
@@ -110,6 +82,7 @@ fmt_minimal <- function(
 #' @rdname fmt
 fmt_wide <- function(
   samples,
+  params = NULL,
   include_units = TRUE,
   fix_multi_method = "first",
   save = FALSE,
@@ -117,6 +90,10 @@ fmt_wide <- function(
 ) {
   # TODO add saving
   samples <- check_samples(samples)
+
+  if (!is.null(params)) {
+    samples <- dplyr::filter(samples, .data$bcgwcat_param %in% .env$params)
+  }
 
   prep <- samples |>
     add_units_to_col("bcgwcat_param", "result_unit", include_units) |>
@@ -134,6 +111,8 @@ fmt_wide <- function(
       -"result_unit"
     )
 
+  #TODO: Consider adding placeholders incase missing?
+
   tidyr::pivot_wider(
     prep,
     names_from = "bcgwcat_param",
@@ -141,12 +120,46 @@ fmt_wide <- function(
   )
 }
 
-fmt_piper <- function(samples, with_Alk = TRUE) {
-  p <- meq_conversion() |>
-    dplyr::filter(water_type)
+fmt_base <- function(samples) {
+  check_samples(samples, check_fmt = FALSE)
+
+  # Filtering and Fixing
+  s <- samples |>
+    dplyr::filter(
+      # Only parameters of interest
+      .data$Observed_Property_ID %in% index_params()$enmods_param
+    ) |>
+    fix_replicates() |>
+    fix_ph()
+
+  # Format and return only columns of interest
+  s <- fmt_cols(s)
+
+  s
+}
+
+fmt_piper <- function(
+  samples,
+  group = NULL,
+  valid_only = TRUE,
+  omit_outliers = TRUE,
+  with_alkalinity = TRUE
+) {
+  p <- ion_details() |>
+    dplyr::filter(piper_plot)
+
+  ss <- fmt_wide(samples, params = c(p$bcgwcat_param, "charge_balance"))
+
   p <- rlang::set_names(paste0(p$bcgwcat_param, "_meq/l"), p$water_code)
 
-  ss <- fmt_wide(samples)
+  # Ions not measured at all are missing (NA)
+  for (ion in setdiff(names(p), names(ss))) {
+    ss[[ion]] <- NA_real_
+  }
+
+  if (!is.null(group)) {
+    ss$group <- ss[[group]]
+  }
 
   if (with_Alk) {
     ss <- dplyr::mutate(
@@ -165,9 +178,30 @@ fmt_piper <- function(samples, with_Alk = TRUE) {
       "observed_date_time",
       "charge_balance_%",
       "water_type",
+      "group",
       dplyr::any_of(p)
-    ) |>
-    dplyr::filter(abs(`charge_balance_%`) <= 10) |>
+    )
+
+  if (valid_only) {
+    # Only keep samples with valid charge balances of non-NA and -10 <= x <= 10
+    ss <- dplyr::filter(
+      ss,
+      !is.na(.data[["charge_balance_%"]]),
+      abs(.data[["charge_balance_%"]]) <= 10
+    )
+  }
+
+  if (omit_outliers) {
+    # Omit outliers by water type (not within the dominant set)
+
+    ss <- ss |>
+      tidyr::nest(.by = group) |>
+      dplyr::mutate(data = purrr::map(.data$data, add_dominant_water_types)) |>
+      tidyr::unnest("data") |>
+      dplyr::filter(.data$dominant)
+  }
+
+  ss <- ss |>
     dplyr::rowwise() |>
     dplyr::mutate(
       # Add together, ignore missing, but if both missing, NA
@@ -177,13 +211,38 @@ fmt_piper <- function(samples, with_Alk = TRUE) {
         sum(.data$Na, .data$K, na.rm = TRUE)
       ),
       HCO3_CO3 = dplyr::if_else(
-        is.na(.data$`HCO3*`) & is.na(.data$HCO3),
+        is.na(.data$HCO3) & is.na(.data$CO3),
         NA_real_,
-        sum(.data$`HCO3*`, .data$HCO3, na.rm = TRUE)
+        sum(.data$HCO3, .data$CO3, na.rm = TRUE)
       )
     ) |>
     dplyr::ungroup()
+
+  ss
 }
+
+fmt_cols <- function(samples) {
+  s <- samples |>
+    dplyr::select(any_of(meta_vars("enmods", param_vars = TRUE))) |>
+    dplyr::rename_with(tolower)
+
+  # Add and arrange additional columns
+  s <- s |>
+    add_obs_wells() |>
+    add_bcgwcat_params() |>
+    dplyr::relocate(
+      "obs_well",
+      "location_id",
+      "location_latitude",
+      "location_longitude",
+      "location_elevation",
+      "observed_date_time",
+      "medium"
+    )
+
+  s
+}
+
 
 add_obs_wells <- function(df) {
   if ("obs_well" %in% names(df) && !"location_name" %in% names(df)) {
@@ -237,6 +296,7 @@ add_meq <- function(samples) {
 
 add_charge_balance <- function(samples) {
   samples |>
+    add_placeholders() |>
     dplyr::filter(
       !bcgwcat_param %in% c("charge_balance", "anion_sum", "cation_sum")
     ) |>
@@ -246,6 +306,7 @@ add_charge_balance <- function(samples) {
 add_water_type <- function(samples) {
   dplyr::left_join(samples, water_type(samples), by = meta_vars())
 }
+
 
 add_placeholders <- function(
   samples,
