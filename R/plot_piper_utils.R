@@ -98,6 +98,40 @@ grid_diamond <- function(breaks = seq(0, 100, 20)) {
 
 
 shift_xy <- function(x, dx = 0, dy = 0) {
-  x$data <- dplyr::mutate(x$data, x = .data$x + dx, y = .data$y + dy)
+  if (!is.null(x$data)) {
+    x$data <- dplyr::mutate(x$data, x = .data$x + dx, y = .data$y + dy)
+  }
   x
+}
+
+check_point_scale <- function(d, type = "point_colour", scale = NULL) {
+  g <- dplyr::n_distinct(d$group)
+
+  if (!is.null(scale)) {
+    if (length(scale) == 1) {
+      scale <- rep(scale, g)
+    } else if (length(scale) != g) {
+      abort(
+        "The length of {.var {{type}}} doesn't match the number of categories in {.var group}"
+      )
+    }
+  }
+  scale
+}
+
+check_point_colour <- function(d, point_colour) {
+  g <- dplyr::n_distinct(d$group)
+
+  if (is.null(point_colour)) {
+    point_colour <- rep("black", g)
+  } else if (length(point_colour) == 1 && point_colour == "viridis") {
+    point_colour <- viridisLite::viridis(
+      n = g,
+      end = 0.8
+    )
+  }
+
+  point_colour <- check_point_scale(d, scale = point_colour)
+
+  point_colour
 }
