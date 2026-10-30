@@ -161,7 +161,7 @@ fmt_piper <- function(
     ss$group <- ss[[group]]
   }
 
-  if (with_Alk) {
+  if (with_alkalinity) {
     ss <- dplyr::mutate(
       ss,
       `bicarbonate_alkalinity_as_caco3_meq/l` = dplyr::if_else(

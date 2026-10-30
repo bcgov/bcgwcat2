@@ -195,7 +195,8 @@ is_valid <- function(charge_balance) {
 #' Water type based on anions Cl, SO4, HCO3 and cations Ca, Mg, Na and K. Ions
 #' are ranked by proportion MEQ, all greater than 10% are listed in descending
 #' order of presence, cations first. Water type is only calculated for samples
-#' with valid charge balances. If HCO3 is missing, we use Meas Alk as a
+#' with valid charge balances. If HCO3 (`bicarbonate_alkalinity_as_caco3_meq/l`)
+#' is missing, we use Alkalinity (`alkalinity_total_4.5_as_caco3_meq/l`) as a
 #' replacement (indicated by an '*' on HCO3 in the water type). Otherwise,
 #' missing ions are ignored (i.e. treated as 0). The column `missing_ion`
 #' indicates whether there is a problem with the water type, such that it is

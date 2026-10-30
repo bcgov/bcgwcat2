@@ -51,7 +51,7 @@ stiff_plot <- function(
   colour = TRUE,
   legend = TRUE,
   valid = TRUE,
-  with_Alk = TRUE
+  with_alkalinity = TRUE
 ) {
   samples <- check_samples(samples)
 
@@ -104,7 +104,7 @@ stiff_plot <- function(
 
   # Use Meas_Alk if missing HCO3
   if (
-    with_Alk &&
+    with_alkalinity &&
       all(
         c(
           "bicarbonate_alkalinity_as_caco3",
