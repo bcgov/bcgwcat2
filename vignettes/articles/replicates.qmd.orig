@@ -1,14 +1,10 @@
 ---
 title: "Sample Replicates"
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
 ---
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
-)
-```
 
 EnMoDS data includes some replicate samples, usually defined as quality control (QC) samples alongside regular
 environmental samples. The `QC_Type` column identifies which kind of sample each
