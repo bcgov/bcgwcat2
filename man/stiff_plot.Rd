@@ -10,7 +10,7 @@ stiff_plot(
   colour = TRUE,
   legend = TRUE,
   valid = TRUE,
-  with_Alk = TRUE
+  with_alkalinity = TRUE
 )
 }
 \arguments{

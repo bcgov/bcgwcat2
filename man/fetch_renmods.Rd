@@ -4,7 +4,7 @@
 \alias{fetch_renmods}
 \title{Fetch renmods data for specific ems_ids}
 \usage{
-fetch_renmods(ems_ids, date_range)
+fetch_renmods(ems_ids, date_range = NULL)
 }
 \arguments{
 \item{ems_ids}{Character Vector. EMS ids to filter EnMoDS samples to.}

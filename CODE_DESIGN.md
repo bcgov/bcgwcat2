@@ -97,8 +97,8 @@ from `fetch_renmods()`, it applies `fmt_minimal()` automatically.
 
 CSV lookup tables in `inst/extdata/` control how parameters and columns are
 named. They are read at runtime by `read_data()` (`R/utils-data.R`) and exposed
-through `index_params()`, `index_meta()`, `index_meta_params()`,
-`meq_conversion()` and `wq_std()`.
+through `index_params()`, `index_meta()`, `index_meta_params()`, `ion_details()`
+and `wq_std()`.
 
 - `index_params()` maps EnMoDS parameter names (`enmods_param`) to snake_case
   `bcgwcat_param` names. The code uses `bcgwcat_param` names throughout.
@@ -114,7 +114,7 @@ through `index_params()`, `index_meta()`, `index_meta_params()`,
 **These CSVs are generated files.** `data-raw/parameters.R` builds them from:
 
 - the hand-edited CSVs in `data-raw/`
-- the `meq_conversion` table, which is defined inside the script
+- the `ion_details` table, which is defined inside the script
 - the drinking water guidelines (`wq_std`), which are downloaded with `bcdata`
 
 To change a table, edit the source in `data-raw/` and re-run the script. Don't

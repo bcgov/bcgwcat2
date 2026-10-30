@@ -4,15 +4,57 @@
 \alias{piper_plot}
 \title{Create a Piper Plot}
 \usage{
-piper_plot(samples, margin = 10, scale = 1)
+piper_plot(
+  samples,
+  group = "location_id",
+  legend_position = c(0.9, 0.8),
+  legend_title = group,
+  qc_valid_only = TRUE,
+  qc_omit_outliers = TRUE,
+  qc_with_alkalinity = TRUE,
+  point_colour = "viridis",
+  point_shape = 16,
+  point_size = 3,
+  margin = 10,
+  scale = 1
+)
 }
 \arguments{
 \item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
 If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
+\item{group}{Character. Column by which to group data for colour, shape,
+filled and size.}
+
+\item{legend_position}{Character or Numeric. Location of legend passed to
+\code{legend.position} argument of \code{\link[ggplot2:theme]{ggplot2::theme()}}. One of none", "left",
+"right", "bottom", "top", "inside", OR a vector of two numeric values x,
+and y to specify an exact position.}
+
+\item{legend_title}{Character. Title of legend. Defaults to \code{group}.}
+
+\item{qc_omit_outliers}{Logical. Whether to omit outliers by looking at dominant
+water types (see \code{?dominant_water_types()}). Default TRUE.}
+
+\item{qc_with_alkalinity}{Logical. Whether to use Alkalinity
+(\code{alkalinity_total_4.5_as_caco3_meq/l}) for HCO3
+(\code{bicarbonate_alkalinity_as_caco3_meq/l}) if HCO3 is missing. Default TRUE.
+Matches behaviour of \code{water_type()}.}
+
+\item{point_colour}{Character. Colour or colours by which to colour points.
+Either a single value (applied to all), or a vector of values the same
+length as the number of \code{groups}. Can also be "viridis", which will use the
+viridis colour scale.}
+
+\item{point_shape}{Numeric. Shape of points to use, 1 - 25, see
+?\code{\link[ggplot2:scale_shape]{ggplot2::scale_shape()}}. Either a single value (applied to all), or a
+vector of values the same length as the number of \code{groups}.}
+
 \item{margin}{Numeric. Plot margin size in "pt". See \code{\link[ggplot2:element]{ggplot2::margin()}}.}
 
 \item{scale}{Numeric. Scale text (axes titles and tick labels).}
+
+\item{qc_valid}{Logical. Keep only valid data (charge balances <=10)}
 }
 \value{
 ggplot Piper Plot

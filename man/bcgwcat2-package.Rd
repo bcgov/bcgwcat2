@@ -11,8 +11,8 @@ Set of tools for working with groundwater chemstry data from the BC Government E
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://bcgov.github.io/bcgwcat/}
-  \item \url{https://github.com/bcgov/bcgwcat/}
+  \item \url{https://bcgov.github.io/bcgwcat2/}
+  \item \url{https://github.com/bcgov/bcgwcat2/}
 }
 
 }
