@@ -277,3 +277,95 @@ water_type_single <- function(df) {
       water_type = paste0(.data$water_code, collapse = "-")
     )
 }
+
+#' Return dominant water types
+#'
+#' Find the dominant waters type in a group of samples, but only if there are
+#' more than `n` samples with a valid water type. HCO3 and HCO3* types are
+#' treated as equivalent. Water types are considered dominant if they are in  >
+#' `p` proportion of  samples.
+#'
+#' @param samples Data frame with at least a `water_type` column.
+#' @param n Numeric. Minimum number of samples needed to determine dominant
+#' water types.
+#' @param p Numeric. Proportion of samples with a given water type for it to be
+#' considered dominant.
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+#' wt <- data.frame(
+#'   water_type = c(
+#'     "Mg-Na-Ca-HCO3-SO4",
+#'     "Mg-Na-Ca-HCO3-SO4",
+#'     "Mg-Na-Ca",
+#'     "Ca-Mg-HCO3-SO4",
+#'     "Ca-Mg-HCO3-SO4",
+#'     "Mg-Na",
+#'     "Mg-Na",
+#'     "Ca-Mg-Na")
+#'   )
+#' dominant_water_types(wt)
+
+dominant_water_types <- function(samples, n = 5, p = 0.75) {
+  wt <- dplyr::filter(samples, .data$water_type != "") |> # Also omit NA
+    dplyr::mutate(water_type = stringr::str_remove(.data$water_type, "\\*")) |>
+    dplyr::count(.data$water_type, name = "n_wt")
+
+  if (sum(wt$n_wt) > n) {
+    wt <- wt |>
+      dplyr::arrange(dplyr::desc(.data$n_wt), dplyr::desc(.data$water_type)) |>
+      dplyr::mutate(
+        p = .data$n_wt / sum(.data$n_wt),
+        cum_p1 = cumsum(.data$p)
+      ) |>
+      dplyr::arrange(.data$n_wt, .data$water_type) |>
+      dplyr::mutate(cum_p2 = cumsum(.data$p)) |>
+      dplyr::filter(.data$cum_p1 <= .env$p | .data$cum_p2 >= (1 - .env$p))
+  }
+
+  wt <- dplyr::pull(wt, .data$water_type)
+
+  wt
+}
+
+#' Find the dominant water types
+#'
+#' Find the dominant waters type in a group of samples, if there are more than
+#' `n` samples. Match HCO3 and HCO3* types. Considered dominant types if in >`p`
+#' of samples.
+#'
+#' @param n Numeric. Number of samples above which to remove outliers.
+#' @param p Numeric. Proportion of data required to assign a dominant water
+#'   type.
+#'
+#' @returns Data frame with added `dominant` column. TRUE if the water type is
+#'   in the dominant set, FALSE otherwise.
+#'
+#' @noRd
+#'
+#' @examplesIf interactive()
+#' s <- fetch_renmods(
+#'   ems_ids = "E102388",
+#'   date_range = c("2026-01-01", "2027-01-01")
+#' )
+#'
+#' fmt_base(s) |>
+#'   add_meq() |>
+#'   add_charge_balance() |>
+#'   add_water_type() |>
+#'   add_dominant_water_types() |>
+#'   dplyr::pull(dominant)
+
+add_dominant_water_types <- function(samples, n = 5, p = 0.75) {
+  wt <- dominant_water_types(samples, n, p)
+
+  # Mark if dominant
+  s <- dplyr::mutate(
+    samples,
+    dominant = stringr::str_remove(.data$water_type, "\\*") %in% .env$wt
+  )
+
+  s
+}
