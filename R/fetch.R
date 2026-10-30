@@ -34,8 +34,10 @@
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
 
-fetch_renmods <- function(ems_ids, date_range) {
+fetch_renmods <- function(ems_ids, date_range = NULL) {
   ems_ids <- as.character(ems_ids)
+
+  date_range <- date_range %||% c(min_date, Sys.Date())
 
   s_tbl <- renmods::renmods_connect(dates = date_range) |>
     dplyr::filter(.data$Location_ID %in% .env$ems_ids)
