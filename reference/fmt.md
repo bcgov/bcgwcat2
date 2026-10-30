@@ -15,6 +15,7 @@ fmt_minimal(
 
 fmt_wide(
   samples,
+  params = NULL,
   include_units = TRUE,
   fix_multi_method = "first",
   save = FALSE,

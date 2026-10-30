@@ -9,9 +9,9 @@ piper and stiff plots.
 
 Useful links:
 
-- <https://bcgov.github.io/bcgwcat/>
+- <https://bcgov.github.io/bcgwcat2/>
 
-- <https://github.com/bcgov/bcgwcat/>
+- <https://github.com/bcgov/bcgwcat2/>
 
 ## Author
 

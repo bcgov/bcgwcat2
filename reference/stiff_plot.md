@@ -1,6 +1,6 @@
-# Create Stiff plot
+# Create Stiff Plot
 
-Create Stiff plot
+Create Stiff Plot
 
 ## Usage
 
@@ -11,7 +11,7 @@ stiff_plot(
   colour = TRUE,
   legend = TRUE,
   valid = TRUE,
-  with_Alk = TRUE
+  with_alkalinity = TRUE
 )
 ```
 
@@ -47,8 +47,11 @@ stiff_plot(
 - with_Alk:
 
   Logical. Whether to use `Meas_Alk_meq` for `HCO3_meq` if missing.
-  Default TRUE. Matches behaviour of
-  [`water_type()`](https://bcgov.github.io/bcgwcat2/reference/water_type.md).
+  Default TRUE. Matches behaviour of `water_type()`.
+
+## Value
+
+ggplot Stiff Plot
 
 ## Examples
 
@@ -59,8 +62,15 @@ s <- fetch_renmods(
   date_range = c("1990-01-01", "2026-06-01")
 )
 stiff_plot(s)
+
 s <- fetch_renmods(
   ems_ids = c("E218582"),
+  date_range = c("2026-01-01", "2026-06-01")
+)
+stiff_plot(s)
+
+s <- fetch_renmods(
+  ems_ids = c("E298733"),
   date_range = c("2026-01-01", "2026-06-01")
 )
 stiff_plot(s)

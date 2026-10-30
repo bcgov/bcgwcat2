@@ -11,6 +11,11 @@ tutorial](https://help.github.com/articles/set-up-git) and check out a
 more detailed guide to [pull
 requests](https://help.github.com/articles/using-pull-requests/).)
 
+Before making changes, please read
+[CODE_DESIGN.md](https://bcgov.github.io/bcgwcat2/CODE_DESIGN.md). It
+explains how the package is structured, how to set up for development
+and the coding conventions used.
+
 Pull requests will be evaluated by the repository guardians on a
 schedule and if deemed beneficial will be committed to the master.
 

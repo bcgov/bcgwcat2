@@ -10,8 +10,8 @@ Functions available for coding from the R console
 
 - [`bcgwcat_app()`](https://bcgov.github.io/bcgwcat2/reference/bcgwcat_app.md)
   : Title
-- [`charge_balance()`](https://bcgov.github.io/bcgwcat2/reference/charge_balance.md)
-  : Calculate charge balance
+- [`dominant_water_types()`](https://bcgov.github.io/bcgwcat2/reference/dominant_water_types.md)
+  : Return dominant water types
 - [`fetch_renmods()`](https://bcgov.github.io/bcgwcat2/reference/fetch_renmods.md)
   : Fetch renmods data for specific ems_ids
 - [`fmt_minimal()`](https://bcgov.github.io/bcgwcat2/reference/fmt.md)
@@ -23,9 +23,7 @@ Functions available for coding from the R console
   : Title
 - [`index_params()`](https://bcgov.github.io/bcgwcat2/reference/index_params.md)
   : Title
-- [`meq()`](https://bcgov.github.io/bcgwcat2/reference/meq.md) :
-  Calculate MEQ values
-- [`meq_conversion()`](https://bcgov.github.io/bcgwcat2/reference/meq_conversion.md)
+- [`ion_details()`](https://bcgov.github.io/bcgwcat2/reference/ion_details.md)
   : Title
 - [`mod_data_ui()`](https://bcgov.github.io/bcgwcat2/reference/mod_data_ui.md)
   : Title
@@ -39,15 +37,15 @@ Functions available for coding from the R console
   : Title
 - [`mod_water_quality_ui()`](https://bcgov.github.io/bcgwcat2/reference/mod_water_quality_ui.md)
   : Title
+- [`piper_plot()`](https://bcgov.github.io/bcgwcat2/reference/piper_plot.md)
+  : Create a Piper Plot
 - [`stiff_plot()`](https://bcgov.github.io/bcgwcat2/reference/stiff_plot.md)
-  : Create Stiff plot
+  : Create Stiff Plot
 - [`tbl_overview()`](https://bcgov.github.io/bcgwcat2/reference/tbl_overview.md)
   : Reactable table for data overview
 - [`tbl_water_quality()`](https://bcgov.github.io/bcgwcat2/reference/tbl_water_quality.md)
   : Reactable table for data overview
 - [`water_quality()`](https://bcgov.github.io/bcgwcat2/reference/water_quality.md)
   : Assess problems with water quality
-- [`water_type()`](https://bcgov.github.io/bcgwcat2/reference/water_type.md)
-  : Calculate water type
 - [`wq_std()`](https://bcgov.github.io/bcgwcat2/reference/wq_std.md) :
   Water Quality Data

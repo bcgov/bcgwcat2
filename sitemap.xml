@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://bcgov.github.io/bcgwcat2/404.html</loc></url>
+<url><loc>https://bcgov.github.io/bcgwcat2/CODE_DESIGN.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/CONTRIBUTING.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/LICENSE-text.html</loc></url>
@@ -8,27 +9,26 @@
 <url><loc>https://bcgov.github.io/bcgwcat2/news/index.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/bcgwcat2-package.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/bcgwcat_app.html</loc></url>
-<url><loc>https://bcgov.github.io/bcgwcat2/reference/charge_balance.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/common_docs.html</loc></url>
+<url><loc>https://bcgov.github.io/bcgwcat2/reference/dominant_water_types.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/fetch_renmods.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/fmt.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/index.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/index_meta.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/index_meta_params.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/index_params.html</loc></url>
-<url><loc>https://bcgov.github.io/bcgwcat2/reference/meq.html</loc></url>
-<url><loc>https://bcgov.github.io/bcgwcat2/reference/meq_conversion.html</loc></url>
+<url><loc>https://bcgov.github.io/bcgwcat2/reference/ion_details.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/mod_data_ui.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/mod_details_server.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/mod_details_ui.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/mod_overview_ui.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/mod_plots_ui.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/mod_water_quality_ui.html</loc></url>
+<url><loc>https://bcgov.github.io/bcgwcat2/reference/piper_plot.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/stiff_plot.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/tbl_overview.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/tbl_water_quality.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/water_quality.html</loc></url>
-<url><loc>https://bcgov.github.io/bcgwcat2/reference/water_type.html</loc></url>
 <url><loc>https://bcgov.github.io/bcgwcat2/reference/wq_std.html</loc></url>
 </urlset>
 
