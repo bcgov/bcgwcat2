@@ -4,17 +4,19 @@ vignette: >
   %\VignetteIndexEntry{Custom piperplots}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
-knitr:
-  opts_chunk:
-    collapse: true
-    comment: '#>'
-    dpi: 200
-    out.width: '80%'
-    fig.align: 'center'
-    fig.path: 'vignettes/piper-'
-    fig.width: 8
-    fig.asp: 1
 ---
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dpi = 200,
+  out.width = "80%",
+  fig.align = "center",
+  fig.path = "figures/piper-"
+)
+```
 
 
 With `piper_plot()` we can create custom piper plots using data
@@ -50,22 +52,24 @@ Let's take a quick look... lots of data!
 s
 ```
 
-```{r}
-ss <- fmt_minimal(s)
-```
-
 ## Groups
 
 By default, the piper plot creates a plot with points coloured by EMS ID.
 
 ```{r}
-piper_plot(samples = ss)
+piper_plot(samples = s)
 ```
 
 We can override this by specifying the `group` argument ourselves. In this
 case, let's create a column `Year` and colour points that.
 
+First we'll prepare the data by formatting it. If you don't need to make 
+any adjustments, `piper_plot()` will automatically format your data for you, but
+if you plan to make chages, format first, then make your changes.
+
 ```{r}
+ss <- fmt_minimal(s)
+
 ss <- mutate(ss, Year = factor(year(observed_date_time)))
 
 piper_plot(ss, group = "Year")

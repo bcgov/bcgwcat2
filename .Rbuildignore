@@ -30,3 +30,5 @@ _\.new\.png$
 ^vignettes/articles$
 ^vignettes/\.quarto$
 ^vignettes/*_files$
+^vignettes/.*\.orig$
+^vignettes/_precompile\.R$
