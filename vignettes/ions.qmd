@@ -37,6 +37,8 @@ The exact types of anions and cations used depend on the calculation.
 ```{r}
 #| echo: false
 #| results: "asis"
+library(bcgwcat2)
+
 ions <- data.frame(
   ions = c(
     "Cl",
@@ -240,7 +242,7 @@ We would get the following water type.
 ```{r}
 #| echo: false
 d |>
-  dplyr::left_join(bcgwcat2::ion_details(), by = "bcgwcat_param") |>
+  dplyr::left_join(ion_details(), by = "bcgwcat_param") |>
   bcgwcat2:::water_type_single() |>
   dplyr::select("water_type", "missing_ion") |>
   gt::gt()
