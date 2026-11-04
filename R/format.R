@@ -159,6 +159,8 @@ fmt_piper <- function(
 
   if (!is.null(group)) {
     ss$group <- ss[[group]]
+  } else {
+    ss$group <- "group"
   }
 
   if (with_alkalinity) {

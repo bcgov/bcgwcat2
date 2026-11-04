@@ -73,6 +73,8 @@ piper_plot <- function(
   gap <- 0.4
 
   # Themes and Scales
+  legend_position <- if (all(s$group == "group")) "none" else legend_position
+
   t1 <- scale_piper_points(
     s,
     legend_title,
