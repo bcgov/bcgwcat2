@@ -62,13 +62,42 @@ piper_plot <- function(
   margin = 10,
   scale = 1
 ) {
-  s <- fmt_piper(
+  s <- fmt_plot(
     samples,
+    plot_type = "piper_plot",
     group,
     valid_only = qc_valid_only,
     omit_outliers = qc_omit_outliers,
     with_alkalinity = qc_with_alkalinity
   )
+
+  if (nrow(s) == 0) {
+    if (shiny::isRunning()) {
+      validate(need(nrow(s) > 0), "Missing too many samples")
+    }
+    inform(
+      "Not enough {dplyr::if_else(qc_valid_only, 'good quality', '')} data."
+    )
+    return(invisible())
+  }
+
+  # Combine Ions
+  s <- s |>
+    dplyr::rowwise() |>
+    dplyr::mutate(
+      # Add together, ignore missing, but if both missing, NA
+      Na_K = dplyr::if_else(
+        is.na(.data$Na) & is.na(.data$K),
+        NA_real_,
+        sum(.data$Na, .data$K, na.rm = TRUE)
+      ),
+      HCO3_CO3 = dplyr::if_else(
+        is.na(.data$HCO3) & is.na(.data$CO3),
+        NA_real_,
+        sum(.data$HCO3, .data$CO3, na.rm = TRUE)
+      )
+    ) |>
+    dplyr::ungroup()
 
   gap <- 0.4
 
@@ -110,8 +139,8 @@ piper_cation <- function(
   cat <- dplyr::select(
     samples,
     "location_id",
-    "group",
     "observed_date_time",
+    "group",
     "Ca",
     "Mg",
     "Na_K"
@@ -140,8 +169,8 @@ piper_anion <- function(
   an <- dplyr::select(
     samples,
     "location_id",
-    "group",
     "observed_date_time",
+    "group",
     "SO4",
     "Cl",
     "HCO3_CO3"
@@ -170,8 +199,8 @@ piper_combined <- function(
   all <- dplyr::select(
     samples,
     "location_id",
-    "group",
     "observed_date_time",
+    "group",
     "Ca",
     "Mg",
     "Na_K",

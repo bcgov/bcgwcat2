@@ -139,19 +139,30 @@ fmt_base <- function(samples) {
   s
 }
 
-fmt_piper <- function(
+fmt_plot <- function(
   samples,
+  plot_type,
   group = NULL,
   valid_only = TRUE,
   omit_outliers = TRUE,
   with_alkalinity = TRUE
 ) {
-  p <- ion_details() |>
-    dplyr::filter(piper_plot)
+  p <- dplyr::filter(ion_details(), .data[[plot_type]])
 
-  ss <- fmt_wide(samples, params = c(p$bcgwcat_param, "charge_balance"))
+  ss <- check_samples(samples, check_fmt = TRUE) |>
+    dplyr::filter(
+      bcgwcat_param %in% c(p$bcgwcat_param, "charge_balance"),
+      result_unit %in% c("meq/l", "%")
+    ) |>
+    fmt_wide(include_units = FALSE) |>
+    dplyr::arrange(.data$location_id, .data$observed_date_time) |>
+    dplyr::mutate(
+      sample_id = paste0(.data$location_id, "-", seq_len(dplyr::n())),
+      .by = "location_id"
+    )
 
   # Ions not measured at all are missing (NA)
+
   for (ion in setdiff(p$bcgwcat_param, names(ss))) {
     ss[[ion]] <- NA_real_
   }
@@ -167,10 +178,10 @@ fmt_piper <- function(
     # Use alkalinity if missing bicarbonate
     ss <- dplyr::mutate(
       ss,
-      `bicarbonate_alkalinity_as_caco3_meq/l` = dplyr::if_else(
-        is.na(.data$`bicarbonate_alkalinity_as_caco3_meq/l`),
-        .data$`alkalinity_total_4.5_as_caco3_meq/l`,
-        .data$`bicarbonate_alkalinity_as_caco3_meq/l`
+      `bicarbonate_alkalinity_as_caco3` = dplyr::if_else(
+        is.na(.data$`bicarbonate_alkalinity_as_caco3`),
+        .data$`alkalinity_total_4.5_as_caco3`,
+        .data$`bicarbonate_alkalinity_as_caco3`
       )
     )
   }
@@ -180,27 +191,24 @@ fmt_piper <- function(
     dplyr::select(
       "location_id",
       "observed_date_time",
-      "charge_balance_%",
-      "water_type",
+      "sample_id",
       "group",
-      dplyr::any_of(rlang::set_names(
-        paste0(p$bcgwcat_param, "_meq/l"),
-        p$water_code
-      ))
+      "charge_balance",
+      "water_type",
+      dplyr::any_of(rlang::set_names(p$bcgwcat_param, p$water_code))
     )
 
   if (valid_only) {
     # Only keep samples with valid charge balances of non-NA and -10 <= x <= 10
     ss <- dplyr::filter(
       ss,
-      !is.na(.data[["charge_balance_%"]]),
-      abs(.data[["charge_balance_%"]]) <= 10
+      !is.na(.data$charge_balance),
+      abs(.data$charge_balance) <= 10
     )
   }
 
   if (omit_outliers) {
     # Omit outliers by water type (not within the dominant set)
-
     ss <- ss |>
       tidyr::nest(.by = group) |>
       dplyr::mutate(data = purrr::map(.data$data, add_dominant_water_types)) |>
@@ -208,24 +216,58 @@ fmt_piper <- function(
       dplyr::filter(.data$dominant)
   }
 
-  ss <- ss |>
-    dplyr::rowwise() |>
-    dplyr::mutate(
-      # Add together, ignore missing, but if both missing, NA
-      Na_K = dplyr::if_else(
-        is.na(.data$Na) & is.na(.data$K),
-        NA_real_,
-        sum(.data$Na, .data$K, na.rm = TRUE)
-      ),
-      HCO3_CO3 = dplyr::if_else(
-        is.na(.data$HCO3) & is.na(.data$CO3),
-        NA_real_,
-        sum(.data$HCO3, .data$CO3, na.rm = TRUE)
-      )
-    ) |>
-    dplyr::ungroup()
-
   ss
+}
+
+fmt_stiff <- function(
+  samples,
+  group = NULL,
+  valid_only = TRUE,
+  with_alkalinity = TRUE
+) {
+  s <- samples |>
+    tidyr::pivot_longer(
+      cols = -c(
+        "location_id",
+        "observed_date_time",
+        "sample_id",
+        "group",
+        "charge_balance",
+        "water_type"
+      ),
+      names_to = "water_code",
+      values_to = "result_value"
+    )
+
+  ion_positions <- c(
+    "Ca" = 0,
+    "Mg" = 1,
+    "Na" = 2,
+    "Cl" = 0,
+    "HCO3" = 2,
+    "SO4" = 1
+  )
+
+  s <- s |>
+    dplyr::mutate(
+      y = ion_positions[.data$water_code],
+      result_value = dplyr::if_else(
+        .data$water_code %in% c("Ca", "Mg", "Na"),
+        -.data$result_value,
+        .data$result_value
+      ),
+      water_code = factor(
+        .data$water_code,
+        levels = c("Ca", "Mg", "Na", "HCO3", "SO4", "Cl")
+      ),
+      sample = factor(paste(.data$sample_id, .data$y))
+    ) |>
+    dplyr::filter(!is.na(water_code)) |>
+    dplyr::arrange(.data$sample_id, .data$water_code) |>
+    # Remove samples with any NAs
+    dplyr::filter(!anyNA(.data$result_value), .by = "sample_id")
+
+  s
 }
 
 fmt_cols <- function(samples) {
