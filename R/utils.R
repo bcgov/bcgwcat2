@@ -15,7 +15,7 @@
 #' @param x Character vector of names to make pretty.
 #' @param units Whether or not these include units
 #'
-#' @returns
+#' @returns Character vector of pretty names
 #'
 #' @noRd
 #' @examples

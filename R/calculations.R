@@ -292,7 +292,7 @@ water_type_single <- function(df) {
 #' @param p Numeric. Proportion of samples with a given water type for it to be
 #' considered dominant.
 #'
-#' @returns
+#' @returns Character vector of dominant water types
 #'
 #' @export
 #' @examples

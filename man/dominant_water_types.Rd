@@ -15,6 +15,9 @@ water types.}
 \item{p}{Numeric. Proportion of samples with a given water type for it to be
 considered dominant.}
 }
+\value{
+Character vector of dominant water types
+}
 \description{
 Find the dominant waters type in a group of samples, but only if there are
 more than \code{n} samples with a valid water type. HCO3 and HCO3* types are

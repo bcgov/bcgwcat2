@@ -16,7 +16,7 @@ renmods_data_types <- function() {
 
 #' Title
 #'
-#' @returns
+#' @returns Data frame of ion details
 #'
 #' @export
 #' @examplesIf interactive()
@@ -29,7 +29,7 @@ ion_details <- function() {
 #' @param which Which data to fetch metadata columns for?
 #' @param param_vars Logical. Include parameter variables?
 #'
-#' @returns
+#' @returns Character vector of metadata variable names
 #'
 #' @noRd
 #' @examples
@@ -49,30 +49,36 @@ meta_vars <- function(which = "bcgwcat", param_vars = FALSE) {
 
 #' Title
 #'
-#' @returns
+#' @returns Data frame of metadata variables
 #'
 #' @export
 #' @examples
+#' index_meta()
+
 index_meta <- function() {
   read_data("index_meta.csv")
 }
 
 #' Title
 #'
-#' @returns
+#' @returns Data frame of parameters
 #'
 #' @export
 #' @examples
+#' index_params()
+
 index_params <- function() {
   read_data("index_params.csv")
 }
 
 #' Title
 #'
-#' @returns
+#' @returns Data frame of metadata parameters
 #'
 #' @export
 #' @examples
+#' index_meta_params()
+
 index_meta_params <- function() {
   read_data("index_meta_params.csv")
 }

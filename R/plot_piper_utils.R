@@ -29,11 +29,12 @@ pq_to_xy <- function(p, q) {
 #     dplyr::mutate(group = name)
 # }
 
-#' Title
+#' Create data frame of ternary grid vectors
 #'
-#' @param breaks
+#' @param breaks Numeric vector of breaks to use on the ternary grid axes.
+#' Defaults to 0 to 100 by 20.
 #'
-#' @returns
+#' @returns Data frame of ternary grid vectors
 #'
 #' @noRd
 #' @examples
@@ -68,15 +69,17 @@ grid_ternary_lines <- function(p, i) {
     dplyr::mutate(axis = i, group = paste0(i, "_", id))
 }
 
-#' Title
+#' Create data frame of diamond grid vectors
 #'
-#' @param breaks
+#' @param breaks Numeric vector of breaks to use on the diamond grid axes.
+#' Defaults to 0 to 100 by 20.
 #'
-#' @returns
+#' @returns Data frame of diamond grid vectors
 #'
 #' @noRd
 #' @examples
 #' grid_diamond()
+
 grid_diamond <- function(breaks = seq(0, 100, 20)) {
   props <- breaks / max(breaks)
   p_lines <- purrr::map(

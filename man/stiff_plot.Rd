@@ -6,27 +6,35 @@
 \usage{
 stiff_plot(
   samples,
-  ems_id = NULL,
-  colour = TRUE,
-  legend = TRUE,
-  valid = TRUE,
-  with_alkalinity = TRUE
+  group = "location_id",
+  colour = "viridis",
+  legend_position = c(0.9, 0.8),
+  legend_title = group,
+  qc_valid_only = TRUE,
+  qc_with_alkalinity = TRUE,
+  margin = 10
 )
 }
 \arguments{
 \item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
 If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
-\item{ems_id}{IDs to plot if dataset includes more than one}
+\item{group}{Character. Column by which to group data for colour, shape,
+filled and size.}
 
-\item{colour}{Whether to add colour by \code{ems_id}}
+\item{legend_position}{Character or Numeric. Location of legend passed to
+\code{legend.position} argument of \code{\link[ggplot2:theme]{ggplot2::theme()}}. One of none", "left",
+"right", "bottom", "top", "inside", OR a vector of two numeric values x,
+and y to specify an exact position.}
 
-\item{legend}{Whether to show the legend}
+\item{legend_title}{Character. Title of legend. Defaults to \code{group}.}
 
-\item{valid}{Logical. Keep only valid data (charge balances <=10)}
+\item{qc_with_alkalinity}{Logical. Whether to use Alkalinity
+(\code{alkalinity_total_4.5_as_caco3_meq/l}) for HCO3
+(\code{bicarbonate_alkalinity_as_caco3_meq/l}) if HCO3 is missing. Default TRUE.
+Matches behaviour of \code{water_type()}.}
 
-\item{with_Alk}{Logical. Whether to use \code{Meas_Alk_meq} for \code{HCO3_meq} if
-missing. Default TRUE. Matches behaviour of \code{water_type()}.}
+\item{margin}{Numeric. Plot margin size in "pt". See \code{\link[ggplot2:element]{ggplot2::margin()}}.}
 }
 \value{
 ggplot Stiff Plot
@@ -38,7 +46,7 @@ Create Stiff Plot
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 s <- fetch_renmods(
   ems_ids = c("1401030"),
-  date_range = c("1990-01-01", "2026-06-01")
+  date_range = c("1990-01-01", "2024-06-01")
 )
 stiff_plot(s)
 
@@ -52,6 +60,11 @@ s <- fetch_renmods(
   ems_ids = c("E298733"),
   date_range = c("2026-01-01", "2026-06-01")
 )
+stiff_plot(s)
+
+s <- fetch_renmods(ems_ids = c("1401030", "1401377", "E292373"))
+
+s <- fetch_renmods(ems_ids = "1401377")
 stiff_plot(s)
 \dontshow{\}) # examplesIf}
 }

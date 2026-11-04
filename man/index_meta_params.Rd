@@ -6,6 +6,12 @@
 \usage{
 index_meta_params()
 }
+\value{
+Data frame of metadata parameters
+}
 \description{
 Title
+}
+\examples{
+index_meta_params()
 }

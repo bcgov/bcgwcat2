@@ -6,6 +6,12 @@
 \usage{
 index_params()
 }
+\value{
+Data frame of parameters
+}
 \description{
 Title
+}
+\examples{
+index_params()
 }

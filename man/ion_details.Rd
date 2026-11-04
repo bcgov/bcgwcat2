@@ -6,6 +6,9 @@
 \usage{
 ion_details()
 }
+\value{
+Data frame of ion details
+}
 \description{
 Title
 }

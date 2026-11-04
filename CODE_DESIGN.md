@@ -106,6 +106,13 @@ whether or not they came from different EMS IDs. As a result:
   more than 5 samples with a water type. Therefore wells with 5 samples or fewer
   should retain all samples, even if the data set has more than 5 points.
 
+**Stiff plot samples**
+
+- bcgwcat would group samples by Date, which meant that multiple samples on a
+  date would be combined
+- bcgwcat2 groups samples by date/time, so these separate samples are not
+  combined.
+
 ## Parameter and metadata lookup tables
 
 CSV lookup tables in `inst/extdata/` control how parameters and columns are
