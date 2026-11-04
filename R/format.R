@@ -150,13 +150,12 @@ fmt_piper <- function(
 
   ss <- fmt_wide(samples, params = c(p$bcgwcat_param, "charge_balance"))
 
-  p <- rlang::set_names(paste0(p$bcgwcat_param, "_meq/l"), p$water_code)
-
   # Ions not measured at all are missing (NA)
-  for (ion in setdiff(names(p), names(ss))) {
+  for (ion in setdiff(p$bcgwcat_param, names(ss))) {
     ss[[ion]] <- NA_real_
   }
 
+  # If no group use a placeholder
   if (!is.null(group)) {
     ss$group <- ss[[group]]
   } else {
@@ -164,6 +163,7 @@ fmt_piper <- function(
   }
 
   if (with_alkalinity) {
+    # Use alkalinity if missing bicarbonate
     ss <- dplyr::mutate(
       ss,
       `bicarbonate_alkalinity_as_caco3_meq/l` = dplyr::if_else(
@@ -174,6 +174,7 @@ fmt_piper <- function(
     )
   }
 
+  # Select and rename
   ss <- ss |>
     dplyr::select(
       "location_id",
@@ -181,7 +182,10 @@ fmt_piper <- function(
       "charge_balance_%",
       "water_type",
       "group",
-      dplyr::any_of(p)
+      dplyr::any_of(rlang::set_names(
+        paste0(p$bcgwcat_param, "_meq/l"),
+        p$water_code
+      ))
     )
 
   if (valid_only) {
