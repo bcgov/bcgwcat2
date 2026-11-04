@@ -178,7 +178,7 @@ charge_balance <- function(samples) {
     ) |>
     dplyr::mutate(
       result_unit = dplyr::if_else(
-        bcgwcat_param %in% c("cation_sum", "anion_sum"),
+        .data$bcgwcat_param %in% c("cation_sum", "anion_sum"),
         "meq/l",
         "%"
       )
@@ -227,7 +227,7 @@ water_type <- function(samples) {
   samples |>
     dplyr::full_join(ion_details(), by = "bcgwcat_param") |>
     dplyr::filter(
-      (.data$water_type & result_unit == "meq/l") |
+      (.data$water_type & .data$result_unit == "meq/l") |
         .data$bcgwcat_param == "charge_balance"
     ) |>
     tidyr::nest(.by = meta_vars(), .key = "wt") |>
@@ -263,7 +263,7 @@ water_type_single <- function(df) {
   total <- if (all(is.na(vals))) NA_real_ else sum(vals, na.rm = TRUE) # Ignore missing ions
 
   df |>
-    dplyr::filter(water_code %in% names(vals)) |>
+    dplyr::filter(.data$water_code %in% names(vals)) |>
     dplyr::mutate(
       total = .env$total,
       prop = round(.data$result_value / .data$total, 3)

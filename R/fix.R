@@ -15,8 +15,8 @@ fix_ph <- function(s) {
 
   problems <- dplyr::filter(
     s,
-    Observed_Property_ID == "pH (acidity)",
-    Data_Classification == "FIELD_RESULT"
+    .data$Observed_Property_ID == "pH (acidity)",
+    .data$Data_Classification == "FIELD_RESULT"
   )
 
   if (nrow(problems) > 0) {
@@ -27,18 +27,18 @@ fix_ph <- function(s) {
     s <- s |>
       dplyr::mutate(
         Observed_Property_ID = dplyr::if_else(
-          Observed_Property_ID == "pH (acidity)" &
-            Data_Classification == "FIELD_RESULT",
+          .data$Observed_Property_ID == "pH (acidity)" &
+            .data$Data_Classification == "FIELD_RESULT",
           "pH-Field (acidity)",
-          Observed_Property_ID
+          .data$Observed_Property_ID
         )
       )
 
     # Check if exact duplicate of recorded field result (pick the transformed result if so)
     dups <- s |>
-      dplyr::filter(Observed_Property_ID == "pH-Field (acidity)") |>
+      dplyr::filter(.data$Observed_Property_ID == "pH-Field (acidity)") |>
       dplyr::filter(dplyr::n() > 1, .by = cols) |>
-      dplyr::filter(Observed_Property_Name == "0004")
+      dplyr::filter(.data$Observed_Property_Name == "0004")
 
     # Remove exact dups created
     if (nrow(dups) > 0) {
@@ -46,7 +46,7 @@ fix_ph <- function(s) {
         msg,
         "x" = "Reclassification created {nrow(dups)} duplicate(s), omit instead"
       )
-      s <- anti_join(s, dups, by = c(cols, "Observed_Property_Name"))
+      s <- dplyr::anti_join(s, dups, by = c(cols, "Observed_Property_Name"))
     }
 
     inform(msg)
@@ -63,7 +63,7 @@ fix_replicates <- function(s) {
 fix_multiple_measures <- function(
   s,
   method = c("first", "min", "max", "mean"),
-  type = c("reapeated_measure", "multi_measure", "meq")
+  type = c("repeated_measure", "multi_measure", "meq")
 ) {
   # Find multiple measures
   # (i.e. same location, same date, same parameter, and 'by')
@@ -73,13 +73,13 @@ fix_multiple_measures <- function(
   if (type == "multi_measure") {
     desc <- "Multiple measurement types"
     obs <- c(obs, "analysis_method")
-    s_prep <- dplyr::filter(s, result_unit != "meq/l")
+    s_prep <- dplyr::filter(s, .data$result_unit != "meq/l")
   } else if (type == "repeated_measure") {
     desc <- "Repeated measurements"
-    s_prep <- dplyr::filter(s, result_unit != "meq/l")
+    s_prep <- dplyr::filter(s, .data$result_unit != "meq/l")
   } else if (type == "meq") {
     desc <- "Multiple MEQ values"
-    s_prep <- dplyr::filter(s, result_unit == "meq/l")
+    s_prep <- dplyr::filter(s, .data$result_unit == "meq/l")
   } else {
     abort("`type` must be 'multi_measure' or 'repeated_measure' or 'meq'")
   }

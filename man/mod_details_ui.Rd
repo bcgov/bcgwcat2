@@ -9,6 +9,9 @@ mod_details_ui(id = "details")
 \arguments{
 \item{id}{}
 }
+\value{
+Shiny module UI
+}
 \description{
 Title
 }

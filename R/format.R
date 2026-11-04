@@ -151,8 +151,8 @@ fmt_plot <- function(
 
   ss <- check_samples(samples, check_fmt = TRUE) |>
     dplyr::filter(
-      bcgwcat_param %in% c(p$bcgwcat_param, "charge_balance"),
-      result_unit %in% c("meq/l", "%")
+      .data$bcgwcat_param %in% c(p$bcgwcat_param, "charge_balance"),
+      .data$result_unit %in% c("meq/l", "%")
     ) |>
     fmt_wide(include_units = FALSE) |>
     dplyr::arrange(.data$location_id, .data$observed_date_time) |>
@@ -262,7 +262,7 @@ fmt_stiff <- function(
       ),
       sample = factor(paste(.data$sample_id, .data$y))
     ) |>
-    dplyr::filter(!is.na(water_code)) |>
+    dplyr::filter(!is.na(.data$water_code)) |>
     dplyr::arrange(.data$sample_id, .data$water_code) |>
     # Remove samples with any NAs
     dplyr::filter(!anyNA(.data$result_value), .by = "sample_id")
@@ -272,7 +272,7 @@ fmt_stiff <- function(
 
 fmt_cols <- function(samples) {
   s <- samples |>
-    dplyr::select(any_of(meta_vars("enmods", param_vars = TRUE))) |>
+    dplyr::select(dplyr::any_of(meta_vars("enmods", param_vars = TRUE))) |>
     dplyr::rename_with(tolower)
 
   # Add and arrange additional columns
@@ -347,7 +347,7 @@ add_charge_balance <- function(samples) {
   samples |>
     add_placeholders() |>
     dplyr::filter(
-      !bcgwcat_param %in% c("charge_balance", "anion_sum", "cation_sum")
+      !.data$bcgwcat_param %in% c("charge_balance", "anion_sum", "cation_sum")
     ) |>
     dplyr::bind_rows(charge_balance(samples))
 }

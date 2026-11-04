@@ -14,7 +14,7 @@
 #'
 #' @param id
 #'
-#' @returns
+#' @returns Shiny module UI
 #'
 #' @export
 #' @examplesIf interactive()
@@ -302,7 +302,7 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
 #'
 #' @param date_ranges
 #'
-#' @returns
+#' @returns Logical TRUE if check passes
 #'
 #' @noRd
 #' @examples
@@ -351,15 +351,7 @@ check_date_range <- function(date_range) {
     any()
 }
 
-#' Check if a date range has
-#'
-#' @param date_ranges
-#'
-#' @returns
-#'
-#' @noRd
-#' @examples
-#' check_date_range(c("1990-01-01 to 2020-01-01"))
+
 char_to_range <- function(date_range) {
   purrr::map(date_range, \(d) {
     if (is.na(d)) {

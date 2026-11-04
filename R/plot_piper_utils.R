@@ -66,7 +66,7 @@ grid_ternary_lines <- function(p, i) {
     }
   ) |>
     purrr::list_rbind(names_to = "id") |>
-    dplyr::mutate(axis = i, group = paste0(i, "_", id))
+    dplyr::mutate(axis = i, group = paste0(i, "_", .data$id))
 }
 
 #' Create data frame of diamond grid vectors

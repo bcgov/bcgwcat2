@@ -11,6 +11,9 @@ mod_details_server(id = "details", ...)
 
 \item{...}{}
 }
+\value{
+Shiny module server
+}
 \description{
 Title
 }

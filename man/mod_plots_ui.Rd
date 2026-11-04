@@ -9,6 +9,9 @@ mod_plots_ui(id = "plots")
 \arguments{
 \item{id}{}
 }
+\value{
+Shiny module UI
+}
 \description{
 Title
 }

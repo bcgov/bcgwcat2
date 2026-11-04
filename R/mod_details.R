@@ -14,7 +14,7 @@
 #'
 #' @param id
 #'
-#' @returns
+#' @returns Shiny module UI
 #'
 #' @export
 #' @examplesIf interactive()
@@ -165,7 +165,7 @@ mod_details_ui <- function(id = "details") {
 #' @param id Character. Shiny module ID
 #' @param ...
 #'
-#' @returns
+#' @returns Shiny module server
 #'
 #' @export
 #' @examplesIf interactive()

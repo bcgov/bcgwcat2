@@ -75,7 +75,10 @@ tbl_overview <- function(samples, which) {
 
   d <- d |>
     dplyr::mutate(
-      observed_date_time = format(observed_date_time, "%Y-%m-%d %H:%M:%S %Z")
+      observed_date_time = format(
+        .data$observed_date_time,
+        "%Y-%m-%d %H:%M:%S %Z"
+      )
     ) |>
     dplyr::relocate(
       dplyr::all_of(cols_meta),
@@ -152,7 +155,10 @@ tbl_overview <- function(samples, which) {
 tbl_water_quality <- function(samples, which = NULL, params = NULL) {
   wq <- water_quality(samples) |>
     dplyr::mutate(
-      observed_date_time = format(observed_date_time, "%Y-%m-%d %H:%M:%S %Z")
+      observed_date_time = format(
+        .data$observed_date_time,
+        "%Y-%m-%d %H:%M:%S %Z"
+      )
     )
 
   if (!is.null(params)) {

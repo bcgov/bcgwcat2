@@ -17,6 +17,9 @@
 #' @import bslib shiny
 #' @importFrom glue glue
 #' @importFrom glue glue_collapse
+#' @importFrom rlang .data
+#' @importFrom rlang .env
+#' @importFrom rlang :=
 ## usethis namespace: end
 NULL
 

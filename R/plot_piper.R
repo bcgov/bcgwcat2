@@ -145,7 +145,7 @@ piper_cation <- function(
     "Mg",
     "Na_K"
   ) |>
-    dplyr::mutate(across(c("Ca", "Mg", "Na_K"), \(x) {
+    dplyr::mutate(dplyr::across(c("Ca", "Mg", "Na_K"), \(x) {
       x / (.data$Ca + .data$Mg + .data$Na_K)
     }))
 
@@ -175,7 +175,7 @@ piper_anion <- function(
     "Cl",
     "HCO3_CO3"
   ) |>
-    dplyr::mutate(across(c("SO4", "Cl", "HCO3_CO3"), \(x) {
+    dplyr::mutate(dplyr::across(c("SO4", "Cl", "HCO3_CO3"), \(x) {
       x / (.data$SO4 + .data$Cl + .data$HCO3_CO3)
     }))
   an <- dplyr::bind_cols(an, abc_to_xy(an$HCO3_CO3, an$Cl, an$SO4))

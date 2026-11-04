@@ -34,7 +34,7 @@ water_quality <- function(samples) {
   samples <- check_samples(samples)
 
   wq <- samples |>
-    dplyr::filter(result_unit != "meq/l") |> # No meq params
+    dplyr::filter(.data$result_unit != "meq/l") |> # No meq params
     dplyr::select(dplyr::all_of(c(
       meta_vars(param_vars = TRUE),
       "bcgwcat_param"

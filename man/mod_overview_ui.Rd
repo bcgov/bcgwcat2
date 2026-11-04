@@ -11,6 +11,9 @@ mod_overview_ui(id = "overview", data_types = renmods_data_types())
 
 \item{data_types}{}
 }
+\value{
+Shiny module UI
+}
 \description{
 Title
 }

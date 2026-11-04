@@ -14,7 +14,7 @@
 #'
 #' @param id
 #'
-#' @returns
+#' @returns Shiny module UI
 #'
 #' @export
 #' @examplesIf interactive()
@@ -113,12 +113,10 @@ mod_plots_server <- function(
       req(input$omit_bad)
       req(input$legends)
 
-      stiff_plot(
-        samples(),
-        ems_id = input$ems_ids,
-        valid = as.logical(input$omit_bad),
-        legend = as.logical(input$legends)
-      )
+      s <- samples() |>
+        dplyr::filter(.data$location_id %in% input$ems_ids)
+
+      stiff_plot(s, qc_valid_only = as.logical(input$omit_bad))
     })
 
     # Plots - Piper ---------------------

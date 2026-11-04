@@ -15,7 +15,7 @@
 #' @param id Character. Shiny module ID
 #' @param data_types
 #'
-#' @returns
+#' @returns Shiny module UI
 #'
 #' @export
 #' @examplesIf interactive()
@@ -137,7 +137,7 @@ mod_overview_server <- function(
             status = .data$date_since < .data$update,
             status = tidyr::replace_na(.data$status, FALSE)
           ) |>
-          dplyr::select(status, type, last_downloaded, date_range)
+          dplyr::select("status", "type", "last_downloaded", "date_range")
       }
       t
     }) |>

@@ -35,7 +35,8 @@ Imports:
     shiny (>= 1.14.0),
     shinyjs,
     stringr,
-    tidyr
+    tidyr,
+    viridisLite
 Remotes: 
     bcgov/renmods
 Suggests: 
