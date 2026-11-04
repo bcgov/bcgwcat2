@@ -253,7 +253,8 @@ water_type_single <- function(df) {
     return(data.frame(missing_ion = FALSE, water_type = NA))
   }
 
-  if ("HCO3" %in% names(vals) && is.na(vals[["HCO3"]])) {
+  # If HCO3 NA OR missing row, use alkalinity (HCO3*)
+  if (!"HCO3" %in% names(vals) || is.na(vals[["HCO3"]])) {
     drop <- "HCO3"
   } else {
     drop <- "HCO3*"
