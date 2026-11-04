@@ -104,6 +104,7 @@ fmt_wide <- function(
     ) |>
     # Multiple samples, different methods
     fix_multiple_measures(method = fix_multi_method, type = "multi_measure") |>
+    fix_multiple_measures(method = fix_multi_method, type = "meq") |>
     dplyr::select(
       -"observed_property_id",
       -"observed_property_name",
