@@ -12,12 +12,8 @@
 
 #' Create Stiff Plot
 #'
-#' @param ems_id IDs to plot if dataset includes more than one
-#' @param colour Whether to add colour by `ems_id`
-#' @param legend Whether to show the legend
-#' @param valid Logical. Keep only valid data (charge balances <=10)
-#' @param with_Alk Logical. Whether to use `Meas_Alk_meq` for `HCO3_meq` if
-#'   missing. Default TRUE. Matches behaviour of `water_type()`.
+#' @inheritParams piper_plot
+#' @inheritParams common_docs
 #'
 #' @returns ggplot Stiff Plot
 #'
@@ -28,7 +24,7 @@
 #' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030"),
-#'   date_range = c("1990-01-01", "2026-06-01")
+#'   date_range = c("1990-01-01", "2024-06-01")
 #' )
 #' stiff_plot(s)
 #'
@@ -44,184 +40,61 @@
 #' )
 #' stiff_plot(s)
 #'
+#' s <- fetch_renmods(ems_ids = c("1401030", "1401377", "E292373"))
+#'
+#' s <- fetch_renmods(ems_ids = "1401377")
+#' stiff_plot(s)
+#'
 
 stiff_plot <- function(
   samples,
-  ems_id = NULL,
-  colour = TRUE,
-  legend = TRUE,
-  valid = TRUE,
-  with_alkalinity = TRUE
+  group = "location_id",
+  colour = "viridis",
+  legend_position = c(0.9, 0.8),
+  legend_title = group,
+  qc_valid_only = TRUE,
+  qc_with_alkalinity = TRUE,
+  margin = 10
 ) {
-  samples <- check_samples(samples)
+  # TODO: Use omit outliers here?
 
-  if (!is.null(ems_id)) {
-    if (length(ems_id) > 1 && !colour) {
-      abort("Can only specify one ems_id at a time unless 'colour = TRUE'")
-    }
-    samples <- dplyr::filter(samples, .data$location_id %in% !!ems_id)
-  } else if (length(unique(samples$location_id)) > 1 && !colour) {
-    abort(
-      "With more than one location_id (EMS ID) included in data, ",
-      "need to specify which id OR 'colour = TRUE'"
-    )
-  }
+  s <- fmt_plot(
+    samples,
+    plot_type = "stiff_plot",
+    group = group,
+    valid_only = qc_valid_only,
+    omit_outliers = FALSE, #omit_outliers = qc_omit_outliers,
+    with_alkalinity = qc_with_alkalinity
+  ) |>
+    fmt_stiff()
 
-  s_prep <- samples |>
-    dplyr::filter(
-      .data$bcgwcat_param %in%
-        c(
-          "charge_balance",
-          "calcium_dissolved",
-          "magnesium_dissolved",
-          "sodium_dissolved",
-          "chloride_dissolved",
-          "bicarbonate_alkalinity_as_caco3", #HCO3
-          "alkalinity_total_4.5_as_caco3", # Meas_alk
-          "sulfate_dissolved",
-          "charge_balance"
-        ),
-      .data$result_unit %in% c("meq/l", "%")
-    ) |>
-    dplyr::mutate(
-      id = paste0(.data$location_id, .data$observed_date_time),
-      id = as.numeric(factor(id)),
-      .by = "location_id"
-    ) |>
-    dplyr::select(
-      "location_id",
-      "id",
-      "bcgwcat_param",
-      "result_value"
-    ) |>
-    dplyr::arrange(.data$location_id, .data$id)
-
-  s_prep <- s_prep |>
-    tidyr::pivot_wider(
-      names_from = "bcgwcat_param",
-      values_from = "result_value"
-    )
-
-  # Use Meas_Alk if missing HCO3
-  if (
-    with_alkalinity &&
-      all(
-        c(
-          "bicarbonate_alkalinity_as_caco3",
-          "alkalinity_total_4.5_as_caco3"
-        ) %in%
-          names(s_prep)
-      )
-  ) {
-    s_prep <- dplyr::mutate(
-      s_prep,
-      bicarbonate_alkalinity_as_caco3 = dplyr::if_else(
-        is.na(.data$bicarbonate_alkalinity_as_caco3),
-        .data$alkalinity_total_4.5_as_caco3,
-        .data$bicarbonate_alkalinity_as_caco3
-      )
-    )
-  }
-
-  # Keep only valid data if specified
-  if (valid) {
-    s_prep <- dplyr::filter(s_prep, is_valid(.data$charge_balance))
-  }
-
-  s_prep <- s_prep |>
-    dplyr::select(-dplyr::any_of("bicarbonate_alkalinity_as_caco3")) |>
-    tidyr::pivot_longer(
-      cols = -c("location_id", "id", "charge_balance"),
-      names_to = "bcgwcat_param",
-      values_to = "result_value"
-    )
-
-  # Remove rows with any NAs
-  s_prep <- dplyr::filter(
-    s_prep,
-    !anyNA(.data$result_value),
-    .by = c("location_id", "id")
-  )
-
-  if (nrow(s_prep) == 0) {
-    inform(
-      paste(
-        "Not enough ",
-        dplyr::if_else(valid, "good quality ", ""),
-        "data for this EMS ID"
-      )
-    )
-    return(invisible())
-  }
-
-  stiff <- s_prep |>
-    dplyr::mutate(
-      y = dplyr::case_when(
-        .data$bcgwcat_param == "calcium_dissolved" ~ 0,
-        .data$bcgwcat_param == "magnesium_dissolved" ~ 1,
-        .data$bcgwcat_param == "sodium_dissolved" ~ 2,
-        .data$bcgwcat_param == "chloride_dissolved" ~ 0,
-        .data$bcgwcat_param == "alkalinity_total_4.5_as_caco3" ~ 2,
-        .data$bcgwcat_param == "sulfate_dissolved" ~ 1
-      ),
-      result_value = dplyr::if_else(
-        .data$bcgwcat_param %in%
-          c("calcium_dissolved", "magnesium_dissolved", "sodium_dissolved"),
-        -.data$result_value,
-        .data$result_value
-      ),
-      bcgwcat_param = factor(
-        .data$bcgwcat_param,
-        levels = c(
-          "calcium_dissolved",
-          "magnesium_dissolved",
-          "sodium_dissolved",
-          "alkalinity_total_4.5_as_caco3",
-          "sulfate_dissolved",
-          "chloride_dissolved"
-        )
-      )
-    ) |>
-    dplyr::arrange(.data$location_id, .data$id, .data$bcgwcat_param) |>
-    dplyr::group_by(.data$location_id, .data$id) |>
-    dplyr::mutate(
-      sample = factor(paste(.data$id, .data$y)),
-      n = sum(!is.na(.data$result_value)),
-      element = stringr::str_remove(.data$bcgwcat_param, "_meq")
-    ) |>
-    dplyr::filter(.data$n == 6) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(ems_id = location_id)
-
-  if (colour) {
-    fill <- "ems_id"
-  } else {
-    fill <- NULL
-  }
-
-  if (nrow(stiff) == 0) {
+  if (nrow(s) == 0) {
     if (shiny::isRunning()) {
-      validate(need(nrow(stiff) > 0), "Missing too many samples")
+      validate(need(nrow(s) > 0), "Missing too many samples")
     }
-    inform("Missing too many samples")
+    inform(
+      "Not enough {dplyr::if_else(qc_valid_only, 'good quality', '')} data."
+    )
     return(invisible())
   }
 
-  ggplot2::ggplot(
-    stiff,
+  colour <- check_colour_scale(s, colour)
+  legend_position <- if (all(s$group == "group")) "none" else legend_position
+
+  g <- ggplot2::ggplot(
+    s,
     ggplot2::aes(
       x = .data$result_value,
       y = .data$sample,
-      group = .data$id,
-      fill = .data[[fill]]
+      group = .data$sample_id,
+      fill = .data$group
     )
   ) +
-    ggplot2::theme_classic() +
-    ggplot2::theme(axis.title.y = ggplot2::element_blank()) +
-    ggplot2::geom_polygon(colour = "black", show.legend = legend) +
+    theme_stiff(legend_position, margin = margin) +
+    ggplot2::geom_polygon(colour = "black") +
     ggplot2::geom_vline(xintercept = 0) +
     ggrepel::geom_label_repel(
-      ggplot2::aes(label = .data$bcgwcat_param),
+      ggplot2::aes(label = .data$water_code),
       fill = "white",
       min.segment.length = 0
     ) +
@@ -233,6 +106,45 @@ stiff_plot <- function(
       c(-max(abs(x)), max(abs(x)))
     }) +
     ggplot2::labs(x = "Milliequivalents per litre") +
-    ggplot2::facet_wrap(~ems_id, scales = "free_y") +
-    ggplot2::scale_fill_viridis_d(name = "EMS ID", end = 0.8)
+    ggplot2::scale_fill_manual(name = legend_title, values = colour)
+
+  if (!is.null(group)) {
+    g <- g +
+      ggplot2::facet_wrap(ggplot2::vars(.data$group), scales = "free_y")
+  }
+  g
+}
+
+
+theme_stiff <- function(legend_position = "bottom", margin = 10) {
+  list(
+    ggplot2::theme_bw() +
+      ggplot2::theme(axis.title.y = ggplot2::element_blank()) +
+      ggplot2::theme(
+        legend.position = legend_position,
+        legend.margin = ggplot2::margin(5, 5, 15, 5),
+        plot.margin = ggplot2::margin(margin, margin, margin, margin)
+      )
+  )
+}
+
+check_colour_scale <- function(d, colour = NULL) {
+  g <- dplyr::n_distinct(d$group)
+
+  if (is.null(colour)) {
+    colour <- rep("white", g)
+  } else if (length(colour) == 1 && colour == "viridis") {
+    colour <- viridisLite::viridis(
+      n = g,
+      end = 0.8
+    )
+  } else if (length(colour) == 1) {
+    colour <- rep(colour, g)
+  } else if (length(colour) != g) {
+    abort(
+      "The length of {.var colour} doesn't match the number of categories in {.var group}"
+    )
+  }
+
+  colour
 }
