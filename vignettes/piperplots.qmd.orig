@@ -54,6 +54,8 @@ s
 ss <- fmt_minimal(s)
 ```
 
+## Groups
+
 By default, the piper plot creates a plot with points coloured by EMS ID.
 
 ```{r}
@@ -63,12 +65,13 @@ piper_plot(samples = ss)
 We can override this by specifying the `group` argument ourselves. In this
 case, let's create a column `Year` and colour points that.
 
-
 ```{r}
 ss <- mutate(ss, Year = factor(year(observed_date_time)))
 
 piper_plot(ss, group = "Year")
 ```
+
+## Appearance
 
 We can also customize the appearance of the points.
 
@@ -105,7 +108,7 @@ piper_plot(
 )
 ```
 
-Hmm, those points are a bit tough to see, let's use filled shapes
+Hmm, those points are a bit tough to see, let's use filled shapes.
 
 ```{r}
 piper_plot(
@@ -113,6 +116,17 @@ piper_plot(
   group = "Year_cat",
   point_colour = c("#21908C", "#440154", "#9AD93C"),
   point_shape = c(22, 24, 21),
+  point_size = 5
+)
+```
+
+Or specify the shapes with text, "square", "triangle", "circle"
+```{r}
+piper_plot(
+  samples = ss,
+  group = "Year_cat",
+  point_colour = c("#21908C", "#440154", "#9AD93C"),
+  point_shape = c("square", "triangle", "circle"),
   point_size = 5
 )
 ```
@@ -161,3 +175,19 @@ piper_plot(
 )
 ```
 
+## Quality Control
+
+There are three arguments for specifying quality control (`qc`) which are all TRUE by default:
+- `qc_valid_only` - Only include points with valid charge balances (i.e. absolute value <= 10)
+- `qc_omit_outliers` - Omit samples within a group which do not have a Dominant water type (see [`dominant_water_type()`](reference/dominant_water_types.html) for details)
+- `qc_with_alkalinity` - If HCO3 (`bicarbonate_alkalinity_as_caco3_meq/l`) is missing, use Alkalinity (`alkalinity_total_4.5_as_caco3_meq/l`) instead (see [`water_type()`](reference/water_type.html) for details).
+
+You can turn these off by using `FALSE` for the argument values
+
+```{r}
+piper_plot(
+  samples = ss,
+  qc_omit_outliers = FALSE,
+  qc_with_alkalinity = FALSE
+)
+```
