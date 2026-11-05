@@ -7,11 +7,13 @@ Create Stiff Plot
 ``` r
 stiff_plot(
   samples,
-  ems_id = NULL,
-  colour = TRUE,
-  legend = TRUE,
-  valid = TRUE,
-  with_alkalinity = TRUE
+  group = "location_id",
+  colour = "viridis",
+  legend_position = c(0.9, 0.8),
+  legend_title = group,
+  qc_valid_only = TRUE,
+  qc_with_alkalinity = TRUE,
+  margin = 10
 )
 ```
 
@@ -28,26 +30,34 @@ stiff_plot(
   samples will be first formatted with
   [`fmt_minimal()`](https://bcgov.github.io/bcgwcat2/reference/fmt.md).
 
-- ems_id:
+- group:
 
-  IDs to plot if dataset includes more than one
+  Character. Column by which to group data for colour, shape, filled and
+  size.
 
-- colour:
+- legend_position:
 
-  Whether to add colour by `ems_id`
+  Character or Numeric. Location of legend passed to `legend.position`
+  argument of
+  [`ggplot2::theme()`](https://ggplot2.tidyverse.org/reference/theme.html).
+  One of none", "left", "right", "bottom", "top", "inside", OR a vector
+  of two numeric values x, and y to specify an exact position.
 
-- legend:
+- legend_title:
 
-  Whether to show the legend
+  Character. Title of legend. Defaults to `group`.
 
-- valid:
+- qc_with_alkalinity:
 
-  Logical. Keep only valid data (charge balances \<=10)
+  Logical. Whether to use Alkalinity
+  (`alkalinity_total_4.5_as_caco3_meq/l`) for HCO3
+  (`bicarbonate_alkalinity_as_caco3_meq/l`) if HCO3 is missing. Default
+  TRUE. Matches behaviour of `water_type()`.
 
-- with_Alk:
+- margin:
 
-  Logical. Whether to use `Meas_Alk_meq` for `HCO3_meq` if missing.
-  Default TRUE. Matches behaviour of `water_type()`.
+  Numeric. Plot margin size in "pt". See
+  [`ggplot2::margin()`](https://ggplot2.tidyverse.org/reference/element.html).
 
 ## Value
 
@@ -59,7 +69,7 @@ ggplot Stiff Plot
 if (FALSE) { # interactive()
 s <- fetch_renmods(
   ems_ids = c("1401030"),
-  date_range = c("1990-01-01", "2026-06-01")
+  date_range = c("1990-01-01", "2024-06-01")
 )
 stiff_plot(s)
 
@@ -73,6 +83,11 @@ s <- fetch_renmods(
   ems_ids = c("E298733"),
   date_range = c("2026-01-01", "2026-06-01")
 )
+stiff_plot(s)
+
+s <- fetch_renmods(ems_ids = c("1401030", "1401377", "E292373"))
+
+s <- fetch_renmods(ems_ids = "1401377")
 stiff_plot(s)
 }
 ```

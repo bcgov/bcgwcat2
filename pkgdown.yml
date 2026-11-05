@@ -1,8 +1,10 @@
 pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2026-10-30T22:35Z
+articles:
+  ions: ions.html
+  piperplots: piperplots.html
+last_built: 2026-11-05T14:45Z
 urls:
   reference: https://bcgov.github.io/bcgwcat2/reference
   article: https://bcgov.github.io/bcgwcat2/articles

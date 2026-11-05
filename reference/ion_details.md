@@ -8,6 +8,10 @@ Title
 ion_details()
 ```
 
+## Value
+
+Data frame of ion details
+
 ## Examples
 
 ``` r

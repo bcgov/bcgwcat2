@@ -12,6 +12,10 @@ mod_data_ui(id = "data")
 
 - id:
 
+## Value
+
+Shiny module UI
+
 ## Examples
 
 ``` r

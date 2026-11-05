@@ -27,6 +27,10 @@ dominant_water_types(samples, n = 5, p = 0.75)
   Numeric. Proportion of samples with a given water type for it to be
   considered dominant.
 
+## Value
+
+Character vector of dominant water types
+
 ## Examples
 
 ``` r

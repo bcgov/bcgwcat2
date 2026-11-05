@@ -16,6 +16,10 @@ mod_overview_ui(id = "overview", data_types = renmods_data_types())
 
 - data_types:
 
+## Value
+
+Shiny module UI
+
 ## Examples
 
 ``` r

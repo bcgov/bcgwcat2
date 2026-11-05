@@ -116,6 +116,30 @@ automatically.
   `Observed_Date_Time`, `Observed_Parameter_ID`, `QC_Type`, and
   (possibly) `Data_Classification`
 
+## Differences from bcgwcat
+
+**Piper plot outliers:** bcgwcat2 finds dominant water types separately
+for each `group` in `fmt_piper()`. The original bcgwcat
+[`piper_plot()`](https://bcgov.github.io/bcgwcat2/reference/piper_plot.md)
+used all data whether or not they came from different EMS IDs. As a
+result:
+
+- A water type that was rare overall but dominant within it’s EMS ID
+  would have been removed in bcgwcat (incorrect), but retained in
+  bcgwcat2 (correct)
+- A data set with many points overall but only a few points from each
+  well would have omitted many outliers, but outliers should only
+  removed when there are more than 5 samples with a water type.
+  Therefore wells with 5 samples or fewer should retain all samples,
+  even if the data set has more than 5 points.
+
+**Stiff plot samples**
+
+- bcgwcat would group samples by Date, which meant that multiple samples
+  on a date would be combined
+- bcgwcat2 groups samples by date/time, so these separate samples are
+  not combined.
+
 ## Parameter and metadata lookup tables
 
 CSV lookup tables in `inst/extdata/` control how parameters and columns

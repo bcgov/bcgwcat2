@@ -12,6 +12,10 @@ mod_details_ui(id = "details")
 
 - id:
 
+## Value
+
+Shiny module UI
+
 ## Examples
 
 ``` r

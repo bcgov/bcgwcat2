@@ -136,3 +136,11 @@ Functions available for coding from the R console
 - [`wq_std()`](https://bcgov.github.io/bcgwcat2/reference/wq_std.md) :
   Water Quality Data
 
+# Articles
+
+### All vignettes
+
+- [Anions and
+  Cations](https://bcgov.github.io/bcgwcat2/articles/ions.md):
+- [Custom
+  piperplots](https://bcgov.github.io/bcgwcat2/articles/piperplots.md):

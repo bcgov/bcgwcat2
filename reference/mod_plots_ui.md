@@ -12,6 +12,10 @@ mod_plots_ui(id = "plots")
 
 - id:
 
+## Value
+
+Shiny module UI
+
 ## Examples
 
 ``` r

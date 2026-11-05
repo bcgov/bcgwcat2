@@ -16,6 +16,10 @@ mod_details_server(id = "details", ...)
 
 - ...:
 
+## Value
+
+Shiny module server
+
 ## Examples
 
 ``` r
