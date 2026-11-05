@@ -52,25 +52,25 @@ Let's take a quick look... lots of data!
 ``` r
 s
 #> # A tibble: 794 × 70
-#>    Ministry_Contact Sampling_Agency Project Project_Name Work_Order_number Location_ID Location_Name             
-#>    <chr>            <chr>           <chr>   <chr>        <chr>             <chr>       <chr>                     
-#>  1 Twyla Legault    74 - Permittee  <NA>    <NA>         50224985          1401030     OBS WELL  75 - KEREMEOS (…
-#>  2 Twyla Legault    74 - Permittee  <NA>    <NA>         <NA>              1401377     OBS WELL 203 - CAWSTON (B…
-#>  3 Twyla Legault    74 - Permittee  <NA>    <NA>         50224985          1401030     OBS WELL  75 - KEREMEOS (…
-#>  4 Twyla Legault    74 - Permittee  <NA>    <NA>         50249196          1401377     OBS WELL 203 - CAWSTON (B…
-#>  5 Graeme Henderson 74 - Permittee  <NA>    <NA>         50233207          E292373     OBS WELL 426 - QUALICUM (…
-#>  6 Graeme Henderson 74 - Permittee  <NA>    <NA>         50233207          E292373     OBS WELL 426 - QUALICUM (…
-#>  7 Twyla Legault    74 - Permittee  <NA>    <NA>         50249196          1401377     OBS WELL 203 - CAWSTON (B…
-#>  8 Twyla Legault    74 - Permittee  <NA>    <NA>         50224985          1401030     OBS WELL  75 - KEREMEOS (…
-#>  9 Graeme Henderson 74 - Permittee  <NA>    <NA>         50233207          E292373     OBS WELL 426 - QUALICUM (…
-#> 10 Twyla Legault    74 - Permittee  <NA>    <NA>         50249196          1401377     OBS WELL 203 - CAWSTON (B…
+#>    Ministry_Contact Sampling_Agency Project Project_Name Work_Order_number Location_ID
+#>    <chr>            <chr>           <chr>   <chr>        <chr>             <chr>      
+#>  1 Twyla Legault    74 - Permittee  <NA>    <NA>         50224985          1401030    
+#>  2 Twyla Legault    74 - Permittee  <NA>    <NA>         <NA>              1401377    
+#>  3 Twyla Legault    74 - Permittee  <NA>    <NA>         50224985          1401030    
+#>  4 Twyla Legault    74 - Permittee  <NA>    <NA>         50249196          1401377    
+#>  5 Graeme Henderson 74 - Permittee  <NA>    <NA>         50233207          E292373    
+#>  6 Graeme Henderson 74 - Permittee  <NA>    <NA>         50233207          E292373    
+#>  7 Twyla Legault    74 - Permittee  <NA>    <NA>         50249196          1401377    
+#>  8 Twyla Legault    74 - Permittee  <NA>    <NA>         50224985          1401030    
+#>  9 Graeme Henderson 74 - Permittee  <NA>    <NA>         50233207          E292373    
+#> 10 Twyla Legault    74 - Permittee  <NA>    <NA>         50249196          1401377    
 #> # ℹ 784 more rows
-#> # ℹ 63 more variables: Location_Type <chr>, Location_Latitude <dbl>, Location_Longitude <dbl>,
-#> #   Location_Elevation <dbl>, Location_Elevation_Units <chr>, Location_Group <chr>,
-#> #   Field_Visit_Start_Time <dttm>, Field_Visit_End_Time <dttm>, Field_Visit_Participants <chr>,
-#> #   Field_Comment <chr>, Field_Filtered <lgl>, Field_Filtered_Comment <chr>, Field_Preservative <chr>,
-#> #   Field_Device_ID <chr>, Field_Device_Type <chr>, Sampling_Context_Tag <chr>, Collection_Method <chr>,
-#> #   Medium <chr>, Taxonomy <chr>, Taxonomy_Common_Name <chr>, Depth_Upper <dbl>, Depth_Lower <dbl>, …
+#> # ℹ 64 more variables: Location_Name <chr>, Location_Type <chr>, Location_Latitude <dbl>,
+#> #   Location_Longitude <dbl>, Location_Elevation <dbl>, Location_Elevation_Units <chr>,
+#> #   Location_Group <chr>, Field_Visit_Start_Time <dttm>, Field_Visit_End_Time <dttm>,
+#> #   Field_Visit_Participants <chr>, Field_Comment <chr>, Field_Filtered <lgl>,
+#> #   Field_Filtered_Comment <chr>, Field_Preservative <chr>, Field_Device_ID <chr>,
+#> #   Field_Device_Type <chr>, Sampling_Context_Tag <chr>, Collection_Method <chr>, Medium <chr>, …
 ```
 
 ## Groups
