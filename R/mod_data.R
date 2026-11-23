@@ -233,8 +233,7 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
 
       # Messages to console
       with_messages({
-        s <- fetch_renmods(ems_ids(), date_range()) |> # Fetch data
-          fmt_minimal() # Format
+        s <- fetch_renmods(ems_ids(), date_range()) # Fetch and format data
       })
 
       samples(s)

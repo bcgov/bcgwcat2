@@ -44,9 +44,6 @@
 #' @examplesIf interactive()
 #' s <- fetch_renmods(ems_ids = "E208101", date_range = c("2001-01-01", "2015-01-01"))
 #' piper_plot(s)
-#'
-#' ss <- fmt_minimal(s)
-#' piper_plot(ss)
 
 piper_plot <- function(
   samples,

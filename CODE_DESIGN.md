@@ -66,9 +66,11 @@ The core of the package doesn't depend on Shiny. Data flows through these steps:
 1. **`fetch_renmods()`** (`R/fetch.R`) connects through
    `renmods::renmods_connect()`, filters by `Location_ID` (EMS IDs, always
    converted to character) and by date range, then loads the result into memory.
-   It returns the raw EnMoDS columns, which have TitleCase names.
+   By default it then formats the data with `fmt_minimal()`. With `raw = TRUE`
+   it returns the raw EnMoDS columns instead, which have TitleCase names.
 2. **`fmt_minimal()`** (`R/format.R`) is the central formatter, and almost
-   everything downstream expects its output. It selects columns, converts names
+   everything downstream expects its output. It only accepts raw data (from
+   `fetch_renmods(raw = TRUE)`). It selects columns, converts names
    to lower case and keeps only known parameters. It then runs `add_obs_wells()`
    → `add_bcgwcat_params()` → `add_meq()` → `add_placeholder()` →
    `add_charge_balance()` → `add_water_type()`.
@@ -84,8 +86,14 @@ The core of the package doesn't depend on Shiny. Data flows through these steps:
    - `stiff_plot()` is in `R/plots.R`.
    - The reactable tables are in `R/tables.R`.
 
-`check_samples()` (`R/checks.R`) validates inputs. If it receives raw output
-from `fetch_renmods()`, it applies `fmt_minimal()` automatically.
+Input checks are in `R/checks.R`. Functions never format raw data
+automatically:
+
+- `check_samples()` expects formatted (long) samples and aborts with a hint if
+  it receives raw EnMoDS data.
+- `check_samples_raw()` is used by `fmt_minimal()` and expects raw data.
+- `check_samples_wide()` accepts formatted long or wide samples, and converts
+  long samples with `fmt_wide()`.
 
 ## Data assumptions
 

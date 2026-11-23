@@ -63,14 +63,9 @@ piper_plot(samples = s)
 We can override this by specifying the `group` argument ourselves. In this
 case, let's create a column `Year` and colour points that.
 
-First we'll prepare the data by formatting it. If you don't need to make 
-any adjustments, `piper_plot()` will automatically format your data for you, but
-if you plan to make chages, format first, then make your changes.
 
 ```{r}
-ss <- fmt_minimal(s)
-
-ss <- mutate(ss, Year = factor(year(observed_date_time)))
+ss <- mutate(s, Year = factor(year(observed_date_time)))
 
 piper_plot(ss, group = "Year")
 ```

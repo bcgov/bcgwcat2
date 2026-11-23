@@ -10,41 +10,67 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' Check samples format - Expect or return minimal
+#' Check samples are formatted
 #'
-#' @returns Formatted samples data frame
+#' Expects output of `fmt_minimal()` (default output of `fetch_renmods()`).
+#'
+#' @returns Invisible TRUE if check passes
 #'
 #' @noRd
-#' @examples
+#' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
 #'
-#' check_samples(samples)
+#' check_samples(s)
 
-check_samples <- function(samples, check_fmt = TRUE) {
-  need <- "`samples` must be output of either `fetch_renmods()` or `fmt_minimal()`"
+check_samples <- function(samples) {
+  need <- "`samples` must be output of `fetch_renmods()` or `fmt_minimal()`"
 
   if (!inherits(samples, "data.frame")) {
     abort(need)
   }
 
-  if (check_fmt) {
-    if ("Location_ID" %in% names(samples)) {
-      inform("Formatting raw samples with `fmt_minimal()`...")
-      samples <- fmt_minimal(samples)
-    } else if (!"obs_well" %in% names(samples)) {
-      abort(need)
-    }
+  if (is_raw(samples)) {
+    abort(c(
+      "`samples` must be formatted, not raw EnMoDS data",
+      "i" = "Do not use `raw = TRUE` with `fetch_renmods()` or format raw data with `fmt_minimal()`"
+    ))
   }
 
-  samples
+  if (!all(c("obs_well", "bcgwcat_param") %in% names(samples))) {
+    abort(need)
+  }
+
+  invisible(TRUE)
+}
+
+#' Check samples are raw EnMoDS data
+#'
+#' Expects the output of `fetch_renmods(raw = TRUE)`.
+#'
+#' @returns Invisible TRUE if check passes
+#'
+#' @noRd
+
+check_samples_raw <- function(samples) {
+  if (!inherits(samples, "data.frame") || !is_raw(samples)) {
+    abort(c(
+      "`samples` must be raw EnMoDS data from `fetch_renmods(raw = TRUE)`",
+      "i" = "Data from `fetch_renmods()` are already formatted"
+    ))
+  }
+
+  invisible(TRUE)
 }
 
 #' Check samples format - Expect or return wide
 #'
-#' @returns Formatted samples data frame
+#' Accepts formatted samples in long (`fmt_minimal()`) or wide (`fmt_wide()`)
+#' format. Long samples are converted to wide.
+#'
+#' @returns Wide samples data frame
 #'
 #' @noRd
 #' @examplesIf interactive()
@@ -54,30 +80,22 @@ check_samples <- function(samples, check_fmt = TRUE) {
 #' )
 #'
 #' check_samples_wide(s)
-#'
-#' ss <- fmt_minimal(s)
-#' check_samples_wide(ss)
+#' check_samples_wide(fmt_wide(s))
 
-check_samples_wide <- function(samples, check_fmt = TRUE) {
-  need <- "`samples` must be output of either `fetch_renmods()`, `fmt_minimal()` or `fmt_wide()`"
+check_samples_wide <- function(samples) {
+  is_wide <- inherits(samples, "data.frame") &&
+    "obs_well" %in% names(samples) &&
+    !"result_value" %in% names(samples)
 
-  if (!inherits(samples, "data.frame")) {
-    abort(need)
+  if (is_wide) {
+    return(samples)
   }
 
-  if (check_fmt) {
-    if ("Location_ID" %in% names(samples)) {
-      samples <- fmt_minimal(samples)
-    }
-    if (all(c("obs_well", "result_value") %in% names(samples))) {
-      inform("Formatting raw samples with `fmt_wide()`...")
-      samples <- fmt_wide(samples)
-    } else if (!"obs_well" %in% names(samples)) {
-      abort(need)
-    }
-  }
+  fmt_wide(samples) # Checks samples are formatted
+}
 
-  samples
+is_raw <- function(samples) {
+  "Location_ID" %in% names(samples)
 }
 
 check_plot_ids <- function(

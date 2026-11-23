@@ -12,17 +12,35 @@
 
 #' Format EnMoDS data
 #'
-#' This family of functions formats and filters data returned by [fetch_renmods()].
-#' All functions use [fmt_minimal()] as their first step.
+#' This family of functions formats and filters EnMoDS data among different formats.
 #'
-#' **`fmt_minimal()`**
+#' **`fmt_base()`** does the first, basic formatting of raw EnMoDS data from
+#' `fetch_renmods(raw = TRUE)`. This function is not normally called by users
+#' (use [fmt_minimal()] instead which calls `fmt_base()`), but it is included for transparency, as it
+#' shows the data used in calculations such as MEQs, charge balances and water
+#' types (see [meq()], [charge_balance()], and [water_type()]).
 #'
-#' - keeps only columns listed in [index_meta()] and [index_meta_params()]
 #' - filters to only parameters (observed properties) listed in [index_params()]
+#' - keeps only "NORMAL" samples (omits replicates, blanks, etc., see
+#'   `QC_Type`)
+#' - reclassifies `pH (acidity)` recorded as a Field Result as
+#'   `pH-Field (acidity)`
+#' - keeps only columns listed in [index_meta()] and [index_meta_params()]
 #' - all column names converted to lower case (snake_case)
 #' - creates `obs_well` filled with Observation Well listed in `location_name`
+#' - adds `bcgwcat_param` names (see [index_params()])
 #'
-#' **`fmt_wide()`** builds on `fmt_minimal()`
+#' **`fmt_minimal()`** builds on `fmt_base()` to format raw EnMoDS data from
+#' `fetch_renmods(raw = TRUE)`. This is done automatically by
+#' [fetch_renmods()] by default, so is only needed if you want to work with the
+#' raw data first.
+#'
+#' - adds calculated values as extra rows: MEQs, charge balance and
+#'   anion/cation sums (see [meq()], [charge_balance()])
+#' - adds water type (see [water_type()])
+#'
+#' **`fmt_wide()`** expects the output of `fmt_minimal()` (i.e. the default
+#' output of [fetch_renmods()])
 #'
 #' - transform the parameters/observed properties from long into wide format
 #' - if any parameters for a specific observation (identified by `location_id` and `observation_date_time`) have been measured multiple times with different methods, a single measurement will be selected
@@ -34,7 +52,9 @@
 #' - adds units as second row of data (very awkward in R, so best if only used
 #'   with AquaChem)
 #'
-#' @param samples Data frame. Output from [fetch_renmods()]
+#' @param samples Data frame. For `fmt_base()` and `fmt_minimal()`, raw EnMoDS data from
+#'   `fetch_renmods(raw = TRUE)`. For other formatting functions, output from
+#'   [fetch_renmods()] or [fmt_minimal()].
 #' @param include_units Logical. Whether or not to append units to parameter
 #'   column names.
 #' @param fix_multi_method Character. How should multiple measurements be fixed?
@@ -50,15 +70,27 @@
 #'
 #' @export
 #' @examplesIf interactive()
+#' # Raw data
+#' s_raw <- fetch_renmods(
+#'   ems_ids = c("1401030", "1401377"),
+#'   date_range = c("2020-01-01", "2022-02-01"),
+#'   raw = TRUE
+#' )
+#'
+#' # Basic formatting only: Filtering and column renaming (no calculated values)
+#' fmt_base(s_raw)
+#'
+#' # Minimal formatting: Basic plus calculated values
+#' fmt_minimal(s_raw)
+#'
+#' # `fmt_minimal()` applied by default in fetch_renmods()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
 #'
-#' fmt_minimal(s)
+#' # Widen data: Note dropping data with repeated values
 #' fmt_wide(s)
-#'
-#' s
 
 #' @rdname fmt
 fmt_minimal <- function(
@@ -80,6 +112,7 @@ fmt_minimal <- function(
 }
 
 #' @rdname fmt
+#' @export
 fmt_wide <- function(
   samples,
   params = NULL,
@@ -121,8 +154,10 @@ fmt_wide <- function(
   )
 }
 
+#' @rdname fmt
+#' @export
 fmt_base <- function(samples) {
-  check_samples(samples, check_fmt = FALSE)
+  check_samples_raw(samples)
 
   # Filtering and Fixing
   s <- samples |>
@@ -149,7 +184,7 @@ fmt_plot <- function(
 ) {
   p <- dplyr::filter(ion_details(), .data[[plot_type]])
 
-  ss <- check_samples(samples, check_fmt = TRUE) |>
+  ss <- check_samples(samples) |>
     dplyr::filter(
       .data$bcgwcat_param %in% c(p$bcgwcat_param, "charge_balance"),
       .data$result_unit %in% c("meq/l", "%")

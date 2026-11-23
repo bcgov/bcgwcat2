@@ -17,8 +17,7 @@
 #' `FALSE` if not. See [wq_std()] for more information on the water quality
 #' guidelines.
 #'
-#' @param samples Data frame. Output from [fmt_minimal()] or [fetch_renmods()].
-#' If [fetch_renmods()] samples will be first formatted with [fmt_minimal()].
+#' @param samples Data frame. Output from [fetch_renmods()] or [fmt_minimal()].
 #'
 #' @return Tibble of sites, samples, parameters, water quality limits and problems.
 #' @export

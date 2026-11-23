@@ -28,7 +28,7 @@ library(dplyr)
 library(stringr)
 
 # A well sampled on one day, with normal, replicate and blank samples
-s <- fetch_renmods("E316790", c("2023-10-11", "2023-10-12"))
+s <- fetch_renmods("E316790", c("2023-10-11", "2023-10-12"), raw = TRUE)
 nrow(s)
 count(s, QC_Type)
 
@@ -40,8 +40,7 @@ nrow(s) # drops unused observedproperties, as well as non-normal samples
 ## Multiple Analyses
 
 ```{r}
-s <- fetch_renmods("E337477", c("2025-06-17", "2025-06-18"))
-fmt_minimal(s)
+s <- fetch_renmods("E337477", c("2025-06-17", "2025-06-18")) #formatted
 
 filter(s, Observed_Property_ID == "Phosphorus Total Dissolved")
 
@@ -83,7 +82,7 @@ This leads to observations having two measures of `pH (acidity)`, on of which ha
 **Current practice is to relabel those with a `Data_Classification` of "FIELD_RESULT" as `pH-Field (acidity)`. If this duplicates an existing `pH-Field (acidity)` record, it is removed.**.
 
 ```{r}
-s <- fetch_renmods("E337477", c("2025-06-17", "2025-06-18"))
+s <- fetch_renmods("E337477", c("2025-06-17", "2025-06-18"), raw = TRUE)
 
 s |>
   filter(str_detect(Observed_Property_ID, "pH")) |>
@@ -113,7 +112,7 @@ Very rarely this actually creates a duplicate of the existing `pH-Field` value.
 
 
 ```{r}
-s <- fetch_renmods("E287195", c("2022-02-23", "2022-02-24"))
+s <- fetch_renmods("E287195", c("2022-02-23", "2022-02-24"), raw = TRUE)
 
 s |>
   filter(str_detect(Observed_Property_ID, "pH")) |>

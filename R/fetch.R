@@ -14,13 +14,17 @@
 #'
 #' Light wrapper around [renmods::renmods_connect()] to fetch data by date and
 #' EMS ID. Also collects data into memory, so can take some time if a lot of
-#' data are requested.
+#' data are requested. By default, the data are formatted with
+#' [fmt_minimal()], ready to use with the other bcgwcat2 functions.
 #'
 #' @param ems_ids Character Vector. EMS ids to filter EnMoDS samples to.
 #' @param date_range Character/Date Vector. Start/end dates to filter to. `NULL`
 #'   returns all data.
+#' @param raw Logical. Return the raw EnMoDS data instead of formatting it with
+#'   [fmt_minimal()]. Default `FALSE`.
 #'
-#' @returns Data frame of filtered EnMoDS data.
+#' @returns Data frame of filtered EnMoDS data, formatted with [fmt_minimal()]
+#'   unless `raw = TRUE`.
 #'
 #' @export
 #' @examplesIf interactive()
@@ -29,12 +33,19 @@
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
 #'
-#'  s <- fetch_renmods(
+#' s <- fetch_renmods(
 #'   ems_ids = 22769669,
 #'   date_range = c("2020-01-01", "2022-02-01")
 #' )
+#'
+#' # Raw EnMoDS data
+#' s_raw <- fetch_renmods(
+#'   ems_ids = 22769669,
+#'   date_range = c("2020-01-01", "2022-02-01"),
+#'   raw = TRUE
+#' )
 
-fetch_renmods <- function(ems_ids, date_range = NULL) {
+fetch_renmods <- function(ems_ids, date_range = NULL, raw = FALSE) {
   ems_ids <- as.character(ems_ids)
 
   s_tbl <- renmods::renmods_connect(dates = date_range) |>
@@ -47,6 +58,10 @@ fetch_renmods <- function(ems_ids, date_range = NULL) {
   # TODO: CHECK IF ANY DATA -> check_present()
 
   # TODO: Check if ANY MEDIUM != "Water - Ground"
+
+  if (!raw) {
+    s <- fmt_minimal(s)
+  }
 
   s
 }

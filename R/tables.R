@@ -37,7 +37,7 @@
 #'   ems_ids = "E102388",
 #'   date_range = c("2026-01-01", "2027-01-01")
 #' )
-#' fmt_wide(s)
+#' tbl_overview(s, "rel")
 #' tbl_overview(fmt_wide(s), "rel")
 
 tbl_overview <- function(samples, which) {
