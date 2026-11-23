@@ -22,11 +22,24 @@
 #' test_mod("overview")
 #'
 
-test_mod <- function(module) {
+test_mod <- function(module, ems_ids = NULL) {
+  if (!is.null(ems_ids)) {
+    samples <- fetch_renmods(ems_ids)
+    sample_data <- list(
+      "samples" = reactive(samples),
+      "ems_ids" = reactive(ems_ids)
+    )
+  } else {
+    sample_data <- NULL
+  }
+
   ui <- bcgwcat_ui(get(paste0("mod_", module, "_ui"))())
 
   server <- function(input, output, session) {
-    get(paste0("mod_", module, "_server"))(updated = reactiveVal(1))
+    get(paste0("mod_", module, "_server"))(
+      updated = reactiveVal(1),
+      sample_data = sample_data
+    )
   }
 
   bcgwcat_run_app(ui, server)

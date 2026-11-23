@@ -18,7 +18,7 @@
 #'
 #' @export
 #' @examplesIf interactive()
-#' test_mod("water_quality")
+#' test_mod("plots", ems_ids = c("E298733", "E336585", "E335827"))
 
 mod_plots_ui <- function(id = "plots") {
   ns <- NS(id)
