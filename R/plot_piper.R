@@ -71,13 +71,7 @@ piper_plot <- function(
     with_alkalinity = qc_with_alkalinity
   )
 
-  if (nrow(s) == 0) {
-    if (shiny::isRunning()) {
-      validate(need(nrow(s) > 0), "Missing too many samples")
-    }
-    inform(
-      "Not enough {dplyr::if_else(qc_valid_only, 'good quality', '')} data."
-    )
+  if (!check_plot_ids(samples, s, group = group)) {
     return(invisible())
   }
 

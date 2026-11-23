@@ -79,3 +79,32 @@ check_samples_wide <- function(samples, check_fmt = TRUE) {
 
   samples
 }
+
+check_plot_ids <- function(
+  samples_orig,
+  samples_filtered,
+  group = "location_id"
+) {
+  if (!nrow(samples_filtered)) {
+    if (shiny::isRunning()) {
+      validate(need(
+        nrow(samples_filtered) > 0,
+        "Missing too many samples: nothing to plot."
+      ))
+    }
+    inform(
+      "Not enough {dplyr::if_else(qc_valid_only, 'good quality', '')} data."
+    )
+    return(invisible(FALSE))
+  }
+
+  ids_dropped <- setdiff(samples_orig[[group]], samples_filtered[[group]])
+
+  if (length(ids_dropped)) {
+    inform(
+      "Some groups have too few samples and will be omitted from the plot: {ids_dropped}"
+    )
+  }
+
+  return(invisible(TRUE))
+}
