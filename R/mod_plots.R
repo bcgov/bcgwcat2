@@ -100,7 +100,8 @@ mod_plots_server <- function(
         session,
         "ems_ids",
         choices = ems_ids(),
-        server = TRUE
+        server = TRUE,
+        options = selectize_options()
       )
     })
 

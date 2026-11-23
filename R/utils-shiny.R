@@ -36,3 +36,29 @@ with_messages <- function(code) {
     )
   })
 }
+
+#' Set options for selectizeInputs
+#'
+#' Uses onInitialize to prevent password managers from targeting this input.
+#'
+#' @param create Logical. Whether the user is permitted to create options
+#'
+#' @returns a options list
+#'
+#' @noRd
+selectize_options <- function(create = TRUE) {
+  list(
+    create = create, #
+    onInitialize = I(
+      "function() {
+      this.$control_input.attr({
+        'autocomplete': 'off',
+        'data-1p-ignore': '',
+        'data-lpignore': 'true',
+        'data-bwignore': 'true',
+        'data-form-type': 'other'
+      });
+    }"
+    )
+  )
+}

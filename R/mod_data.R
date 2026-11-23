@@ -33,7 +33,7 @@ mod_data_ui <- function(id = "data") {
           "EMS IDs",
           choices = NULL,
           multiple = TRUE,
-          options = list(create = TRUE)
+          options = selectize_options()
         ),
         dateRangeInput(
           ns("date_range"),
@@ -158,7 +158,8 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
       session,
       "ems_ids",
       choices = ems_ids_all,
-      server = TRUE
+      server = TRUE,
+      options = selectize_options()
     )
 
     purrr::map(

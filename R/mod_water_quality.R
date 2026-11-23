@@ -110,17 +110,23 @@ mod_water_quality_server <- function(
         label = "Parameters to include",
         multiple = TRUE,
         choices = params(),
-        selected = params()
+        selected = params(),
+        options = selectize_options()
       )
     })
 
     observe({
-      browser()
       if (!is.null(input$params) && length(input$params) > 0) {
-        updateSelectizeInput(session, "params", selected = character(0))
+        sel <- character(0)
       } else {
-        updateSelectizeInput(session, "params", selected = params())
+        sel <- params()
       }
+      updateSelectizeInput(
+        session,
+        "params",
+        selected = sel,
+        options = selectize_options()
+      )
     }) |>
       bindEvent(input$params_toggle)
 

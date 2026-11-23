@@ -61,7 +61,7 @@ bcgwcat_sidebar <- function() {
       "EMS IDs",
       choices = NULL,
       multiple = TRUE,
-      options = list(create = TRUE)
+      options = selectize_options()
     )
   )
 }
