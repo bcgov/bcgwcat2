@@ -64,7 +64,7 @@ mod_water_quality_ui <- function(id = "water_quality") {
                 "for more specifics regarding how bcgwcat parameter names correspond to EnMoDs and EMS data."
               )
             ),
-            reactable::reactableOutput(ns("table_water_quality")),
+            reactable::reactableOutput(ns("table_water_quality"))
             # shinyjs::disabled(
             #   downloadButton(
             #     ns("download_csv"),

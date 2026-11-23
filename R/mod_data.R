@@ -102,10 +102,10 @@ mod_data_ui <- function(id = "data") {
                   style = "background-color:#f8d7da",
                   .noWS = "after"
                 ),
-                ").",
+                ")."
               ),
               tags$li(
-                "Parameter names are different from those in the EnMoDs data base.",
+                "Parameter names are different from those in the EnMoDs data base."
               ),
               tags$li(
                 "Please see ",
@@ -119,7 +119,7 @@ mod_data_ui <- function(id = "data") {
                 ns("download_csv"),
                 label = "Download as CSV"
               )
-            ),
+            )
           )
         ),
         nav_panel(
