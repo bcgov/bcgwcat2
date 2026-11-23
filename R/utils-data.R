@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-renmods_data_types <- function() {
+renmods_datasets <- function() {
   c("this_yr", "yr_2_5", "yr_5_10", "historic")
 }
 

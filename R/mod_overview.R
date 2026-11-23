@@ -13,7 +13,7 @@
 #' Title
 #'
 #' @param id Character. Shiny module ID
-#' @param data_types
+#' @param datasets
 #'
 #' @returns Shiny module UI
 #'
@@ -23,7 +23,7 @@
 
 mod_overview_ui <- function(
   id = "overview",
-  data_types = renmods_data_types()
+  datasets = renmods_datasets()
 ) {
   ns <- NS(id)
 
@@ -31,7 +31,7 @@ mod_overview_ui <- function(
     title = "Status",
     layout_column_wrap(
       fill = FALSE,
-      !!!purrr::map(rev(data_types), \(t) {
+      !!!purrr::map(rev(datasets), \(t) {
         uiOutput(ns(paste0("status_box_", t)))
       })
     ),
@@ -57,7 +57,7 @@ mod_overview_ui <- function(
           ),
           actionButton(
             ns("dtn_data_download"),
-            "Download/Update ALL datasets"
+            "Download/Update ALL Datasets"
           ),
           actionButton(
             ns("btn_data_cache"),
@@ -72,7 +72,7 @@ mod_overview_ui <- function(
 
 mod_overview_server <- function(
   id = "overview",
-  data_types = renmods_data_types(),
+  datasets = renmods_datasets(),
   ...
 ) {
   moduleServer(id, function(input, output, session) {
@@ -85,7 +85,7 @@ mod_overview_server <- function(
       bindEvent(input$btn_data_check, ignoreInit = TRUE)
 
     observe({
-      with_messages(renmods::renmods_update(types = "all"))
+      with_messages(renmods::renmods_update(datasets = "all"))
       updated(updated() + 1)
     }) |>
       bindEvent(input$btn_data_download, ignoreInit = TRUE)
@@ -100,7 +100,7 @@ mod_overview_server <- function(
     observe({
       showModal(modalDialog(
         title = "Are you sure?",
-        "This will delete all files in your renmods cache as well as the renmods cache folder. You can remove files individually with the 'Remove data' button, or update the data with the 'Download' button.",
+        "This will delete all files in your renmods cache as well as the renmods cache folder. You can remove files individually with the 'Remove' button, or update the data with the 'Download' button.",
         footer = tagList(
           modalButton("Cancel"),
           actionButton(
@@ -121,7 +121,7 @@ mod_overview_server <- function(
 
       if (!length(s)) {
         t <- data.frame(
-          type = data_types,
+          dataset = datasets,
           status = FALSE,
           last_downloaded = NA,
           date_range = NA
@@ -137,7 +137,7 @@ mod_overview_server <- function(
             status = .data$date_since < .data$update,
             status = tidyr::replace_na(.data$status, FALSE)
           ) |>
-          dplyr::select("status", "type", "last_downloaded", "date_range")
+          dplyr::select("status", "dataset", "last_downloaded", "date_range")
       }
       t
     }) |>
@@ -146,7 +146,7 @@ mod_overview_server <- function(
     output$status_table <- reactable::renderReactable({
       tbl_dates(data_status())
       # data_status() |>
-      #   dplyr::rename("dataset" = "type", "data_date_range" = "date_range") |>
+      #   dplyr::rename("data_date_range" = "date_range") |>
       #   dplyr::rename_with(pretty_names) |>
 
       #   reactable::reactable(
@@ -165,24 +165,24 @@ mod_overview_server <- function(
       #   )
     })
 
-    purrr::map(data_types, \(t) {
-      output[[paste0("status_box_", t)]] <- renderUI({
-        value_box_status(data_status(), t, session)
+    purrr::map(datasets, \(d) {
+      output[[paste0("status_box_", d)]] <- renderUI({
+        value_box_status(data_status(), d, session)
       })
 
       # Download buttons
       observe({
-        with_messages(renmods::renmods_update(types = t, force = TRUE))
+        with_messages(renmods::renmods_update(datasets = d, force = TRUE))
         updated(updated() + 1)
       }) |>
-        bindEvent(input[[paste0("btn-download-", t)]])
+        bindEvent(input[[paste0("btn-download-", d)]])
 
       # Clear cache buttons
       observe({
-        with_messages(renmods::cache_remove(types = t))
+        with_messages(renmods::cache_remove(datasets = d))
         updated(updated() + 1)
       }) |>
-        bindEvent(input[[paste0("btn-clear-cache-", t)]])
+        bindEvent(input[[paste0("btn-clear-cache-", d)]])
     })
 
     # Outputs -------------------------------------------
@@ -190,14 +190,15 @@ mod_overview_server <- function(
   })
 }
 
-value_box_status <- function(data_status, type, session) {
-  t <- dplyr::filter(data_status, .data$type == .env$type)
-  title <- pretty_renmods(type)
+value_box_status <- function(data_status, dataset, session) {
+  t <- dplyr::filter(data_status, .data$dataset == .env$dataset)
+  title <- pretty_renmods(dataset)
   deets <- difftime(Sys.time(), t$last_downloaded) |> round()
   icon <- bsicons::bs_icon("x-circle-fill")
   last_dl <- p("Last downloaded", format(deets), "ago")
   dt_range <- p(
     "Date range: ",
+    br(),
     span(strong(t$date_range), style = "font-size:110%")
   )
 
@@ -236,26 +237,26 @@ value_box_status <- function(data_status, type, session) {
     dt_range,
     p(
       style = "margin-top: 1ch",
-      btn_dl_data(t$type, session),
-      btn_clear_cache(t$type, session)
+      btn_dl_data(t$dataset, session),
+      btn_clear_cache(t$dataset, session)
     )
   )
 }
 
 
-btn_dl_data <- function(type, session) {
+btn_dl_data <- function(dataset, session) {
   toolbar_input_button(
-    session$ns(paste0("btn-download-", type)),
+    session$ns(paste0("btn-download-", dataset)),
     label = "Download",
     show_label = TRUE,
     icon = bsicons::bs_icon("download")
   )
 }
 
-btn_clear_cache <- function(type, session) {
+btn_clear_cache <- function(dataset, session) {
   toolbar_input_button(
-    session$ns(paste0("btn-clear-cache-", type)),
-    label = "Remove data",
+    session$ns(paste0("btn-clear-cache-", dataset)),
+    label = "Remove",
     show_label = TRUE,
     icon = bsicons::bs_icon("trash3-fill")
   )

@@ -38,7 +38,7 @@ Imports:
     tidyr,
     viridisLite
 Remotes: 
-    bcgov/renmods
+    bcgov/renmods (>= 0.0.4)
 Suggests: 
     roxygen2,
     testthat (>= 3.0.0),
