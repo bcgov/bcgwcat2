@@ -81,7 +81,10 @@ The core of the package doesn't depend on Shiny. Data flows through these steps:
    pivoting, it resolves repeated and multi-method measurements with
    `fix_multiple_measures()` (`R/fix.R`).
 4. **Calculations and outputs**:
-   - `meq()`, `charge_balance()` and `water_type()` are in `R/calculations.R`.
+   - `meq()`, `charge_balance()`, `water_type()` and `dominant_water_types()`
+     are in `R/calculations.R`. Each has an exported `add_` version (e.g.,
+     `add_meq()`) that adds the results to the samples, documented on the same
+     help page.
    - Comparison with water quality guidelines is in `R/water_quality.R`.
    - `stiff_plot()` is in `R/plots.R`.
    - The reactable tables are in `R/tables.R`.

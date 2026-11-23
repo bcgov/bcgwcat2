@@ -12,35 +12,43 @@
 
 #' Calculate MEQ values
 #'
-#' Calculates MEQ values for 'long' data in mg/L. Expects output of either
-#' [fetch_renmods()] or [fmt_minimal()].
+#' This function is not normally used on it's own, as it is applied as
+#' part of [fmt_minimal()] during a call to [fetch_renmods()]. It calculates MEQ
+#' values for 'long' data in mg/L.
 #'
 #' For conversion details and a description of the data see [ion_details()].
-#'
 #' MEQs are calculated by dividing the parameter concentration in mg/L by the
 #' conversion factor. "result_unit" is required to ensure the units are in mg/L
-#' before calculating MEQs
+#' before calculating MEQs.
 #'
-#' **Note: This is an internal function, exported for clarity in calculations**
+#' **`meq()`** returns only the MEQ values.
 #'
-#' @param samples Data frame. Output from [fmt_minimal()] or [fetch_renmods()].
-#' If [fetch_renmods()] samples will be first formatted with [fmt_minimal()].
+#' **`add_meq()`** adds the MEQ values to the samples as extra rows.
 #'
-#' @noRd
+#' @param samples Data frame. Output from [fmt_base()].
+#'
+#' @returns Data frame of MEQ values (`meq()`) or full samples with MEQ values added
+#'   (`add_meq()`).
+#'
+#' @export
 #'
 #' @examplesIf interactive()
-#'
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
-#'   date_range = c("2020-01-01", "2022-02-01")
-#' )
+#'   date_range = c("2020-01-01", "2022-02-01"),
+#'   raw = TRUE
+#' ) |>
+#'   fmt_base()
 #'
-#' fmt_base(s) |>
+#' s |>
 #'   meq() |>
 #'   dplyr::select(bcgwcat_param, observed_property_id, result_value, result_unit)
+#'
+#'   add_meq(s)
 
 meq <- function(samples) {
   # TODO: CHECK UNITS!
+  # TODO: Rethink - Do we need both of these functions? can meq() drop more?
 
   # Values all in mg/L which is the standard reported by EMS
 
@@ -67,14 +75,20 @@ meq <- function(samples) {
   meq_values
 }
 
+#' @rdname meq
+#' @export
+add_meq <- function(samples) {
+  dplyr::bind_rows(samples, meq(samples))
+}
 
 #' Calculate charge balance
 #'
-#' Calculates charge balances based on ALS formula. **Note:** Original EMS
-#' charge balances, anion sums and cation sums will be renamed to
-#' `charge_balance_enmods`, `anion_sum_enmods`, `cation_sum_enmods`,
-#' respectively, when these are added to samples data (see
-#' [fmt_minimal()]).
+#' This function is not normally used on it's own, as it is applied as part of
+#' [fmt_minimal()] during a call to [fetch_renmods()]. It calculates charge
+#' balances based on ALS formula. **Note:** Original EMS charge balances, anion
+#' sums and cation sums are renamed to `charge_balance_enmods`,
+#' `anion_sum_enmods`, `cation_sum_enmods`, respectively. It requires [meq()]
+#' values to work.
 #'
 #' Potential changes in workflows over the years have made it difficult to
 #' ascertain exactly how charge balances were calculated in older samples. This
@@ -90,12 +104,12 @@ meq <- function(samples) {
 #'             nitrogen_nitrite_dissolved_no2_meq/l +
 #'             alkalinity_total_4.5_as_caco3_meq/l
 #'
-#' cation sum = calcium_dissolved_meq/l + magnesium_dissolved_meq/l + sodium_dissolved_meq/l +
-#'              potassium_dissolved_meq/l + aluminum_dissolved_meq/l +
-#'              copper_dissolved_meq/l + iron_dissolved_meq/l +
-#'              manganese_dissolved_meq/l + zinc_dissolved_meq/l +
-#'              nitrogen_ammonia_dissolved_meq/l +
-#'              (10 ^ (-ph)) * 1000
+#' cation sum = calcium_dissolved_meq/l + magnesium_dissolved_meq/l +
+#'              sodium_dissolved_meq/l + potassium_dissolved_meq/l +
+#'              aluminum_dissolved_meq/l + copper_dissolved_meq/l +
+#'              iron_dissolved_meq/l + manganese_dissolved_meq/l +
+#'              zinc_dissolved_meq/l + nitrogen_ammonia_dissolved_meq/l + (10 ^
+#'              (-ph)) * 1000
 #'
 #' Charge balance = 100 x (Cation Sum - Anion sum) / (Cation Sum + Anion Sum)
 #'
@@ -105,30 +119,49 @@ meq <- function(samples) {
 #' If there are multiple measures for the same observation (i.e. repeated
 #' measures), we use the mean MEQ value for that parameter.
 #'
-#' @inheritParams common_docs
+#' **`charge_balance()`** returns only the anion sums, cation sums and charge
+#' balances.
+#'
+#' **`add_charge_balance()`** adds these values to the samples as extra rows,
+#' replacing any previously calculated values. It also adds empty placeholder
+#' rows for the EnMoDS values (`charge_balance_enmods`, `anion_sum_enmods`,
+#' `cation_sum_enmods`) if they are missing.
+#'
+#' @param samples Data frame. Output from [fmt_base()] with MEQ values added
+#'   (see [add_meq()]).
 #'
 #' @return Data frame with only cation and anion sums, and charge balance
-#'   values.
-#' @noRd
+#'   values (`charge_balance()`), or samples with these values added
+#'   (`add_charge_balance()`).
+#'
+#' @export
 #'
 #' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = c("1401030", "1401377"),
-#'   date_range = c("2020-01-01", "2022-02-01")
-#' )
-#' fmt_base(s) |>
-#'   meq() |>
+#'   date_range = c("2020-01-01", "2022-02-01"),
+#'   raw = TRUE
+#' ) |>
+#' fmt_base() |>
+#' add_meq()
+#'
+#' s |>
 #'   charge_balance() |>
 #'   dplyr::select(bcgwcat_param, result_value, result_unit)
 #'
 #' s <- fetch_renmods(
 #'   ems_ids = "E102388",
-#'   date_range = c("2026-01-01", "2027-01-01")
-#' )
-#' fmt_base(s) |>
-#'   meq() |>
+#'   date_range = c("2026-01-01", "2027-01-01"),
+#'   raw = TRUE
+#' ) |>
+#' fmt_base() |>
+#' add_meq()
+#'
+#' s |>
 #'   charge_balance() |>
 #'   dplyr::select(bcgwcat_param, result_value, result_unit)
+#'
+#'   add_charge_balance(s)
 
 charge_balance <- function(samples) {
   pre_calc <- samples |>
@@ -185,6 +218,16 @@ charge_balance <- function(samples) {
     )
 }
 
+#' @rdname charge_balance
+#' @export
+add_charge_balance <- function(samples) {
+  samples |>
+    add_placeholders() |>
+    dplyr::filter(
+      !.data$bcgwcat_param %in% c("charge_balance", "anion_sum", "cation_sum")
+    ) |>
+    dplyr::bind_rows(charge_balance(samples))
+}
 
 is_valid <- function(charge_balance) {
   !is.na(charge_balance) & abs(charge_balance) <= 10
@@ -192,36 +235,51 @@ is_valid <- function(charge_balance) {
 
 #' Calculate water type
 #'
-#' Water type based on anions Cl, SO4, HCO3 and cations Ca, Mg, Na and K. Ions
-#' are ranked by proportion MEQ, all greater than 10% are listed in descending
-#' order of presence, cations first. Water type is only calculated for samples
-#' with valid charge balances. If HCO3 (`bicarbonate_alkalinity_as_caco3_meq/l`)
-#' is missing, we use Alkalinity (`alkalinity_total_4.5_as_caco3_meq/l`) as a
-#' replacement (indicated by an '*' on HCO3 in the water type). Otherwise,
-#' missing ions are ignored (i.e. treated as 0). The column `missing_ion`
-#' indicates whether there is a problem with the water type, such that it is
-#' missing a cation or anion (i.e. is all cations or all anions). Water type is
-#' designed to compliment piper plots by using the same ions so they are
-#' comparable.
+#' This function is not normally used on it's own, as it is applied as part of
+#' [fmt_minimal()] during a call to [fetch_renmods()]. It calculates water type
+#' based on anions Cl, SO4, HCO3 and cations Ca, Mg, Na and K. It expects both
+#' [meq()]s and [charge_balance()]s to be in the data.
 #'
-#' @param samples Data frame. Output from [fmt_minimal()] or [fetch_renmods()].
-#' If [fetch_renmods()] samples will be first formatted with [fmt_minimal()].
+#' Ions are ranked by proportion MEQ, all greater than 10% are listed in
+#' descending order of presence, cations first. Water type is only calculated
+#' for samples with valid charge balances. If HCO3
+#' (`bicarbonate_alkalinity_as_caco3_meq/l`) is missing, we use Alkalinity
+#' (`alkalinity_total_4.5_as_caco3_meq/l`) as a replacement (indicated by an '*'
+#' on HCO3 in the water type). Otherwise, missing ions are ignored (i.e. treated
+#' as 0). The column `missing_ion` indicates whether there is a problem with the
+#' water type, such that it is missing a cation or anion (i.e. is all cations or
+#' all anions). Water type is designed to compliment piper plots by using the
+#' same ions so they are comparable.
 #'
-#' @return Data frame with added columns `water_type` and `missing_ion`.
+#' **`water_type()`** returns one row per sample with the columns `water_type`
+#' and `missing_ion`.
 #'
-#' @noRd
+#' **`add_water_type()`** adds the `water_type` and `missing_ion` columns to the
+#' samples.
+#'
+#' @param samples Data frame. Output from [fmt_base()] with MEQ values and
+#'   charge balances added (see [add_meq()] and [add_charge_balance()]).
+#'
+#' @return Data frame of samples with `water_type` and `missing_ion`
+#'   (`water_type()`), or samples with these columns added
+#'   (`add_water_type()`).
+#'
+#' @export
 #'
 #' @examplesIf interactive()
 #' s <- fetch_renmods(
 #'   ems_ids = "E102388",
-#'   date_range = c("2026-01-01", "2027-01-01")
-#' )
-#'
-#' fmt_base(s) |>
+#'   date_range = c("2026-01-01", "2027-01-01"),
+#'   raw = TRUE
+#' ) |>
+#'   fmt_base() |>
 #'   add_meq() |>
-#'   add_charge_balance() |>
-#'   water_type() |>
+#'   add_charge_balance()
+#'
+#' water_type(s) |>
 #'   dplyr::select(water_type)
+#'
+#' add_water_type(s)
 
 water_type <- function(samples) {
   samples |>
@@ -233,6 +291,12 @@ water_type <- function(samples) {
     tidyr::nest(.by = meta_vars(), .key = "wt") |>
     dplyr::mutate(wt = purrr::map(.data$wt, water_type_single)) |>
     tidyr::unnest("wt")
+}
+
+#' @rdname water_type
+#' @export
+add_water_type <- function(samples) {
+  dplyr::left_join(samples, water_type(samples), by = meta_vars())
 }
 
 #' Calculate water type for a single sample
@@ -286,6 +350,12 @@ water_type_single <- function(df) {
 #' treated as equivalent. Water types are considered dominant if they are in  >
 #' `p` proportion of  samples.
 #'
+#' **`dominant_water_types()`** returns the dominant water types.
+#'
+#' **`add_dominant_water_types()`** adds a `dominant` column to the samples,
+#' which is `TRUE` if the sample's water type is in the dominant set, `FALSE`
+#' otherwise.
+#'
 #' @param samples Data frame with at least a `water_type` column.
 #' @param n Numeric. Minimum number of samples needed to determine dominant
 #' water types.
@@ -293,6 +363,8 @@ water_type_single <- function(df) {
 #' considered dominant.
 #'
 #' @returns Character vector of dominant water types
+#'   (`dominant_water_types()`), or samples with an added `dominant` column
+#'   (`add_dominant_water_types()`).
 #'
 #' @export
 #' @examples
@@ -305,9 +377,21 @@ water_type_single <- function(df) {
 #'     "Ca-Mg-HCO3-SO4",
 #'     "Mg-Na",
 #'     "Mg-Na",
-#'     "Ca-Mg-Na")
+#'     "Ca-Mg-Na"
 #'   )
+#' )
+#'
 #' dominant_water_types(wt)
+#' add_dominant_water_types(wt)
+#'
+#' @examplesIf interactive()
+#' s <- fetch_renmods(
+#'   ems_ids = "E102388",
+#'   date_range = c("2026-01-01", "2027-01-01")
+#' )
+#'
+#' add_dominant_water_types(s) |>
+#'   dplyr::pull(dominant)
 
 dominant_water_types <- function(samples, n = 5, p = 0.75) {
   wt <- dplyr::filter(samples, .data$water_type != "") |> # Also omit NA
@@ -331,34 +415,8 @@ dominant_water_types <- function(samples, n = 5, p = 0.75) {
   wt
 }
 
-#' Find the dominant water types
-#'
-#' Find the dominant waters type in a group of samples, if there are more than
-#' `n` samples. Match HCO3 and HCO3* types. Considered dominant types if in >`p`
-#' of samples.
-#'
-#' @param n Numeric. Number of samples above which to remove outliers.
-#' @param p Numeric. Proportion of data required to assign a dominant water
-#'   type.
-#'
-#' @returns Data frame with added `dominant` column. TRUE if the water type is
-#'   in the dominant set, FALSE otherwise.
-#'
-#' @noRd
-#'
-#' @examplesIf interactive()
-#' s <- fetch_renmods(
-#'   ems_ids = "E102388",
-#'   date_range = c("2026-01-01", "2027-01-01")
-#' )
-#'
-#' fmt_base(s) |>
-#'   add_meq() |>
-#'   add_charge_balance() |>
-#'   add_water_type() |>
-#'   add_dominant_water_types() |>
-#'   dplyr::pull(dominant)
-
+#' @rdname dominant_water_types
+#' @export
 add_dominant_water_types <- function(samples, n = 5, p = 0.75) {
   wt <- dominant_water_types(samples, n, p)
 

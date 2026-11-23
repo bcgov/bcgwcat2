@@ -374,24 +374,6 @@ add_bcgwcat_params <- function(s) {
     dplyr::relocate("bcgwcat_param", .before = "observed_property_id")
 }
 
-add_meq <- function(samples) {
-  dplyr::bind_rows(samples, meq(samples))
-}
-
-add_charge_balance <- function(samples) {
-  samples |>
-    add_placeholders() |>
-    dplyr::filter(
-      !.data$bcgwcat_param %in% c("charge_balance", "anion_sum", "cation_sum")
-    ) |>
-    dplyr::bind_rows(charge_balance(samples))
-}
-
-add_water_type <- function(samples) {
-  dplyr::left_join(samples, water_type(samples), by = meta_vars())
-}
-
-
 add_placeholders <- function(
   samples,
   add = c("charge_balance_enmods", "anion_sum_enmods", "cation_sum_enmods")
