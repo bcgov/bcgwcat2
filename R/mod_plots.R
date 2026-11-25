@@ -33,18 +33,20 @@ mod_plots_ui <- function(id = "plots") {
           "EMS IDs to plot",
           choices = NULL,
           multiple = TRUE,
-          options = list(create = TRUE)
+          options = selectize_options()
         ),
-        radioButtons(
-          ns("omit_bad"),
-          "Omit 'bad' charge balances?",
-          choices = c("Yes" = TRUE, "No" = FALSE)
+        checkboxGroupInput(
+          ns("qc"),
+          label = strong("Quality control"),
+          choiceNames = tt_labels(inputs_qc()),
+          choiceValues = inputs_qc()$arg
         ),
-        radioButtons(
-          ns("legends"),
-          "Plot legends",
-          choices = c("Yes" = TRUE, "No" = FALSE)
-        ),
+        checkboxGroupInput(
+          ns("display"),
+          strong("Plot display"),
+          choiceNames = inputs_display()$text,
+          choiceValues = inputs_display()$arg
+        )
       ),
       navset_card_pill(
         nav_panel(
@@ -56,12 +58,18 @@ mod_plots_ui <- function(id = "plots") {
               card(
                 full_screen = TRUE,
                 card_header("Stiff Plot"),
-                card_body(plotOutput(ns("plot_stiff")))
+                card_body(
+                  plotOutput(ns("plot_stiff")),
+                  em(textOutput(ns("msg_stiff")))
+                )
               ),
               card(
                 full_screen = TRUE,
                 card_header("Piper Plot"),
-                card_body(plotOutput(ns("plot_piper")))
+                card_body(
+                  plotOutput(ns("plot_piper")),
+                  em(textOutput(ns("msg_piper")))
+                )
               )
             )
           )
@@ -87,6 +95,8 @@ mod_plots_server <- function(
     # Data
     samples <- sample_data$samples
     ems_ids <- sample_data$ems_ids
+    msg_stiff <- reactiveVal(NULL)
+    msg_piper <- reactiveVal(NULL)
 
     # Navigation Mods -------------
     observe({
@@ -105,31 +115,88 @@ mod_plots_server <- function(
       )
     })
 
+    output$msg_stiff <- renderText({
+      msg_stiff()
+    })
+    output$msg_piper <- renderText({
+      msg_piper()
+    })
+    # Options ---------------------------
+    qc <- reactive({
+      input_args(inputs_qc(), input$qc)
+    })
+
+    display <- reactive({
+      i <- input_args(inputs_display(), input$display)
+      if (!i["plot_legend"]) {
+        i["legend_position"] <- "none"
+      }
+      i <- i[-1]
+      i
+    })
+
+    # Samples for plots -----------------
+    samples_sub <- reactive({
+      validate(need(!is.null(input$ems_ids), "Select EMS IDs to plot"))
+      validate(need(samples(), "Collect data first (see Data tab)"))
+      s <- dplyr::filter(samples(), .data$location_id %in% input$ems_ids)
+      validate(need(nrow(s) > 0, "No data to display"))
+      s
+    })
+
     # Plots - Stiff ---------------------
     output$plot_stiff <- renderPlot({
-      validate(need(samples(), "Collect data first (see Data tab)"))
-      validate(need(nrow(samples()) > 0, "No data to display"))
-
-      req(input$ems_ids)
-      req(input$omit_bad)
-      req(input$legends)
-
-      s <- samples() |>
-        dplyr::filter(.data$location_id %in% input$ems_ids)
-
-      stiff_plot(s, qc_valid_only = as.logical(input$omit_bad))
-    })
+      # Create plot, catch messages
+      msg_stiff(NULL)
+      m <- capture.output(
+        p <- rlang::exec(stiff_plot, samples_sub(), !!!qc(), !!!display()),
+        type = "message"
+      )
+      msg_stiff(m)
+      p
+    }) |>
+      bindCache(samples_sub(), qc(), display())
 
     # Plots - Piper ---------------------
     output$plot_piper <- renderPlot({
-      validate(need(samples(), "Collect data first (see Data tab)"))
-      validate(need(nrow(samples()) > 0, "No data to display"))
-
-      req(input$ems_ids)
-      req(input$omit_bad)
-      req(input$legends)
-
+      msg_piper(NULL)
       # Create plot
-    })
+      m <- capture.output(
+        p <- rlang::exec(piper_plot, samples_sub(), !!!qc(), !!!display()),
+        type = "message"
+      )
+      msg_piper(m)
+      p
+    }) |>
+      bindCache(samples_sub(), qc(), display())
   })
+}
+
+inputs_qc <- function() {
+  dplyr::tribble(
+    ~text                  , ~arg                 , ~tt                                                                          ,
+    "Valid charge balance" , "qc_valid_only"      , "Only include samples with valid charge blances"                             ,
+    "Omit outliers"        , "qc_omit_outliers"   , "Omit samples within a location which do not have a Dominant Water Type"     ,
+    "Use Alkalinity"       , "qc_with_alkalinity" , "Use Alkalinity as a substitute for Bicarbonate, if Bicarbonate is missing."
+  )
+}
+
+inputs_display <- function() {
+  dplyr::tribble(
+    ~text         , ~arg          ,
+    "Show legend" , "plot_legend"
+  )
+}
+
+tt_labels <- function(i, filter = NULL, label = FALSE) {
+  purrr::map2(i$text, i$tt, \(t, tt) {
+    tooltip(
+      trigger = list(t, bsicons::bs_icon("info-circle")),
+      tt
+    )
+  })
+}
+
+input_args <- function(i, filter) {
+  rlang::set_names(i$arg %in% filter, i$arg)
 }
