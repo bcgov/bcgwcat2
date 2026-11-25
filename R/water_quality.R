@@ -30,7 +30,7 @@
 #' water_quality(s)
 
 water_quality <- function(samples) {
-  samples <- check_samples(samples)
+  check_samples(samples)
 
   wq <- samples |>
     dplyr::filter(.data$result_unit != "meq/l") |> # No meq params

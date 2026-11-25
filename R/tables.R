@@ -41,7 +41,8 @@
 #' tbl_overview(fmt_wide(s), "rel")
 
 tbl_overview <- function(samples, which) {
-  d <- check_samples_wide(samples)
+  check_samples_wide(samples)
+  d <- samples
 
   cols_meta <- c(
     "obs_well",

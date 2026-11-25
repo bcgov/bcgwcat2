@@ -58,7 +58,7 @@ check_samples_raw <- function(samples) {
   if (!inherits(samples, "data.frame") || !is_raw(samples)) {
     abort(c(
       "`samples` must be raw EnMoDS data from `fetch_renmods(raw = TRUE)`",
-      "i" = "Data from `fetch_renmods()` are already formatted"
+      "i" = "The default for `fetch_renmods()` is to format the data"
     ))
   }
 
@@ -87,11 +87,11 @@ check_samples_wide <- function(samples) {
     "obs_well" %in% names(samples) &&
     !"result_value" %in% names(samples)
 
-  if (is_wide) {
-    return(samples)
+  if (!is_wide) {
+    abort("`samples` must be in wide format, output of `fmt_wide()`")
   }
 
-  fmt_wide(samples) # Checks samples are formatted
+  invisible(TRUE)
 }
 
 is_raw <- function(samples) {

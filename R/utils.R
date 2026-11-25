@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' Make column names pretty
+#' Make names pretty
 #'
 #' @param x Character vector of names to make pretty.
 #' @param units Whether or not these include units

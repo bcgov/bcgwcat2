@@ -122,7 +122,7 @@ fmt_wide <- function(
   out_path = paste0("wide_", Sys.Date(), ".csv")
 ) {
   # TODO add saving
-  samples <- check_samples(samples)
+  check_samples(samples)
 
   if (!is.null(params)) {
     samples <- dplyr::filter(samples, .data$bcgwcat_param %in% .env$params)
