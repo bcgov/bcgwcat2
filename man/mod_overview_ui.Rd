@@ -4,12 +4,10 @@
 \alias{mod_overview_ui}
 \title{Title}
 \usage{
-mod_overview_ui(id = "overview", data_types = renmods_data_types())
+mod_overview_ui(id = "overview", datasets = renmods_datasets())
 }
 \arguments{
 \item{id}{Character. Shiny module ID}
-
-\item{data_types}{}
 }
 \value{
 Shiny module UI

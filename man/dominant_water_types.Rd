@@ -2,9 +2,12 @@
 % Please edit documentation in R/calculations.R
 \name{dominant_water_types}
 \alias{dominant_water_types}
+\alias{add_dominant_water_types}
 \title{Return dominant water types}
 \usage{
 dominant_water_types(samples, n = 5, p = 0.75)
+
+add_dominant_water_types(samples, n = 5, p = 0.75)
 }
 \arguments{
 \item{samples}{Data frame with at least a \code{water_type} column.}
@@ -17,12 +20,21 @@ considered dominant.}
 }
 \value{
 Character vector of dominant water types
+(\code{dominant_water_types()}), or samples with an added \code{dominant} column
+(\code{add_dominant_water_types()}).
 }
 \description{
 Find the dominant waters type in a group of samples, but only if there are
 more than \code{n} samples with a valid water type. HCO3 and HCO3* types are
 treated as equivalent. Water types are considered dominant if they are in  >
 \code{p} proportion of  samples.
+}
+\details{
+\strong{\code{dominant_water_types()}} returns the dominant water types.
+
+\strong{\code{add_dominant_water_types()}} adds a \code{dominant} column to the samples,
+which is \code{TRUE} if the sample's water type is in the dominant set, \code{FALSE}
+otherwise.
 }
 \examples{
 wt <- data.frame(
@@ -34,7 +46,20 @@ wt <- data.frame(
     "Ca-Mg-HCO3-SO4",
     "Mg-Na",
     "Mg-Na",
-    "Ca-Mg-Na")
+    "Ca-Mg-Na"
   )
+)
+
 dominant_water_types(wt)
+add_dominant_water_types(wt)
+
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+s <- fetch_renmods(
+  ems_ids = "E102388",
+  date_range = c("2026-01-01", "2027-01-01")
+)
+
+add_dominant_water_types(s) |>
+  dplyr::pull(dominant)
+\dontshow{\}) # examplesIf}
 }

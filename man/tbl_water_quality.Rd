@@ -7,8 +7,7 @@
 tbl_water_quality(samples, which = NULL, params = NULL)
 }
 \arguments{
-\item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
-If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
+\item{samples}{Data frame. Output from \code{\link[=fetch_renmods]{fetch_renmods()}} or \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
 \item{which}{Character. Which columns to include "rel" for relevant,
 otherwise all are included.}

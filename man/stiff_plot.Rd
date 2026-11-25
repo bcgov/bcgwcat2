@@ -7,17 +7,18 @@
 stiff_plot(
   samples,
   group = "location_id",
-  colour = "viridis",
+  colour = "location_id",
+  colour_scale = "viridis",
   legend_position = c(0.9, 0.8),
-  legend_title = group,
+  legend_title = pretty_names(colour),
   qc_valid_only = TRUE,
+  qc_omit_outliers = FALSE,
   qc_with_alkalinity = TRUE,
   margin = 10
 )
 }
 \arguments{
-\item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
-If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
+\item{samples}{Data frame. Output from \code{\link[=fetch_renmods]{fetch_renmods()}} or \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
 \item{group}{Character. Column by which to group data for colour, shape,
 filled and size.}
@@ -29,12 +30,15 @@ and y to specify an exact position.}
 
 \item{legend_title}{Character. Title of legend. Defaults to \code{group}.}
 
+\item{qc_omit_outliers}{Logical. Whether to omit outliers by looking at dominant
+water types (see \code{?dominant_water_types()}). Default TRUE.}
+
 \item{qc_with_alkalinity}{Logical. Whether to use Alkalinity
 (\code{alkalinity_total_4.5_as_caco3_meq/l}) for HCO3
 (\code{bicarbonate_alkalinity_as_caco3_meq/l}) if HCO3 is missing. Default TRUE.
 Matches behaviour of \code{water_type()}.}
 
-\item{margin}{Numeric. Plot margin size in "pt". See \code{\link[ggplot2:element]{ggplot2::margin()}}.}
+\item{margin}{Numeric. Plot margin size in "pt". See \code{\link[ggplot2:margin]{ggplot2::margin()}}.}
 }
 \value{
 ggplot Stiff Plot

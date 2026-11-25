@@ -5,6 +5,7 @@
 \alias{fmt_minimal}
 \alias{fmt}
 \alias{fmt_wide}
+\alias{fmt_base}
 \title{Format EnMoDS data}
 \usage{
 fmt_minimal(
@@ -21,9 +22,13 @@ fmt_wide(
   save = FALSE,
   out_path = paste0("wide_", Sys.Date(), ".csv")
 )
+
+fmt_base(samples)
 }
 \arguments{
-\item{samples}{Data frame. Output from \code{\link[=fetch_renmods]{fetch_renmods()}}}
+\item{samples}{Data frame. For \code{fmt_base()} and \code{fmt_minimal()}, raw EnMoDS data from
+\code{fetch_renmods(raw = TRUE)}. For other formatting functions, output from
+\code{\link[=fetch_renmods]{fetch_renmods()}} or \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
 \item{save}{Logical. Whether to automatically save the formatted data to
 \code{out_path}.}
@@ -39,19 +44,38 @@ column names.}
 Filtered and formatted data frame of EnMoDS data.
 }
 \description{
-This family of functions formats and filters data returned by \code{\link[=fetch_renmods]{fetch_renmods()}}.
-All functions use \code{\link[=fmt_minimal]{fmt_minimal()}} as their first step.
+This family of functions formats and filters EnMoDS data among different formats.
 }
 \details{
-\strong{\code{fmt_minimal()}}
+\strong{\code{fmt_base()}} does the first, basic formatting of raw EnMoDS data from
+\code{fetch_renmods(raw = TRUE)}. This function is not normally called by users
+(use \code{\link[=fmt_minimal]{fmt_minimal()}} instead which calls \code{fmt_base()}), but it is included for transparency, as it
+shows the data used in calculations such as MEQs, charge balances and water
+types (see \code{\link[=meq]{meq()}}, \code{\link[=charge_balance]{charge_balance()}}, and \code{\link[=water_type]{water_type()}}).
 \itemize{
-\item keeps only columns listed in \code{\link[=index_meta]{index_meta()}} and \code{\link[=index_meta_params]{index_meta_params()}}
 \item filters to only parameters (observed properties) listed in \code{\link[=index_params]{index_params()}}
+\item keeps only "NORMAL" samples (omits replicates, blanks, etc., see
+\code{QC_Type})
+\item reclassifies \code{pH (acidity)} recorded as a Field Result as
+\code{pH-Field (acidity)}
+\item keeps only columns listed in \code{\link[=index_meta]{index_meta()}} and \code{\link[=index_meta_params]{index_meta_params()}}
 \item all column names converted to lower case (snake_case)
 \item creates \code{obs_well} filled with Observation Well listed in \code{location_name}
+\item adds \code{bcgwcat_param} names (see \code{\link[=index_params]{index_params()}})
 }
 
-\strong{\code{fmt_wide()}} builds on \code{fmt_minimal()}
+\strong{\code{fmt_minimal()}} builds on \code{fmt_base()} to format raw EnMoDS data from
+\code{fetch_renmods(raw = TRUE)}. This is done automatically by
+\code{\link[=fetch_renmods]{fetch_renmods()}} by default, so is only needed if you want to work with the
+raw data first.
+\itemize{
+\item adds calculated values as extra rows: MEQs, charge balance and
+anion/cation sums (see \code{\link[=meq]{meq()}}, \code{\link[=charge_balance]{charge_balance()}})
+\item adds water type (see \code{\link[=water_type]{water_type()}})
+}
+
+\strong{\code{fmt_wide()}} expects the output of \code{fmt_minimal()} (i.e. the default
+output of \code{\link[=fetch_renmods]{fetch_renmods()}})
 \itemize{
 \item transform the parameters/observed properties from long into wide format
 \item if any parameters for a specific observation (identified by \code{location_id} and \code{observation_date_time}) have been measured multiple times with different methods, a single measurement will be selected
@@ -67,14 +91,26 @@ with AquaChem)
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+# Raw data
+s_raw <- fetch_renmods(
+  ems_ids = c("1401030", "1401377"),
+  date_range = c("2020-01-01", "2022-02-01"),
+  raw = TRUE
+)
+
+# Basic formatting only: Filtering and column renaming (no calculated values)
+fmt_base(s_raw)
+
+# Minimal formatting: Basic plus calculated values
+fmt_minimal(s_raw)
+
+# `fmt_minimal()` applied by default in fetch_renmods()
 s <- fetch_renmods(
   ems_ids = c("1401030", "1401377"),
   date_range = c("2020-01-01", "2022-02-01")
 )
 
-fmt_minimal(s)
+# Widen data: Note dropping data with repeated values
 fmt_wide(s)
-
-s
 \dontshow{\}) # examplesIf}
 }

@@ -21,6 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Steffi LaZerte \email{sel@steffilazerte.ca} (\href{https://orcid.org/0000-0002-7690-8360}{ORCID})
   \item Andarge Baye \email{Andarge.Baye@gov.bc.ca}
 }
 

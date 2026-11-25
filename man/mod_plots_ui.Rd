@@ -6,9 +6,6 @@
 \usage{
 mod_plots_ui(id = "plots")
 }
-\arguments{
-\item{id}{}
-}
 \value{
 Shiny module UI
 }
@@ -17,6 +14,6 @@ Title
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-test_mod("water_quality")
+test_mod("plots", ems_ids = c("E298733", "E336585", "E335827"))
 \dontshow{\}) # examplesIf}
 }

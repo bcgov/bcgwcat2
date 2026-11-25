@@ -8,16 +8,10 @@ mod_details_server(id = "details", ...)
 }
 \arguments{
 \item{id}{Character. Shiny module ID}
-
-\item{...}{}
 }
 \value{
 Shiny module server
 }
 \description{
 Title
-}
-\examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-\dontshow{\}) # examplesIf}
 }

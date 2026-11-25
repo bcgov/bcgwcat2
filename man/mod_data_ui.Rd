@@ -6,9 +6,6 @@
 \usage{
 mod_data_ui(id = "data")
 }
-\arguments{
-\item{id}{}
-}
 \value{
 Shiny module UI
 }

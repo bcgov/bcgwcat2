@@ -7,8 +7,7 @@
 tbl_overview(samples, which)
 }
 \arguments{
-\item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
-If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
+\item{samples}{Data frame. Output from \code{\link[=fetch_renmods]{fetch_renmods()}} or \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 
 \item{which}{Character. Which columns to include "rel" for relevant,
 otherwise all are included.}
@@ -37,7 +36,7 @@ s <- fetch_renmods(
   ems_ids = "E102388",
   date_range = c("2026-01-01", "2027-01-01")
 )
-fmt_wide(s)
+tbl_overview(s, "rel")
 tbl_overview(fmt_wide(s), "rel")
 \dontshow{\}) # examplesIf}
 }

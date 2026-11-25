@@ -6,9 +6,6 @@
 \usage{
 mod_water_quality_ui(id = "water_quality")
 }
-\arguments{
-\item{id}{}
-}
 \description{
 Title
 }

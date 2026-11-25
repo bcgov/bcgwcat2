@@ -12,7 +12,3 @@ Data frame of ion details
 \description{
 Title
 }
-\examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-\dontshow{\}) # examplesIf}
-}

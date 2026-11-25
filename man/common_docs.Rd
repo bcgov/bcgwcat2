@@ -4,8 +4,7 @@
 \alias{common_docs}
 \title{Common arguments}
 \arguments{
-\item{samples}{Data frame. Output from \code{\link[=fmt_minimal]{fmt_minimal()}} or \code{\link[=fetch_renmods]{fetch_renmods()}}.
-If \code{\link[=fetch_renmods]{fetch_renmods()}} samples will be first formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}.}
+\item{samples}{Data frame. Output from \code{\link[=fetch_renmods]{fetch_renmods()}} or \code{\link[=fmt_minimal]{fmt_minimal()}}.}
 }
 \description{
 Common arguments

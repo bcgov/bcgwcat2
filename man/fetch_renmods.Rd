@@ -4,21 +4,26 @@
 \alias{fetch_renmods}
 \title{Fetch renmods data for specific ems_ids}
 \usage{
-fetch_renmods(ems_ids, date_range = NULL)
+fetch_renmods(ems_ids, date_range = NULL, raw = FALSE)
 }
 \arguments{
 \item{ems_ids}{Character Vector. EMS ids to filter EnMoDS samples to.}
 
 \item{date_range}{Character/Date Vector. Start/end dates to filter to. \code{NULL}
 returns all data.}
+
+\item{raw}{Logical. Return the raw EnMoDS data instead of formatting it with
+\code{\link[=fmt_minimal]{fmt_minimal()}}. Default \code{FALSE}.}
 }
 \value{
-Data frame of filtered EnMoDS data.
+Data frame of filtered EnMoDS data, formatted with \code{\link[=fmt_minimal]{fmt_minimal()}}
+unless \code{raw = TRUE}.
 }
 \description{
 Light wrapper around \code{\link[renmods:renmods_connect]{renmods::renmods_connect()}} to fetch data by date and
 EMS ID. Also collects data into memory, so can take some time if a lot of
-data are requested.
+data are requested. By default, the data are formatted with
+\code{\link[=fmt_minimal]{fmt_minimal()}}, ready to use with the other bcgwcat2 functions.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
@@ -27,9 +32,16 @@ s <- fetch_renmods(
   date_range = c("2020-01-01", "2022-02-01")
 )
 
- s <- fetch_renmods(
+s <- fetch_renmods(
   ems_ids = 22769669,
   date_range = c("2020-01-01", "2022-02-01")
+)
+
+# Raw EnMoDS data
+s_raw <- fetch_renmods(
+  ems_ids = 22769669,
+  date_range = c("2020-01-01", "2022-02-01"),
+  raw = TRUE
 )
 \dontshow{\}) # examplesIf}
 }
