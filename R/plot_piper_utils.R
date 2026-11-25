@@ -66,7 +66,7 @@ grid_ternary_lines <- function(p, i) {
     }
   ) |>
     purrr::list_rbind(names_to = "id") |>
-    dplyr::mutate(axis = i, group = paste0(i, "_", .data$id))
+    dplyr::mutate(axis = i, axes_group = paste0(i, "_", .data$id))
 }
 
 #' Create data frame of diamond grid vectors
@@ -87,14 +87,14 @@ grid_diamond <- function(breaks = seq(0, 100, 20)) {
     \(w) pq_to_xy(p = c(w, w), q = c(0, 1))
   ) |>
     purrr::list_rbind(names_to = "id") |>
-    dplyr::mutate(axis = "p", group = paste0("p_", .data$id))
+    dplyr::mutate(axis = "p", axes_group = paste0("p_", .data$id))
 
   q_lines <- purrr::map(
     rlang::set_names(props),
     \(w) pq_to_xy(p = c(0, 1), q = c(w, w))
   ) |>
     purrr::list_rbind(names_to = "id") |>
-    dplyr::mutate(axis = "q", group = paste0("q_", .data$id))
+    dplyr::mutate(axis = "q", axes_group = paste0("q_", .data$id))
 
   dplyr::bind_rows(p_lines, q_lines)
 }
@@ -107,34 +107,77 @@ shift_xy <- function(x, dx = 0, dy = 0) {
   x
 }
 
-check_point_scale <- function(d, type = "point_colour", scale = NULL) {
-  g <- dplyr::n_distinct(d$group)
-
-  if (!is.null(scale)) {
-    if (length(scale) == 1) {
-      scale <- rep(scale, g)
-    } else if (length(scale) != g) {
-      abort(
-        "The length of {.var {{type}}} doesn't match the number of categories in {.var group}"
-      )
+get_scale <- function(d, type = "size", scale, legend_title) {
+  if (is.null(scale)) {
+    if (type == "shape") {
+      scale <- ggplot2::scale_shape(name = pretty_names(legend_title))
+    }
+    if (type == "size") {
+      scale <- ggplot2::scale_size(name = pretty_names(legend_title))
     }
   }
-  scale
-}
 
-check_point_colour <- function(d, point_colour) {
-  g <- dplyr::n_distinct(d$group)
+  if (!inherits(scale, "Scale")) {
+    g <- dplyr::n_distinct(d[[paste0(".", type)]])
+    guide <- "legend"
 
-  if (is.null(point_colour)) {
-    point_colour <- rep("black", g)
-  } else if (length(point_colour) == 1 && point_colour == "viridis") {
-    point_colour <- viridisLite::viridis(
-      n = g,
-      end = 0.8
+    if (length(scale) == 1) {
+      scale <- rep(scale, g)
+      guide <- "none"
+    } else if (length(scale) != g) {
+      abort(
+        "The length of {.var {{paste0(type, '_scale')}}} doesn't match the number of categories in {.var {{type}}}"
+      )
+    }
+
+    if (type == "shape") {
+      fun <- ggplot2::scale_shape_manual
+    } else if (type == "size") {
+      fun <- ggplot2::scale_size_manual
+    }
+
+    scale <- fun(
+      name = pretty_names(legend_title),
+      values = scale,
+      guide = guide
     )
   }
 
-  point_colour <- check_point_scale(d, scale = point_colour)
+  scale
+}
 
-  point_colour
+get_scale_colour <- function(d, colour_scale, legend_title) {
+  if (!inherits(colour_scale, "Scale")) {
+    guide <- "legend"
+
+    if (length(colour_scale) == 1 && colour_scale == "viridis") {
+      colour_scale <- ggplot2::scale_colour_viridis_d(
+        name = pretty_names(legend_title),
+        aesthetics = c("colour", "fill"),
+        end = 0.8
+      )
+    } else {
+      g <- dplyr::n_distinct(d[[".colour"]])
+
+      if (is.null(colour_scale)) {
+        colour_scale <- rep("black", g)
+        guide <- "none"
+      }
+
+      if (length(colour_scale) != length(g)) {
+        abort(
+          "The length of {.var {colour_scale} doesn't match the number of categories in {.var colour}"
+        )
+      }
+
+      colour_scale <- ggplot2::scale_colour_manual(
+        name = pretty_names(legend_title),
+        values = colour_scale,
+        aesthetics = c("colour", "fill"),
+        guide = guide
+      )
+    }
+  }
+
+  colour_scale
 }

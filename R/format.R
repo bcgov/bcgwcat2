@@ -177,14 +177,19 @@ fmt_base <- function(samples) {
 fmt_plot <- function(
   samples,
   plot_type,
-  group = NULL,
+  group,
+  colour = NULL,
+  shape = NULL,
+  size = NULL,
   valid_only = TRUE,
   omit_outliers = TRUE,
   with_alkalinity = TRUE
 ) {
+  check_samples(samples)
+
   p <- dplyr::filter(ion_details(), .data[[plot_type]])
 
-  ss <- check_samples(samples) |>
+  s <- samples |>
     dplyr::filter(
       .data$bcgwcat_param %in% c(p$bcgwcat_param, "charge_balance"),
       .data$result_unit %in% c("meq/l", "%")
@@ -197,22 +202,30 @@ fmt_plot <- function(
     )
 
   # Ions not measured at all are missing (NA)
-
-  for (ion in setdiff(p$bcgwcat_param, names(ss))) {
-    ss[[ion]] <- NA_real_
+  for (ion in setdiff(p$bcgwcat_param, names(s))) {
+    s[[ion]] <- NA_real_
   }
 
-  # If no group use a placeholder
-  if (!is.null(group)) {
-    ss$group <- ss[[group]]
-  } else {
-    ss$group <- "group"
+  # If no aesthetics use a placeholder
+  for (a in c("group", "colour", "shape", "size")) {
+    col <- get(a, inherits = FALSE)
+    new_col <- paste0(".", a)
+    if (is.null(col)) {
+      s[[new_col]] <- ""
+    } else {
+      if (!is.character(col) || !col %in% names(s)) {
+        abort("{.arg {a}} ('{col}') isn't a column in the samples data frame")
+      } else {
+        s[[new_col]] <- s[[col]]
+      }
+      if (!is.factor(s[[new_col]])) s[[new_col]] <- factor(s[[new_col]])
+    }
   }
 
+  # Use alkalinity if missing bicarbonate
   if (with_alkalinity) {
-    # Use alkalinity if missing bicarbonate
-    ss <- dplyr::mutate(
-      ss,
+    s <- dplyr::mutate(
+      s,
       `bicarbonate_alkalinity_as_caco3` = dplyr::if_else(
         is.na(.data$`bicarbonate_alkalinity_as_caco3`),
         .data$`alkalinity_total_4.5_as_caco3`,
@@ -222,12 +235,15 @@ fmt_plot <- function(
   }
 
   # Select and rename
-  ss <- ss |>
+  s <- s |>
     dplyr::select(
       "location_id",
       "observed_date_time",
       "sample_id",
-      "group",
+      ".group",
+      ".colour",
+      ".shape",
+      ".size",
       "charge_balance",
       "water_type",
       dplyr::any_of(rlang::set_names(p$bcgwcat_param, p$water_code))
@@ -235,23 +251,24 @@ fmt_plot <- function(
 
   if (valid_only) {
     # Only keep samples with valid charge balances of non-NA and -10 <= x <= 10
-    ss <- dplyr::filter(
-      ss,
+    s <- dplyr::filter(
+      s,
       !is.na(.data$charge_balance),
       abs(.data$charge_balance) <= 10
     )
   }
 
-  if (omit_outliers) {
+  if (omit_outliers && nrow(s)) {
     # Omit outliers by water type (not within the dominant set)
-    ss <- ss |>
-      tidyr::nest(.by = group) |>
+
+    s <- s |>
+      tidyr::nest(.by = .group) |>
       dplyr::mutate(data = purrr::map(.data$data, add_dominant_water_types)) |>
       tidyr::unnest("data") |>
       dplyr::filter(.data$dominant)
   }
 
-  ss
+  s
 }
 
 fmt_stiff <- function(
@@ -261,12 +278,14 @@ fmt_stiff <- function(
   with_alkalinity = TRUE
 ) {
   s <- samples |>
+    dplyr::select(-".shape", -".size") |>
     tidyr::pivot_longer(
       cols = -c(
         "location_id",
         "observed_date_time",
         "sample_id",
-        "group",
+        ".group",
+        ".colour",
         "charge_balance",
         "water_type"
       ),
@@ -378,6 +397,10 @@ add_placeholders <- function(
   samples,
   add = c("charge_balance_enmods", "anion_sum_enmods", "cation_sum_enmods")
 ) {
+  if (nrow(samples) == 0) {
+    return(samples)
+  }
+
   placeholders <- dplyr::tribble(
     ~bcgwcat_param          , ~result_unit ,
     "charge_balance_enmods" , "%"          ,

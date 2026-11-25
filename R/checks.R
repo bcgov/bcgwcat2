@@ -103,17 +103,13 @@ check_plot_ids <- function(
   samples_filtered,
   group = "location_id"
 ) {
-  if (!nrow(samples_filtered)) {
-    if (shiny::isRunning()) {
-      validate(need(
-        nrow(samples_filtered) > 0,
-        "Missing too many samples: nothing to plot."
-      ))
-    }
-    inform(
-      "Not enough {dplyr::if_else(qc_valid_only, 'good quality', '')} data."
-    )
-    return(invisible(FALSE))
+  chk <- shiny_msg(
+    nrow(samples_filtered) > 0,
+    "Missing too many samples: nothing to plot."
+  )
+
+  if (!chk) {
+    return(FALSE)
   }
 
   ids_dropped <- setdiff(samples_orig[[group]], samples_filtered[[group]])
@@ -124,5 +120,5 @@ check_plot_ids <- function(
     )
   }
 
-  return(invisible(TRUE))
+  TRUE
 }

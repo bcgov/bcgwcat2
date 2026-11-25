@@ -49,21 +49,24 @@
 stiff_plot <- function(
   samples,
   group = "location_id",
-  colour = "viridis",
+  colour = "location_id",
+  colour_scale = "viridis",
   legend_position = c(0.9, 0.8),
-  legend_title = group,
+  legend_title = pretty_names(colour),
   qc_valid_only = TRUE,
+  qc_omit_outliers = FALSE,
   qc_with_alkalinity = TRUE,
   margin = 10
 ) {
-  # TODO: Use omit outliers here?
+  # TODO: Use omit outliers here? Should be TRUE?
 
   s <- fmt_plot(
     samples,
     plot_type = "stiff_plot",
     group = group,
+    colour = colour,
     valid_only = qc_valid_only,
-    omit_outliers = FALSE, #omit_outliers = qc_omit_outliers,
+    omit_outliers = qc_omit_outliers,
     with_alkalinity = qc_with_alkalinity
   ) |>
     fmt_stiff()
@@ -72,8 +75,7 @@ stiff_plot <- function(
     return(invisible())
   }
 
-  colour <- check_colour_scale(s, colour)
-  legend_position <- if (all(s$group == "group")) "none" else legend_position
+  colour_scale <- get_scale_colour(s, colour_scale, legend_title)
 
   g <- ggplot2::ggplot(
     s,
@@ -81,7 +83,7 @@ stiff_plot <- function(
       x = .data$result_value,
       y = .data$sample,
       group = .data$sample_id,
-      fill = .data$group
+      fill = .data$.colour
     )
   ) +
     theme_stiff(legend_position, margin = margin) +
@@ -100,11 +102,11 @@ stiff_plot <- function(
       c(-max(abs(x)), max(abs(x)))
     }) +
     ggplot2::labs(x = "Milliequivalents per litre") +
-    ggplot2::scale_fill_manual(name = legend_title, values = colour)
+    colour_scale
 
   if (!is.null(group)) {
     g <- g +
-      ggplot2::facet_wrap(ggplot2::vars(.data$group), scales = "free_y")
+      ggplot2::facet_wrap(ggplot2::vars(.data$.group), scales = "free_y")
   }
   g
 }

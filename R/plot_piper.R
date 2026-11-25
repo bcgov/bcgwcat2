@@ -48,27 +48,33 @@
 piper_plot <- function(
   samples,
   group = "location_id",
+  colour = "location_id",
+  colour_scale = "viridis",
+  shape = NULL,
+  shape_scale = 16,
+  size = NULL,
+  size_scale = 3,
   legend_position = c(0.9, 0.8),
-  legend_title = group,
+  legend_title = NULL,
   qc_valid_only = TRUE,
   qc_omit_outliers = TRUE,
   qc_with_alkalinity = TRUE,
-  point_colour = "viridis",
-  point_shape = 16,
-  point_size = 3,
   margin = 10,
   scale = 1
 ) {
   s <- fmt_plot(
     samples,
     plot_type = "piper_plot",
-    group,
+    group = group,
+    colour = colour,
+    shape = shape,
+    size = size,
     valid_only = qc_valid_only,
     omit_outliers = qc_omit_outliers,
     with_alkalinity = qc_with_alkalinity
   )
 
-  if (!check_plot_ids(samples, s, group = group)) {
+  if (!check_plot_ids(samples, s, group = ".group")) {
     return(invisible())
   }
 
@@ -93,14 +99,19 @@ piper_plot <- function(
   gap <- 0.4
 
   # Themes and Scales
-  legend_position <- if (all(s$group == "group")) "none" else legend_position
+
+  if (is.null(size)) {
+    size_scale <- size_scale * scale
+  }
 
   t1 <- scale_piper_points(
     s,
-    legend_title,
-    point_colour,
-    point_shape,
-    point_size * scale
+    colour,
+    colour_scale,
+    shape,
+    shape_scale,
+    size,
+    size_scale
   )
   t2 <- theme_piper(legend_position, margin = margin * scale)
 
@@ -131,14 +142,17 @@ piper_cation <- function(
     samples,
     "location_id",
     "observed_date_time",
-    "group",
+    ".colour",
+    ".shape",
+    ".size",
     "Ca",
     "Mg",
     "Na_K"
   ) |>
     dplyr::mutate(dplyr::across(c("Ca", "Mg", "Na_K"), \(x) {
       x / (.data$Ca + .data$Mg + .data$Na_K)
-    }))
+    })) |>
+    tidyr::drop_na()
 
   cat <- dplyr::bind_cols(cat, abc_to_xy(cat$Ca, cat$Na_K, cat$Mg))
 
@@ -161,7 +175,9 @@ piper_anion <- function(
     samples,
     "location_id",
     "observed_date_time",
-    "group",
+    ".colour",
+    ".shape",
+    ".size",
     "SO4",
     "Cl",
     "HCO3_CO3"
@@ -191,7 +207,9 @@ piper_combined <- function(
     samples,
     "location_id",
     "observed_date_time",
-    "group",
+    ".colour",
+    ".shape",
+    ".size",
     "Ca",
     "Mg",
     "Na_K",
@@ -250,7 +268,8 @@ piper_ternary <- function(
   a_labs <- grid_ternary() |>
     dplyr::filter(.data$axis == "a", .data$y == 0) |>
     dplyr::mutate(
-      lab = stringr::str_extract(.data$group, "\\d+(\\.\\d+)?") |> as.numeric(),
+      lab = stringr::str_extract(.data$axes_group, "\\d+(\\.\\d+)?") |>
+        as.numeric(),
       lab = format(.data$lab * 100, digits = 2)
     ) |>
     dplyr::distinct()
@@ -259,7 +278,8 @@ piper_ternary <- function(
     dplyr::filter(.data$axis == "b") |>
     dplyr::slice(seq(1, 12, by = 2)) |>
     dplyr::mutate(
-      lab = stringr::str_extract(.data$group, "\\d+(\\.\\d+)?") |> as.numeric(),
+      lab = stringr::str_extract(.data$axes_group, "\\d+(\\.\\d+)?") |>
+        as.numeric(),
       lab = format(.data$lab * 100, digits = 2)
     ) |>
     dplyr::distinct()
@@ -268,7 +288,8 @@ piper_ternary <- function(
     dplyr::filter(.data$axis == "c") |>
     dplyr::slice(seq(2, 12, by = 2)) |>
     dplyr::mutate(
-      lab = stringr::str_extract(.data$group, "\\d+(\\.\\d+)?") |> as.numeric(),
+      lab = stringr::str_extract(.data$axes_group, "\\d+(\\.\\d+)?") |>
+        as.numeric(),
       lab = format(.data$lab * 100, digits = 2)
     ) |>
     dplyr::distinct()
@@ -378,7 +399,7 @@ piper_diamond <- function(
 geom_piper_grid <- function(grid) {
   ggplot2::geom_line(
     data = grid,
-    ggplot2::aes(x = .data$x, y = .data$y, group = .data$group),
+    ggplot2::aes(x = .data$x, y = .data$y, group = .data$axes_group),
     color = "grey70",
     linewidth = 0.3
   )
@@ -416,40 +437,29 @@ geom_piper_points <- function(ions, scale = 1) {
     ggplot2::aes(
       x = .data$x,
       y = .data$y,
-      colour = .data$group,
-      fill = .data$group,
-      shape = .data$group,
-      size = .data$group
-    )
+      colour = .data$.colour,
+      fill = .data$.colour,
+      shape = .data$.shape,
+      size = .data$.size
+    ),
+    na.rm = TRUE
   )
 }
 
 scale_piper_points <- function(
   ions,
-  legend_title,
-  point_colour = "black",
-  point_shape = 16,
-  point_size = 3
+  colour,
+  colour_scale,
+  shape,
+  shape_scale,
+  size,
+  size_scale
 ) {
-  point_colour <- check_point_colour(ions, point_colour)
-  point_shape <- check_point_scale(ions, "point_shape", point_shape)
-  point_size <- check_point_scale(ions, "point_size", point_size)
+  colour_scale <- get_scale_colour(ions, colour_scale, legend_title = colour)
+  shape_scale <- get_scale(ions, "shape", shape_scale, legend_title = shape)
+  size_scale <- get_scale(ions, "size", size_scale, legend_title = size)
 
-  list(
-    ggplot2::scale_colour_manual(
-      name = legend_title,
-      values = point_colour,
-      aesthetics = c("colour", "fill")
-    ),
-    ggplot2::scale_shape_manual(
-      name = legend_title,
-      values = point_shape
-    ),
-    ggplot2::scale_size_manual(
-      name = legend_title,
-      values = point_size
-    )
-  )
+  list(colour_scale, shape_scale, size_scale)
 }
 
 theme_piper <- function(legend_position = "bottom", margin = 10) {
