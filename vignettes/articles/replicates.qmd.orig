@@ -6,6 +6,12 @@ knitr:
     comment: '#>'
 ---
 
+```{r}
+#| include: false
+# Choose duckdb's extension directory explicitly to silence its storage message
+old_opts <- options(duckdb.home = "~/.duckdb")
+```
+
 EnMoDS data includes some replicate samples, usually defined as quality control (QC) samples alongside regular
 environmental samples. The `QC_Type` column identifies which kind of sample each
 row comes from. 
@@ -138,4 +144,9 @@ fmt |>
     result_value
   ) |>
   arrange(observed_property_id)
+```
+
+```{r}
+#| include: false
+options(old_opts)
 ```

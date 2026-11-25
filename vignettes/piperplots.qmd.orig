@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
   fig.align = "center",
   fig.path = "figures/piper-"
 )
+# Choose duckdb's extension directory explicitly to silence its storage message
+old_opts <- options(duckdb.home = "~/.duckdb")
 ```
 
 
@@ -189,4 +191,9 @@ piper_plot(
   qc_omit_outliers = FALSE,
   qc_with_alkalinity = FALSE
 )
+```
+
+```{r}
+#| include: false
+options(old_opts)
 ```
