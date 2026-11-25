@@ -50,3 +50,23 @@ inform <- function(message, df = NULL, ..., .envir = rlang::caller_env()) {
 abort <- function(..., .envir = rlang::caller_env(), call = NULL) {
   cli::cli_abort(..., call = call, .envir = .envir)
 }
+
+shiny_msg <- function(
+  valid_cond,
+  msg,
+  stop = FALSE,
+  .envir = rlang::caller_env()
+) {
+  if (shiny::isRunning()) {
+    validate(need(valid_cond, msg))
+  } else if (!valid_cond) {
+    if (stop) {
+      abort(msg, .envir = .envir)
+    } else {
+      inform(msg, .envir = .envir)
+      return(FALSE)
+    }
+  }
+
+  TRUE
+}

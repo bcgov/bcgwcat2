@@ -237,7 +237,7 @@ mod_data_server <- function(updated, app_session, id = "data", ...) {
       })
 
       samples(s)
-      samples_wide(samples())
+      samples_wide(fmt_wide(samples()))
     }) |>
       bindEvent(input$fetch_data)
 
